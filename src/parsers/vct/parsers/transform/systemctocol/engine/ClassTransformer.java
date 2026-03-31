@@ -47,6 +47,7 @@ public class ClassTransformer<T> {
      * @return A COL class encoding the semantics of the given process class
      */
     public ByReferenceClass<T> create_process_class(ProcessClass process) {
+
         java.util.List<ClassDeclaration<T>> declarations = new java.util.ArrayList<>();
         // Transform class attributes
         Ref<T, Class<T>> main_cls_ref = new LazyRef<>(col_system::get_main, Option.empty(), ClassTag$.MODULE$.apply(Class.class));
@@ -125,6 +126,7 @@ public class ClassTransformer<T> {
 
         // Add newly generated methods to declaration list
         declarations.addAll(generated_instance_methods);
+
         return new ByReferenceClass<>(Seqs.empty(),
                 List.from(CollectionConverters.asScala(declarations)), Seqs.empty(), col_system.TRUE,
                 OriGen.create(create_name(state_class.get_generating_instance())));
@@ -147,6 +149,7 @@ public class ClassTransformer<T> {
 
         // Create new VariableTransformer
         VariableTransformer<T> variable_transformer = new VariableTransformer<>(sc_inst, col_system);
+
         // Transform attribute variables
         for (SCVariable attribute : attributes) {
             result.put(attribute, variable_transformer.transform_variable_to_instance_field(attribute));
@@ -177,6 +180,7 @@ public class ClassTransformer<T> {
                 }
             }
         }
+        
         return result;
     }
 

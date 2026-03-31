@@ -319,6 +319,7 @@ public class Transformer<T> {
 			if (!(sc_inst instanceof SCKnownType)) {
 
 				ClassTransformer<T> class_transformer = new ClassTransformer<>(col_system);
+				
 				StateClass state_cls = col_system.get_state_class(sc_inst);
 
 				// Transform state class first, since process classes might call state class methods, but not the other way around
