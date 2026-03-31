@@ -1,6 +1,7 @@
 package vct.parsers.parser;
 
 import org.antlr.v4.runtime.*;
+import vct.antlr4.generated.PSLParser;
 
 public abstract class CPPParserBase extends Parser
 {

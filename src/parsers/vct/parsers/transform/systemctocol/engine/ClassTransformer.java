@@ -2,6 +2,7 @@ package vct.parsers.transform.systemctocol.engine;
 
 import de.tub.pes.syscir.sc_model.*;
 import de.tub.pes.syscir.sc_model.variables.SCClassInstance;
+import de.tub.pes.syscir.sc_model.variables.SCSimpleType;
 import scala.Option;
 import scala.collection.immutable.List;
 import scala.jdk.javaapi.CollectionConverters;
@@ -47,7 +48,6 @@ public class ClassTransformer<T> {
      */
     public ByReferenceClass<T> create_process_class(ProcessClass process) {
         java.util.List<ClassDeclaration<T>> declarations = new java.util.ArrayList<>();
-
         // Transform class attributes
         Ref<T, Class<T>> main_cls_ref = new LazyRef<>(col_system::get_main, Option.empty(), ClassTag$.MODULE$.apply(Class.class));
         InstanceField<T> m = new InstanceField<>(new TByReferenceClass<>(main_cls_ref, Seqs.empty(), OriGen.create()), col_system.NO_FLAGS, OriGen.create("m"));
@@ -125,7 +125,6 @@ public class ClassTransformer<T> {
 
         // Add newly generated methods to declaration list
         declarations.addAll(generated_instance_methods);
-
         return new ByReferenceClass<>(Seqs.empty(),
                 List.from(CollectionConverters.asScala(declarations)), Seqs.empty(), col_system.TRUE,
                 OriGen.create(create_name(state_class.get_generating_instance())));
@@ -148,10 +147,15 @@ public class ClassTransformer<T> {
 
         // Create new VariableTransformer
         VariableTransformer<T> variable_transformer = new VariableTransformer<>(sc_inst, col_system);
-
         // Transform attribute variables
         for (SCVariable attribute : attributes) {
             result.put(attribute, variable_transformer.transform_variable_to_instance_field(attribute));
+        }
+
+        // Add psl helper variables
+        if (true){
+            SCSimpleType psl_init = new SCSimpleType(create_name(sc_inst,run_method).toLowerCase()+"_init","bool");
+            result.put(psl_init,variable_transformer.transform_variable_to_instance_field(psl_init));
         }
 
         // Transform run method local variables
@@ -173,7 +177,6 @@ public class ClassTransformer<T> {
                 }
             }
         }
-
         return result;
     }
 

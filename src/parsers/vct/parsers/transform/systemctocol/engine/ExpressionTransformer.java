@@ -1269,6 +1269,9 @@ public class ExpressionTransformer<T> {
         if (expr instanceof UnaryExpression e) {
             return transform_unary_expression(e, sc_inst, obj);
         }
+        if (expr instanceof PSLExpression e) {
+            return transform_psl_expression(e);
+        }
         // TODO: ArrayInitializerExpression, NewExpression, SCClassInstanceExpression
         throw new ExpressionParseException("The following expression is not supported:\n\n" + expr);
     }
@@ -1643,6 +1646,17 @@ public class ExpressionTransformer<T> {
             case "--" -> handle_incr_decr(false, expr.isPrepost(), original);
             default -> throw new UnsupportedException("Unsupported unary operator " + expr.getOperator());
         };
+    }
+    /**
+     * Transforms a PSL expression to COL.
+     * 
+     * @param expr PSLExpression to be converted
+     * @return An expression encoding the semantics of the PSL expression
+     */
+    private Expr<T> transform_psl_expression(PSLExpression expr){
+        String psl_text = expr.toString();
+
+        return new StringValue<>(psl_text,OriGen.create());
     }
 
     // ============================================================================================================== //

@@ -49,7 +49,7 @@ public class ColSystemCParser extends Parser {
         if (document == null) throw new IllegalOperationException("Could not open input XML document.");
         Environment environment = Engine.parseSystem(document);
         SCSystem sc_system = environment.getSystem();
-
+        sc_system.setPslExpressions(environment.getPSLExpressionStack());
         // Transform SystemC system to COL system
         Transformer<G> sc_to_col_transformer = new Transformer<>(sc_system);
         sc_to_col_transformer.create_col_model();
