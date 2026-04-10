@@ -1,7 +1,8 @@
 // PSL Parser Defined for SystemC Flavour
+// Based on IEEE Std 1850-2010
 parser grammar LangPSLParser;
 options {tokenVocab=LangPSLLexer;}
-import LangCPPParser;
+import CPPParser;
 
 // Flavor Macros
 def_sym: EQ;

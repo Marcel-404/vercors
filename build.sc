@@ -72,7 +72,7 @@ object viper extends ScalaModule {
   }
 
   object silver extends ScalaModule {
-    override def scalaVersion = "2.13.10"
+    override def scalaVersion = "2.13.11"
     override def scalacOptions = T { Seq("-Xno-patmat-analysis", "-nowarn") }
     def repo = silverGit
     override def sources = T.sources { repo.filteredRepo() / "src" / "main" / "scala" }
@@ -107,13 +107,13 @@ object viper extends ScalaModule {
     }
 
     object common extends ScalaModule {
-      override def scalaVersion = "2.13.10"
+      override def scalaVersion = "2.13.11"
       override def scalacOptions = T { Seq("-Xno-patmat-analysis", "-nowarn") }
       override def sources = T.sources { silicon.repo.filteredRepo() / "common" / "src" / "main" / "scala" }
       override def moduleDeps = Seq(silver)
     }
 
-    override def scalaVersion = "2.13.10"
+    override def scalaVersion = "2.13.11"
     override def scalacOptions = T { Seq("-Xno-patmat-analysis", "-nowarn") }
     def repo = siliconGit
     override def sources = T.sources { repo.filteredRepo() / "src" / "main" / "scala" }
@@ -129,7 +129,7 @@ object viper extends ScalaModule {
   }
 
   object carbon extends ScalaModule {
-    override def scalaVersion = "2.13.10"
+    override def scalaVersion = "2.13.11"
     override def scalacOptions = T { Seq("-Xno-patmat-analysis", "-nowarn") }
     def repo = carbonGit
     override def sources = T.sources { repo.filteredRepo() / "src" / "main" / "scala" }
@@ -408,6 +408,7 @@ object vercors extends Module {
         java.generate(),
         pvl.generate(),
         llvm.generate(),
+        psl.generate(),
       )
     }
     def deps = Agg(
@@ -518,6 +519,17 @@ object vercors extends Module {
       def deps = Seq(
         "SpecParser.g4", "SpecLexer.g4",
         "LangLLVMSpecParser.g4", "LangLLVMSpecLexer.g4"
+      )
+    }
+
+    object psl extends GenModule {
+      def lexer = "LangPSLLexer.g4"
+      def parser = "LangPSLParser.g4"
+      def deps = Seq(
+        "SpecParser.g4", "SpecLexer.g4",
+         "LangCPPParser.g4", "LangCPPLexer.g4",
+         "CPPParser.g4",
+        "LangPSLParser.g4", "LangPSLLexer.g4"
       )
     }
   }

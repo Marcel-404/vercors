@@ -250,6 +250,11 @@ public class ExpressionTransformer<T> {
             pure = false;
             return transform_while_loop_expression(e, sc_inst, obj, path_cond);
         }
+        /*if (expr instanceof PSLExpression e){
+            Expr<T> cond = create_expression(e, sc_inst, obj);
+            Statement<T> test =new Assert<>(cond,new GeneratedBlame<>(),OriGen.create());
+            return null;
+        }*/
         // TODO: Support SocketFunctionCallExpression, MultiSocketAccessExpression for TLM library?
         throw new ExpressionParseException("The following statement is not supported:\n\n" + expr);
     }
@@ -1655,7 +1660,6 @@ public class ExpressionTransformer<T> {
      */
     private Expr<T> transform_psl_expression(PSLExpression expr){
         String psl_text = expr.toString();
-
         return new StringValue<>(psl_text,OriGen.create());
     }
 

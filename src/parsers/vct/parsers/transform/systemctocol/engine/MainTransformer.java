@@ -4,6 +4,7 @@ import de.tub.pes.syscir.sc_model.SCSystem;
 import de.tub.pes.syscir.sc_model.SCVariable;
 import de.tub.pes.syscir.sc_model.expressions.Expression;
 import de.tub.pes.syscir.sc_model.expressions.PSLExpression;
+import de.tub.pes.syscir.sc_model.expressions.MarkerExpression;
 import de.tub.pes.syscir.sc_model.expressions.SCVariableDeclarationExpression;
 import de.tub.pes.syscir.sc_model.variables.SCArray;
 import de.tub.pes.syscir.sc_model.variables.SCClassInstance;
@@ -418,15 +419,17 @@ public class MainTransformer<T> {
      */
     private void create_psl_invariant(){
         java.util.List<Expr<T>> conditions = new java.util.ArrayList<>();
-        java.util.ArrayList<PSLExpression> psl_expressions = sc_system.getPslExpressions();
+        java.util.ArrayList<MarkerExpression> psl_expressions = sc_system.getAnnotations();
         if (psl_expressions !=null){
             // Parse PSL expression
 
             // Transform PSL expression to PVL
             ExpressionTransformer<T> expression_transformer = new ExpressionTransformer<>(null, col_system, null, null, new java.util.HashMap<>());
         
-            for (PSLExpression psl_expression : psl_expressions){
+            for (MarkerExpression psl_expression : psl_expressions){
                 try {
+                    String text = psl_expression.toString();
+                    
                     Expr<T> expr = expression_transformer.transform_simple_expression(psl_expression);
                     if (expr == null) throw new NullPointerException();
                     // parse expr using antlr4
@@ -1278,7 +1281,7 @@ public class MainTransformer<T> {
             Ref<T, InstanceField<T>> proc_ref = new DirectRef<>(proc, ClassTag$.MODULE$.apply(InstanceField.class));
             Deref<T> proc_deref = new Deref<>(col_system.THIS, proc_ref, new GeneratedBlame<>(), OriGen.create());
             FieldLocation<T> proc_loc = new FieldLocation<>(col_system.THIS, proc_ref, OriGen.create());
-
+            // psl_expressions
             // Find field's Main attribute
             InstanceField<T> m = col_system.get_class_main_ref(class_by_field.get(proc));
             Ref<T, InstanceField<T>> m_ref = new DirectRef<>(m, ClassTag$.MODULE$.apply(InstanceField.class));

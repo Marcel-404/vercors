@@ -1,5 +1,12 @@
 lexer grammar LangPSLLexer;
 
+import SpecLexer,LangCPPLexer;
+
+channels {
+  EXPECTED_ERROR_CHANNEL,
+  LINE_DIRECTIVE_CHANNEL
+}
+
 // mandatory tokens, SpecLexer
 EQUALS: '==';
 INC: '++';
@@ -203,9 +210,5 @@ ACTIVE: 'active';
 TIME_UNIT: 'SC_SEC' | 'SC_MS' | 'SC_US' | 'SC_NS' | 'SC_PS' | 'SC_FS';
 
 IDENTIFIER: [a-zA-Z]('_'?[a-zA-Z0-9])*;
-
-COMMENT: '/*' .*? '*/'-> skip;
-
-LINE_COMMENT: '//' ~[\r\n]* -> skip;
 
 WS: [ \t\r\n]+ -> skip;

@@ -3,6 +3,7 @@ package vct.parsers.parser;
 import de.tub.pes.syscir.engine.Engine;
 import de.tub.pes.syscir.engine.Environment;
 import de.tub.pes.syscir.engine.TransformerFactory;
+import de.tub.pes.syscir.sc_model.expressions.MarkerExpression;
 import de.tub.pes.syscir.sc_model.SCSystem;
 import hre.io.Readable;
 import org.antlr.v4.runtime.CharStream;
@@ -21,6 +22,7 @@ import vct.result.VerificationError;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.Reader;
 import java.nio.file.Path;
+import java.util.List;
 
 public class ColSystemCParser extends Parser {
 
@@ -49,11 +51,15 @@ public class ColSystemCParser extends Parser {
         if (document == null) throw new IllegalOperationException("Could not open input XML document.");
         Environment environment = Engine.parseSystem(document);
         SCSystem sc_system = environment.getSystem();
-        sc_system.setPslExpressions(environment.getPSLExpressionStack());
+
+        //parseAnnotations(sc_system.getAnnotations());
+
         // Transform SystemC system to COL system
         Transformer<G> sc_to_col_transformer = new Transformer<>(sc_system);
         sc_to_col_transformer.create_col_model();
         COLSystem<G> col_system = sc_to_col_transformer.get_col_system();
+
+        System.out.println(col_system.to_parse_result());
 
         // Transform COL system to parse result
         return col_system.to_parse_result();
