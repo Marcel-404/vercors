@@ -2,44 +2,44 @@
 // Based on IEEE Std 1850-2010
 parser grammar LangPSLParser;
 options {tokenVocab=LangPSLLexer;}
-import CPPParser;
+//import CPPParser;
 
 // Flavor Macros
-def_sym: EQ;
+def_sym: Assign;
 
-range_sym: COLON;
+range_sym: Colon;
 
-and_op: AND;
+and_op: AndAnd;
 
-or_op: OR;
+or_op: OrOr;
 
-not_op: NOT;
+not_op: Not;
 
 min_val: MINVAL;
 
 max_val: MAXVAL;
 
-hdl_expr: expression;//expression; 
+hdl_expr: IDENTIFIER;//expression; 
 
-hdl_clock_expr: expression; // SystemC_Event_expression
+hdl_clock_expr: IDENTIFIER; // SystemC_Event_expression
 
 //systemc_event_expression: sc_event | sc_event_finder | sc_event_and_list | sc_event_or_list | sc_signal | sc_port;
 
 hdl_unit: IDENTIFIER; // SystemC_class_sc_module TODO
 
-hdl_decl: declaration;//SystemC_declaration;
+hdl_decl: IDENTIFIER;//SystemC_declaration;
 
-hdl_stmt: statement; //SystemC_statement;
+hdl_stmt: IDENTIFIER; //SystemC_statement;
 
-hdl_seq_stmt: statementSeq;// SystemC_statement;
+hdl_seq_stmt: IDENTIFIER;// SystemC_statement;
 
-hdl_variable_type: simpleTypeSpecifier;// SystemC_simple_type_specifier;
+hdl_variable_type: IDENTIFIER;// SystemC_simple_type_specifier;
 
 // hdl_range: ; (Only for VHDL)
 
-left_sym: PAREN_OPEN;
+left_sym: LeftParen;
 
-right_sym: PAREN_CLOSE;
+right_sym: RightParen;
 
 // Verification Units
 
@@ -48,12 +48,12 @@ psl_specification: verification_item* EOF;
 verification_item: hdl_unit | verification_unit;
 
 verification_unit:
-	vunit_type IDENTIFIER (PAREN_OPEN context_spec PAREN_CLOSE)? BLOCK_OPEN inherit_spec* override_spec*
-		vunit_item* BLOCK_CLOSE;
+	vunit_type IDENTIFIER (LeftParen context_spec RightParen)? LeftBrace inherit_spec* override_spec*
+		vunit_item* RightBrace; 
 
 vunit_type: VUNIT | VPKG | VPROP | VMODE;
 
-vunit_instance: label COLON vunit_type IDENTIFIER (BRACK_OPEN actual_parameter_list BRACK_CLOSE)?SEMICOLON;
+vunit_instance: label Colon vunit_type IDENTIFIER (LeftBracket actual_parameter_list RightBracket)?Semi;
 
 context_spec: binding_spec | formal_parameter_list;
 
@@ -62,13 +62,13 @@ binding_spec: hierarchical_hdl_name;
 hierarchical_hdl_name: hdl_module_name (path_seperator name)*;
 
 hdl_module_name:
-	name (PAREN_OPEN name PAREN_CLOSE)?;
+	name (LeftParen name RightParen)?;
 
-path_seperator: POINT | SLASH;
+path_seperator: Dot | Div;
 
 name: hdl_or_psl_identifier;
 
-inherit_spec: NONTRANSITIVE? INHERIT name (COMMA name)* SEMICOLON;
+inherit_spec: NONTRANSITIVE? INHERIT name (Comma name)* Semi;
 
 vunit_item:
 	hdl_decl
@@ -77,12 +77,12 @@ vunit_item:
 	| psl_directive
 	| vunit_instance;
 
-override_spec: OVERRIDE name_list;
+override_spec: Override name_list;
 
-name_list: IDENTIFIER (COMMA IDENTIFIER)*;
+name_list: IDENTIFIER (Comma IDENTIFIER)* ;
 
 formal_parameter_list:
-	formal_parameter (SEMICOLON formal_parameter)*;
+	formal_parameter (Semi formal_parameter)*;
 
 // PSL DECLARATIONS
 
@@ -92,13 +92,13 @@ psl_declaration:
 	| clock_declaration;
 
 property_declaration:
-	PROPERTY IDENTIFIER (PAREN_OPEN formal_parameter_list PAREN_CLOSE)? def_sym property SEMICOLON;
+	PROPERTY IDENTIFIER (LeftParen formal_parameter_list RightParen)? def_sym property Semi;
 
-formal_parameter: param_spec IDENTIFIER (COMMA IDENTIFIER)*;
+formal_parameter: param_spec IDENTIFIER (Comma IDENTIFIER)*;
 
 param_spec:
-	CONST
-	|(CONST | MUTABLE)? value_parameter
+	Const
+	|(Const | Mutable)? value_parameter
 	| SEQUENCE
 	| PROPERTY;
 
@@ -106,22 +106,22 @@ value_parameter: hdl_type | psl_type_class;
 
 hdl_type: HDLTYPE hdl_variable_type;
 
-psl_type_class: BOOLEAN | BIT | BITVECTOR | NUMERIC | STRING;
+psl_type_class: BOOLEAN | BIT | BITVECTOR | NUMERIC | VAL_STRING;
 
 sequence_declaration:
-	SEQUENCE IDENTIFIER (PAREN_OPEN formal_parameter_list PAREN_CLOSE)? def_sym sequences SEMICOLON;
+	SEQUENCE IDENTIFIER (LeftParen formal_parameter_list RightParen)? def_sym sequences Semi;
 
 clock_declaration:
-	DEFAULT CLOCK def_sym clock_expression SEMICOLON;
+	Default CLOCK def_sym clock_expression Semi;
 
 clock_expression:
 	name
 	| built_in_function_call
-	| PAREN_OPEN bool_val PAREN_CLOSE
-	| PAREN_OPEN hdl_clock_expr PAREN_CLOSE;
+	| LeftParen bool_val RightParen
+	| LeftParen hdl_clock_expr RightParen;
 
 actual_parameter_list:
-	actual_parameter (COMMA actual_parameter)*;
+	actual_parameter (Comma actual_parameter)*;
 
 actual_parameter:
 	 any_type
@@ -131,7 +131,7 @@ actual_parameter:
 	| sequences;
 
 // PSL directives
-psl_directive: (label COLON)? verification_directive;
+psl_directive: (label Colon)? verification_directive;
 
 label: IDENTIFIER;
 
@@ -146,48 +146,48 @@ verification_directive:
 	| fairness_statement;
 
 assert_directive:
-	ASSERT property (REPORT STRING_LITERAL)? SEMICOLON;
+	VAL_ASSERT property (REPORT STRING_LITERAL)? Semi;
 
-assume_directive: ASSUME property SEMICOLON;
+assume_directive: VAL_ASSUME property Semi;
 
-restrict_directive: RESTRICT sequences SEMICOLON;
+restrict_directive: RESTRICT sequences Semi;
 
-restrict_strong_directive: RESTRICTSTRONG sequences SEMICOLON;
+restrict_strong_directive: RESTRICTSTRONG sequences Semi;
 
 cover_directive:
-	COVER sequences BRACK_OPEN REPORT STRING_LITERAL BRACK_CLOSE SEMICOLON;
+	COVER sequences LeftBracket REPORT STRING_LITERAL RightBracket Semi;
 
 fairness_statement:
-	FAIRNESS bool_val SEMICOLON
-	| STRONG FAIRNESS bool_val COMMA bool_val SEMICOLON;
+	FAIRNESS bool_val Semi
+	| STRONG FAIRNESS bool_val Comma bool_val Semi;
 
 // PSL properties 
 
 property: replicator property | fl_property | obe_property;
 
-replicator: FORALL parameter_definition COLON;
+replicator: FORALL parameter_definition Colon;
 
 index_range:
 	left_sym range right_sym ;
-	// | PAREN_OPEN hdl_range PAREN_CLOSE; // (Only for VHDL)
+	// | LeftParen hdl_range RightParen; // (Only for VHDL)
 
 value_set:
-	BLOCK_OPEN value_range (COMMA value_range)* BLOCK_CLOSE
+	LeftBrace value_range (Comma value_range)* RightBrace
 	| BOOLEAN;
 
 value_range: value | range; 
 
 value: bool_val | number_val;
 
-proc_block: BRACK_OPEN BRACK_OPEN proc_block_Item (proc_block_Item)* BRACK_CLOSE BRACK_CLOSE;
+proc_block: LeftBracket LeftBracket proc_block_Item (proc_block_Item)* RightBracket RightBracket;
 
 proc_block_Item: hdl_decl | hdl_seq_stmt;
 
 fl_property:
 	bool_val
-	| PAREN_OPEN (BRACK_OPEN BRACK_OPEN hdl_decl (COMMA hdl_decl)* BRACK_CLOSE BRACK_CLOSE )? fl_property PAREN_CLOSE 
-	| sequences NOT?
-	| name (PAREN_OPEN actual_parameter_list PAREN_CLOSE)?
+	| LeftParen (LeftBracket LeftBracket hdl_decl (Comma hdl_decl)* RightBracket RightBracket )? fl_property RightParen 
+	| sequences Not?
+	| name (LeftParen actual_parameter_list RightParen)?
 	| fl_property CLOCKOP clock_expression
 	| fl_property ABORT bool_val
 	| fl_property ASYNC_ABORT bool_val
@@ -197,15 +197,15 @@ fl_property:
 	| not_op fl_property
 	| fl_property and_op fl_property
 	| fl_property or_op fl_property
-	| fl_property IMPLY fl_property
+	| fl_property Arrow fl_property
 	| fl_property EQUIVALENCE fl_property
 	// Primitive_LTL_perators
 	| LTLX fl_property
 	| LTLXSTRONG fl_property
 	| LTLF fl_property
 	| LTLG fl_property
-	| BRACK_OPEN fl_property LTLU fl_property BRACK_CLOSE
-	| BRACK_OPEN fl_property LTLW fl_property BRACK_CLOSE
+	| LeftBracket fl_property LTLU fl_property RightBracket
+	| LeftBracket fl_property LTLW fl_property RightBracket
 	// Simple_Temporal_Operators
 	| ALWAYS fl_property
 	| NEVER fl_property
@@ -223,50 +223,50 @@ fl_property:
 	| fl_property BEFORE_STRONG fl_property
 	| fl_property BEFORE_ fl_property
 	// Extended Next (Event) Operators:
-	| LTLX BRACK_OPEN number_val BRACK_CLOSE PAREN_OPEN fl_property PAREN_CLOSE
-	| LTLXSTRONG BRACK_OPEN number_val BRACK_CLOSE PAREN_OPEN fl_property PAREN_CLOSE
-	| NEXT BRACK_OPEN number_val BRACK_CLOSE PAREN_OPEN fl_property PAREN_CLOSE
-	| NEXTSTRONG BRACK_OPEN number_val BRACK_CLOSE PAREN_OPEN fl_property PAREN_CLOSE
+	| LTLX LeftBracket number_val RightBracket LeftParen fl_property RightParen
+	| LTLXSTRONG LeftBracket number_val RightBracket LeftParen fl_property RightParen
+	| NEXT LeftBracket number_val RightBracket LeftParen fl_property RightParen
+	| NEXTSTRONG LeftBracket number_val RightBracket LeftParen fl_property RightParen
 	// 
-	| NEXTALWAYS BRACK_OPEN range BRACK_CLOSE PAREN_OPEN fl_property PAREN_CLOSE 
-	| NEXTALWAYSSTRONG BRACK_OPEN range BRACK_CLOSE PAREN_OPEN fl_property PAREN_CLOSE 
-	| NEXTEXISTS BRACK_OPEN range BRACK_CLOSE PAREN_OPEN fl_property PAREN_CLOSE 
-	| NEXTEXISTSSTRONG BRACK_OPEN range BRACK_CLOSE PAREN_OPEN fl_property PAREN_CLOSE 
+	| NEXTALWAYS LeftBracket range RightBracket LeftParen fl_property RightParen 
+	| NEXTALWAYSSTRONG LeftBracket range RightBracket LeftParen fl_property RightParen 
+	| NEXTEXISTS LeftBracket range RightBracket LeftParen fl_property RightParen 
+	| NEXTEXISTSSTRONG LeftBracket range RightBracket LeftParen fl_property RightParen 
 	//
-	| NEXTEVENTSTRONG PAREN_OPEN bool_val PAREN_CLOSE PAREN_OPEN fl_property PAREN_CLOSE
-	| NEXTEVENT PAREN_OPEN bool_val PAREN_CLOSE PAREN_OPEN fl_property PAREN_CLOSE
-	| NEXTEVENTSTRONG PAREN_OPEN bool_val PAREN_CLOSE BRACK_OPEN number_val BRACK_CLOSE 
-		PAREN_OPEN fl_property PAREN_CLOSE 
-	| NEXTEVENT PAREN_OPEN bool_val PAREN_CLOSE BRACK_OPEN number_val BRACK_CLOSE PAREN_OPEN
-		fl_property PAREN_CLOSE
+	| NEXTEVENTSTRONG LeftParen bool_val RightParen LeftParen fl_property RightParen
+	| NEXTEVENT LeftParen bool_val RightParen LeftParen fl_property RightParen
+	| NEXTEVENTSTRONG LeftParen bool_val RightParen LeftBracket number_val RightBracket 
+		LeftParen fl_property RightParen 
+	| NEXTEVENT LeftParen bool_val RightParen LeftBracket number_val RightBracket LeftParen
+		fl_property RightParen
 	//
-	| NEXTEVENTALWAYSSTRONG PAREN_OPEN bool_val PAREN_CLOSE BRACK_OPEN range BRACK_CLOSE 
-		PAREN_OPEN fl_property PAREN_CLOSE
-	| NEXTEVENTALWAYS PAREN_OPEN bool_val PAREN_CLOSE BRACK_OPEN range BRACK_CLOSE 
-		PAREN_OPEN fl_property PAREN_CLOSE
-	| NEXTEVENTEXISTSSTRONG PAREN_OPEN bool_val PAREN_CLOSE BRACK_OPEN range BRACK_CLOSE 
-		PAREN_OPEN fl_property PAREN_CLOSE
-	| NEXTEVENTEXISTS PAREN_OPEN bool_val PAREN_CLOSE BRACK_OPEN range BRACK_CLOSE 
-		PAREN_OPEN fl_property PAREN_CLOSE
+	| NEXTEVENTALWAYSSTRONG LeftParen bool_val RightParen LeftBracket range RightBracket 
+		LeftParen fl_property RightParen
+	| NEXTEVENTALWAYS LeftParen bool_val RightParen LeftBracket range RightBracket 
+		LeftParen fl_property RightParen
+	| NEXTEVENTEXISTSSTRONG LeftParen bool_val RightParen LeftBracket range RightBracket 
+		LeftParen fl_property RightParen
+	| NEXTEVENTEXISTS LeftParen bool_val RightParen LeftBracket range RightBracket 
+		LeftParen fl_property RightParen
 	// Operators_on_seres
-	| sere* PAREN_OPEN fl_property PAREN_CLOSE
+	| sere* LeftParen fl_property RightParen
 	| sequences OVERLAPSUFFIXIMPLY fl_property
 	| sequences NONOVERLAPSUFFIXIMPLY fl_property
 	// VPSL Operators
-	| WITHIN_T BRACK_OPEN PAREN_OPEN number_val COMMA TIME_UNIT PAREN_CLOSE BRACK_CLOSE fl_property; 
+	| WITHIN_T LeftBracket LeftParen number_val Comma TIME_UNIT RightParen RightBracket fl_property; 
 
 sere:
 	bool_val
 	| bool_val proc_block
 	| sequences
-	| sere SEMICOLON sere
-	| sere COLON sere
+	| sere Semi sere
+	| sere Colon sere
 	| compound_sere;
 
 compound_sere:
 	repeated_sere
-	| sequences BRACK_OPEN STAR count? BRACK_CLOSE
-	| sequences BRACK_OPEN PLUS BRACK_CLOSE
+	| sequences LeftBracket Star count? RightBracket
+	| sequences LeftBracket Plus RightBracket
 	| sequences proc_block
 	| braced_sere
 	| clocked_sere
@@ -275,10 +275,10 @@ compound_sere:
 	| parameterized_sere;
 
 parameterized_property:
-	FOR parameters_definition COLON and_or_property_op PAREN_OPEN fl_property PAREN_CLOSE;
+	For parameters_definition Colon and_or_property_op LeftParen fl_property RightParen;
 
 parameterized_sere:
-	FOR parameters_definition COLON and_or_property_op BLOCK_OPEN fl_property BLOCK_CLOSE;
+	For parameters_definition Colon and_or_property_op LeftBrace fl_property RightBrace;
 
 parameters_definition:
 	parameter_definition parameter_definition*;
@@ -288,33 +288,33 @@ parameter_definition:
 
 and_or_property_op: and_op | or_op;
 
-and_or_sere_op: AND | WEAKAND | WEAKOR;
+and_or_sere_op: AndAnd | And | Or;
 
 // sequences
 sequences:
 	sequence_instance
 	| repeated_sere
-	| sequences BRACK_OPEN STAR count? BRACK_CLOSE
-	| sequences BRACK_OPEN PLUS BRACK_CLOSE
+	| sequences LeftBracket Star count? RightBracket
+	| sequences LeftBracket Plus RightBracket
 	| sequences proc_block
 	| braced_sere
 	| clocked_sere;
 
 repeated_sere:
-	bool_val BRACK_OPEN STAR count? BRACK_CLOSE
-	| BRACK_OPEN STAR count? BRACK_CLOSE
-	| bool_val BRACK_OPEN PLUS BRACK_CLOSE
-	| BRACK_OPEN PLUS BRACK_CLOSE
-	| bool_val BRACK_OPEN EQ count BRACK_CLOSE
-	| bool_val BRACK_OPEN IMPLY positive_count? BRACK_CLOSE
+	bool_val LeftBracket Star count? RightBracket
+	| LeftBracket Star count? RightBracket
+	| bool_val LeftBracket Plus RightBracket
+	| LeftBracket Plus RightBracket
+	| bool_val LeftBracket Assign count RightBracket
+	| bool_val LeftBracket Arrow positive_count? RightBracket
 	| bool_val proc_block;
 
 braced_sere:
-	BLOCK_OPEN (BRACK_OPEN BRACK_OPEN hdl_decl hdl_decl* BRACK_CLOSE BRACK_CLOSE)? sere BLOCK_CLOSE
-	| BLOCK_OPEN (FREE hdl_or_psl_identifier (hdl_or_psl_identifier)* )? sere BLOCK_CLOSE; 
+	LeftBrace (LeftBracket LeftBracket hdl_decl hdl_decl* RightBracket RightBracket)? sere RightBrace
+	| LeftBrace (FREE hdl_or_psl_identifier (hdl_or_psl_identifier)* )? sere RightBrace; 
 
 sequence_instance:
-	name (PAREN_OPEN actual_parameter_list PAREN_CLOSE)?;
+	name (LeftParen actual_parameter_list RightParen)?;
 
 clocked_sere: braced_sere CLOCKOP clock_expression;
 
@@ -344,49 +344,49 @@ string_val: hdl_or_psl_expression;
 
 hdl_or_psl_expression:
 	hdl_expression
-	| hdl_or_psl_expression IMPLY hdl_or_psl_expression
+	| hdl_or_psl_expression Arrow hdl_or_psl_expression
 	| hdl_or_psl_expression EQUIVALENCE hdl_or_psl_expression
 	| built_in_function_call
-	| hdl_or_psl_expression UNION hdl_or_psl_expression;
+	| hdl_or_psl_expression Union hdl_or_psl_expression;
 
 hdl_expression: hdl_expr;
 
 built_in_function_call:
-	PREV PAREN_OPEN any_type (COMMA number_val (COMMA clock_expression)?)? PAREN_CLOSE
-	| NEXT PAREN_OPEN any_type PAREN_CLOSE
-	| STABLE PAREN_OPEN any_type (COMMA clock_expression)? PAREN_CLOSE
-	| ROSE PAREN_OPEN bit_val (COMMA clock_expression)? PAREN_CLOSE
-	| FELL PAREN_OPEN bit_val (COMMA clock_expression)? PAREN_CLOSE
-	| ENDED PAREN_OPEN sequences (COMMA clock_expression)? PAREN_CLOSE
-	| ISUNKNOWN PAREN_OPEN bit_vector_val PAREN_CLOSE 
-	| COUNTONES PAREN_OPEN bit_vector_val PAREN_CLOSE 
-	| ONEHOT PAREN_OPEN bit_vector_val PAREN_CLOSE 
-	| ONEHOT0 PAREN_OPEN bit_vector_val PAREN_CLOSE 
-	| NONDET PAREN_OPEN value_set PAREN_CLOSE 
-	| NONDETVECTOR PAREN_OPEN number_val COMMA value_set PAREN_OPEN
+	PREV LeftParen any_type (Comma number_val (Comma clock_expression)?)? RightParen
+	| NEXT LeftParen any_type RightParen
+	| STABLE LeftParen any_type (Comma clock_expression)? RightParen
+	| ROSE LeftParen bit_val (Comma clock_expression)? RightParen
+	| FELL LeftParen bit_val (Comma clock_expression)? RightParen
+	| ENDED LeftParen sequences (Comma clock_expression)? RightParen
+	| ISUNKNOWN LeftParen bit_vector_val RightParen 
+	| COUNTONES LeftParen bit_vector_val RightParen 
+	| ONEHOT LeftParen bit_vector_val RightParen 
+	| ONEHOT0 LeftParen bit_vector_val RightParen 
+	| NONDET LeftParen value_set RightParen 
+	| NONDETVECTOR LeftParen number_val Comma value_set LeftParen
 	// VPSL function calls
-	| ACTIVE PAREN_OPEN any_type PAREN_CLOSE
-	| WAITING PAREN_OPEN any_type PAREN_CLOSE;
+	| ACTIVE LeftParen any_type RightParen
+	| WAITING LeftParen any_type RightParen;
 
 
 // Optional Branching Extension 
 obe_property:
 	bool_val
-	| PAREN_OPEN obe_property PAREN_CLOSE
-	| IDENTIFIER (PAREN_OPEN actual_parameter_list PAREN_CLOSE)? //Name
+	| LeftParen obe_property RightParen
+	| IDENTIFIER (LeftParen actual_parameter_list RightParen)? //Name
 	// Logical Operators
 	| not_op obe_property
 	| obe_property and_op obe_property
 	| obe_property or_op obe_property
-	| obe_property IMPLY obe_property
+	| obe_property Arrow obe_property
 	| obe_property EQUIVALENCE obe_property
 	// Universal Operators
 	| CTLAX obe_property
 	| CTLAG obe_property
 	| CTLAF obe_property
-	| CTLA BRACK_OPEN obe_property LTLU obe_property BRACK_CLOSE
+	| CTLA LeftBracket obe_property LTLU obe_property RightBracket
 	// Existential Operators:
 	| CTLEX obe_property
 	| CTLEG obe_property
 	| CTLEF obe_property
-	| CTLE BRACK_OPEN obe_property LTLU obe_property BRACK_CLOSE ;
+	| CTLE LeftBracket obe_property LTLU obe_property RightBracket ;

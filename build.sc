@@ -528,8 +528,7 @@ object vercors extends Module {
       def deps = Seq(
         "SpecParser.g4", "SpecLexer.g4",
          "LangCPPParser.g4", "LangCPPLexer.g4",
-         "CPPParser.g4",
-        "LangPSLParser.g4", "LangPSLLexer.g4"
+         "CPPParser.g4", "LangPSLLexer.g4"
       )
     }
   }

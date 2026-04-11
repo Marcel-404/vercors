@@ -6,7 +6,6 @@ import de.tub.pes.syscir.engine.TransformerFactory;
 import de.tub.pes.syscir.sc_model.expressions.MarkerExpression;
 import de.tub.pes.syscir.sc_model.SCSystem;
 import hre.io.Readable;
-import org.antlr.v4.runtime.CharStream;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import vct.col.origin.Origin;
@@ -23,6 +22,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.Reader;
 import java.nio.file.Path;
 import java.util.List;
+
+// Imports for psl
+import java.util.LinkedList;
+import vct.antlr4.generated.LangPSLParser;
+import vct.antlr4.generated.LangPSLLexer;
+import vct.parsers.transform.PSLToCOLVisitor;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 public class ColSystemCParser extends Parser {
 
@@ -47,21 +54,60 @@ public class ColSystemCParser extends Parser {
             return null;
         }
 
-        // Use SystemC Intermediate Representation to parse a SystemC system from the document
-        if (document == null) throw new IllegalOperationException("Could not open input XML document.");
+        // Use SystemC Intermediate Representation to parse a SystemC system from the
+        // document
+        if (document == null)
+            throw new IllegalOperationException("Could not open input XML document.");
         Environment environment = Engine.parseSystem(document);
         SCSystem sc_system = environment.getSystem();
 
-        //parseAnnotations(sc_system.getAnnotations());
+        // Parse PSL Annotations
+        List<String> convertedannotations = parseAnnotations(sc_system);
+
+        // parseAnnotations(sc_system.getAnnotations());
 
         // Transform SystemC system to COL system
         Transformer<G> sc_to_col_transformer = new Transformer<>(sc_system);
         sc_to_col_transformer.create_col_model();
         COLSystem<G> col_system = sc_to_col_transformer.get_col_system();
 
-        System.out.println(col_system.to_parse_result());
-
         // Transform COL system to parse result
         return col_system.to_parse_result();
     }
+
+    /**
+     * Parses the PSL annotations and transforms them to PVL equivalents
+     * 
+     * @param sc_system
+     * @return
+     */
+    public List<String> parseAnnotations(SCSystem sc_system) {
+        List<String> pvl_annotations = new LinkedList<>();
+        if (sc_system.getAnnotations() != null) {
+            for (MarkerExpression annotation : sc_system.getAnnotations()) {
+                pvl_annotations.add(transformAnnotation(annotation.toString()));
+            }
+        }
+        return pvl_annotations;
+    }
+
+    private String transformAnnotation(String annotation) {
+        String input = annotation.toString();
+        //String input = "vunit main {}";
+        CharStream charStream = CharStreams.fromString(input);
+        LangPSLLexer lexer = new LangPSLLexer(charStream);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        LangPSLParser parser = new LangPSLParser(tokens);
+
+        ParseTree tree = parser.psl_specification();
+
+        PSLToCOLVisitor visitor = new PSLToCOLVisitor();
+
+        String result = visitor.visit(tree);
+
+        System.out.println(result+"\n\n\n\n");
+
+        return result;
+    }
+
 }

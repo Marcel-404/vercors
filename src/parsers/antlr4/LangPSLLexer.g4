@@ -1,59 +1,45 @@
 lexer grammar LangPSLLexer;
 
-import SpecLexer,LangCPPLexer;
-
-channels {
-  EXPECTED_ERROR_CHANNEL,
-  LINE_DIRECTIVE_CHANNEL
-}
-
-// mandatory tokens, SpecLexer
-EQUALS: '==';
-INC: '++';
-ANGLE_OPEN: '<';
-ANGLE_CLOSE: '>';
-CONS: '::';
-VAL_INLINE: 'inline';
-VAL_PACKAGE: 'package';
+import LangCPPLexer;
 
 // TOKENS
-BRACK_OPEN: '[';
-BRACK_CLOSE: ']';
-PAREN_OPEN: '(';
-PAREN_CLOSE: ')';
-BLOCK_OPEN: '{';
-BLOCK_CLOSE: '}';
+//BRACK_OPEN: '[';
+//BRACK_CLOSE: ']';
+//PAREN_OPEN: '(';
+//PAREN_CLOSE: ')';
+//BLOCK_OPEN: '{';
+//BLOCK_CLOSE: '}';
 
-COMMA: ',';
-SEMICOLON: ';';
-COLON: ':';
-DOUBLEPOINT: '..';
-TRIPLEPOINT: '...';
-EQ: '=';
-ASSIGN: ':=';
+//COMMA: ',';
+//SEMICOLON: ';';
+//COLON: ':';
+//DOUBLEPOINT: '..';
+//TRIPLEPOINT: '...';
+//EQ: '=';
+COLON_ASSIGN: ':=';
 
-STAR: '*';
-PLUS: '+';
+//STAR: '*';
+//PLUS: '+';
 OVERLAPSUFFIXIMPLY: '|->';
 NONOVERLAPSUFFIXIMPLY: '|=>';
 EQUIVALENCE: '<->';
-IMPLY: '->';
+//IMPLY: '->';
 
 REPEATSTAR: '[*';
 REPEATPLUS: '[+]';
 SEQARROWRIGHT: '[->';
 SEQEQUALS: '[=';
 
-AND: '&&';
-WEAKAND: '&';
-OR: '||';
-WEAKOR: '|';
-NOT: '!';
+//AND: '&&';
+//WEAKAND: '&';
+//OR: '||';
+//WEAKOR: '|';
+//NOT: '!';
 
 DOLLAR: '$';
 CLOCKOP: '@';
-POINT: '.';
-SLASH: '/';
+//POINT: '.';
+//SLASH: '/';
 
 MINVAL: '0';
 MAXVAL: 'inf';
@@ -71,8 +57,8 @@ INHERIT: 'inherit';
 
 PROPERTY: 'property';
 
-CONST: 'const';
-MUTABLE: 'mutable';
+//CONST: 'const';
+//MUTABLE: 'mutable';
 SEQUENCE: 'sequence';
 HDLTYPE: 'hdltype';
 
@@ -80,7 +66,7 @@ BOOLEAN: 'boolean';
 BIT: 'bit';
 BITVECTOR: 'bitvector';
 NUMERIC: 'numeric';
-STRING: 'string';
+//STRING: 'string';
 
 STRING_LITERAL : '"' STRING_CHARACTER* '"';
 
@@ -102,13 +88,13 @@ HEX_DIGIT
 
 // ---------------------------------------------------------------
 
-DEFAULT: 'default';
+//DEFAULT: 'default';
 CLOCK: 'clock';
 
 // PSL Directives
-ASSERT: 'assert';
+//ASSERT: 'assert';
 REPORT: 'report';
-ASSUME: 'assume';
+//ASSUME: 'assume';
 RESTRICT: 'restrict';
 RESTRICTSTRONG: 'restrict!';
 COVER: 'cover';
@@ -162,7 +148,7 @@ NEXTEVENTEXISTSSTRONG: 'next_event_e!';
 
 
 // Parameterized Properties and SEREs
-FOR: 'for';
+//FOR: 'for';
 IN: 'in';
 
 // Built in Fnctions
@@ -178,7 +164,7 @@ ONEHOT0: 'onehot0';
 NONDET: 'nondet';
 NONDETVECTOR: 'nondet_vector';
 
-UNION: 'union';
+//UNION: 'union';
 
 // Optional Branching Extension
 
@@ -191,12 +177,12 @@ CTLEG: 'EG';
 CTLEF: 'EF';
 CTLE: 'E';
 
-TRUE: 'true';
-FALSE: 'false';
+//TRUE: 'true';
+//FALSE: 'false';
 
 WITHIN: 'within';
 
-OVERRIDE: 'override';
+//OVERRIDE: 'override';
 NONTRANSITIVE: 'nontransitive';
 FREE: 'free';
 
