@@ -1,5 +1,7 @@
 package vct.parsers.transform;
 
+import java.util.LinkedList;
+
 import org.antlr.v4.runtime.*;
 
 import vct.antlr4.generated.LangPSLParser;
@@ -8,9 +10,19 @@ import vct.antlr4.generated.LangPSLLexer;
 
 public class PSLToCOLVisitor extends LangPSLParserBaseVisitor<String> {
 
+
+    //private java.util.Map<String,java.util.List<String>> vunits = new java.util.HashMap<>();
+
+    //private java.util.Map<String,LangPSLParser.PropertyContext> properties = new java.util.HashMap<>();
+
     // ===================================================================================================
     // Supported visitMethods
     // ===================================================================================================
+
+
+    /*public java.util.Map<String,java.util.List<String>> getVunits(){
+        return vunits;
+    }*/
 
     @Override
     /**
@@ -25,11 +37,6 @@ public class PSLToCOLVisitor extends LangPSLParserBaseVisitor<String> {
             result = result + visit(item) + "\n";
         }
         return result;
-    }
-
-    @Override
-    public String visitHdlUnitVerificationItem(LangPSLParser.HdlUnitVerificationItemContext ctx) {
-        return visit(ctx.hdl_unit());
     }
 
     @Override
@@ -102,7 +109,7 @@ public class PSLToCOLVisitor extends LangPSLParserBaseVisitor<String> {
 
     @Override
     public String visitHdl_expr0(LangPSLParser.Hdl_expr0Context ctx) {
-        return ctx.Identifier().getText(); // TODO CHANGE TO EXPRESSION
+        return ctx.getText(); // TODO CHANGE TO EXPRESSION
     }
 
     @Override
@@ -110,8 +117,8 @@ public class PSLToCOLVisitor extends LangPSLParserBaseVisitor<String> {
         String fl_property = ctx.fl_property().getText();
         String process_active = extractBetween(fl_property, "active(", ")");
         String process_waiting = extractBetween(fl_property, "waiting(", ")");
-        String process = process_active.isEmpty()? process_waiting : process_active;
-        return  visit(ctx.fl_property())+"==> "+process + "." + process + "_timer_value > 0";
+        String process = process_active.isEmpty() ? process_waiting : process_active;
+        return visit(ctx.fl_property()) + "==> " + process + "." + process + "_timer_value > 0";
     }
 
     @Override
@@ -121,12 +128,13 @@ public class PSLToCOLVisitor extends LangPSLParserBaseVisitor<String> {
 
     @Override
     public String visitActiveBuiltInFunctionCall(LangPSLParser.ActiveBuiltInFunctionCallContext ctx) {
-        return "process_state[ID:" + ctx.any_type().getText() + "] == -1 ";
+        return "process_state[ID:" + ctx.Identifier().getText() + "] == -1 ";
     }
 
     @Override
     public String visitWaitingBuiltInFunctionCall(LangPSLParser.WaitingBuiltInFunctionCallContext ctx) {
-        return "process_state[ID:" + ctx.any_type().getText() + "] != -1 "; // TODO: Illogical that process could be waiting but its timer value could be > 0
+        return "process_state[ID:" + ctx.Identifier().getText() + "] != -1 "; // TODO: Illogical that process could be
+                                                                            // waiting but its timer value could be > 0
     }
 
     @Override
@@ -147,6 +155,17 @@ public class PSLToCOLVisitor extends LangPSLParserBaseVisitor<String> {
             timer = "==> " + processLeft + "." + processLeft + "_timer_value == " + timer_value;
         }
         return visit(ctx.fl_property(0)) + timer + " ** " + visit(ctx.fl_property(1));
+    }
+
+    @Override
+    public String visitPropertyDeclarationPslDeclaration(LangPSLParser.PropertyDeclarationPslDeclarationContext ctx) {
+        return visit(ctx.property_declaration());
+    }
+
+    @Override
+    public String visitProperty_declaration0(LangPSLParser.Property_declaration0Context ctx) {
+        //properties.put(ctx.Identifier().getText(),ctx.property());
+        return null;
     }
 
     /**

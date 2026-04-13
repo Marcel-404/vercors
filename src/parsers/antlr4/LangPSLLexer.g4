@@ -2,6 +2,16 @@ lexer grammar LangPSLLexer;
 
 import LangCPPLexer;
 
+channels {
+  EXPECTED_ERROR_CHANNEL,
+  LINE_DIRECTIVE_CHANNEL
+}
+
+// Tokens in Comments represent Tokens that are imported from LangCPPLexer
+// Required Tokens 
+AltIn:'\\in';
+AltForall:'\\forall';
+
 // TOKENS
 //BRACK_OPEN: '[';
 //BRACK_CLOSE: ']';
@@ -68,7 +78,7 @@ BITVECTOR: 'bitvector';
 NUMERIC: 'numeric';
 //STRING: 'string';
 
-STRING_LITERAL : '"' STRING_CHARACTER* '"';
+/*STRING_LITERAL : '"' STRING_CHARACTER* '"';
 
 fragment
 STRING_CHARACTER : ~["\\] | ESCAPE;
@@ -84,7 +94,7 @@ UNICODE_ESCAPE
 fragment
 HEX_DIGIT
     :   [0-9a-fA-F]
-    ;
+    ; */
 
 // ---------------------------------------------------------------
 
@@ -197,4 +207,4 @@ TIME_UNIT: 'SC_SEC' | 'SC_MS' | 'SC_US' | 'SC_NS' | 'SC_PS' | 'SC_FS';
 
 //IDENTIFIER: [a-zA-Z]('_'?[a-zA-Z0-9])*;
 
-WS: [ \t\r\n]+ -> skip;
+//WS: [ \t\r\n]+ -> skip;

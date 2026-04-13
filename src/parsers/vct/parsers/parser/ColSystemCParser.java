@@ -24,6 +24,7 @@ import java.io.Reader;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 // Imports for psl
 import java.util.LinkedList;
 import vct.antlr4.generated.LangPSLParser;
@@ -66,7 +67,6 @@ public class ColSystemCParser extends Parser {
         // Parse PSL Annotations
         sc_system.setAnnotations(parseAnnotations(sc_system));
 
-        
         // Transform SystemC system to COL system
         Transformer<G> sc_to_col_transformer = new Transformer<>(sc_system);
         sc_to_col_transformer.create_col_model();
@@ -86,7 +86,8 @@ public class ColSystemCParser extends Parser {
         ArrayList<MarkerExpression> pvl_annotations = new ArrayList<MarkerExpression>();
         if (sc_system.getAnnotations() != null) {
             for (MarkerExpression annotation : sc_system.getAnnotations()) {
-                MarkerExpression a =new PSLExpression(annotation.getNode(),(transformAnnotation(annotation.toString())));
+                MarkerExpression a = new PSLExpression(annotation.getNode(),
+                        (transformAnnotation(annotation.toString())));
                 pvl_annotations.add(a);
             }
         }
@@ -94,19 +95,20 @@ public class ColSystemCParser extends Parser {
     }
 
     private String transformAnnotation(String annotation) {
-        //String input = annotation.toString();
-        //String input = "vunit main {assert always active(proc1) -> within_t[(ONE,SC_MS)] active(proc2);} vunit src {assert never x;}";
-        String input = "vunit main{assert always active(proc) -> within_t[(One,SC_MS)] waiting(proc2); property aba = y; assert aba;} vunit ABSASR{assert always v>0;}";
-        //String input = "vunit main {}";
+        // String input = annotation.toString();
+        // System.out.println(input);
+        String input = "vunit main {assert always active(proc) -> within_t[(1,SC_MS)] active(proc2);}";
+        // String input = "vunit ABSASR{int x = 0; assert x;}";
+        // String input = "vunit main {}";
         LangPSLLexer lexer = new LangPSLLexer(CharStreams.fromString(input));
         LangPSLParser parser = new LangPSLParser(new CommonTokenStream(lexer));
         ParseTree tree = parser.psl_specification();
 
-        System.out.println(tree.toStringTree(parser)+"\n\n\n\n\n");
-                
+        System.out.println(tree.toStringTree(parser) + "\n\n\n\n\n");
+
         String result = new PSLToCOLVisitor().visit(tree);
 
-        System.out.println(result+"\n\n\n\n\n");
+        System.out.println(result + "\n\n\n\n\n");
         return result;
     }
 
