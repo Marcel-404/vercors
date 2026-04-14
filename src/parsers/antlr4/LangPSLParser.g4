@@ -178,7 +178,7 @@ restrict_directive: RESTRICT sequences Semi;
 restrict_strong_directive: RESTRICTSTRONG sequences Semi;
 
 cover_directive:
-	COVER sequences LeftBracket REPORT STRING_LITERAL RightBracket Semi;
+	COVER sequences LeftBracket REPORT StringLiteral RightBracket Semi;
 
 fairness_statement:
 	FAIRNESS bool_val Semi							# FairnessFairnessStatement

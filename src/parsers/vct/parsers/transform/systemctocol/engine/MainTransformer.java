@@ -1,6 +1,5 @@
 package vct.parsers.transform.systemctocol.engine;
 
-import de.tub.pes.syscir.analysis.statespace_exploration.standard_implementations.Variable;
 import de.tub.pes.syscir.sc_model.SCSystem;
 import de.tub.pes.syscir.sc_model.SCVariable;
 import de.tub.pes.syscir.sc_model.expressions.Expression;
@@ -17,6 +16,7 @@ import scala.jdk.javaapi.CollectionConverters;
 import scala.math.BigInt;
 import scala.reflect.ClassTag$;
 import vct.col.ast.*;
+import vct.col.ast.Class;
 import vct.col.ast.ByReferenceClass;
 import vct.col.ref.DirectRef;
 import vct.col.ref.LazyRef;
@@ -31,6 +31,12 @@ import vct.parsers.transform.systemctocol.util.GeneratedBlame;
 import vct.parsers.transform.systemctocol.util.OriGen;
 import vct.parsers.transform.systemctocol.util.Seqs;
 
+//import java.lang.reflect.Method;
+import vct.antlr4.generated.LangPSLParser;
+import vct.antlr4.generated.LangPSLLexer;
+import vct.parsers.transform.PSLToColVisitor;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.ParseTree;
 /**
  * Generates a Main class encoding the SystemC scheduler. The Main class
  * contains all class instances from the SystemC
@@ -466,40 +472,80 @@ public class MainTransformer<T> {
         col_system.set_global_perms(global_invariant);
     }
 
-    /**
+ /**
      * Generates the psl permission invariant.
      */
-    private void create_psl_invariant(){
-        java.util.List<Expr<T>> conditions = new java.util.ArrayList<>();
-        java.util.ArrayList<MarkerExpression> psl_expressions = sc_system.getAnnotations();
-        if (psl_expressions !=null){
-            // Parse PSL expression
+ private void create_psl_invariant() {
+         java.util.List<Expr<T>> conditions = new java.util.ArrayList<>();
+         java.util.ArrayList<MarkerExpression> psl_expressions = sc_system.getAnnotations();
+         if (psl_expressions != null) {
+                 // Parse PSL expression
+                 try {
+                         // Transform PSL expression to PVL
+                         String input = "!proc -> active(proc); proc -> within_t[(1,SC_MS)] waiting(proc2); proc1 <-> proc2;";
 
-            // Transform PSL expression to PVL
-            ExpressionTransformer<T> expression_transformer = new ExpressionTransformer<>(null, col_system, null, null, new java.util.HashMap<>());
-        
-            for (MarkerExpression psl_expression : psl_expressions){
-                String str = psl_expression.toString();
+                         String annotations[] = input.split("\\;");
 
-                try {
-                    while(str.contains("ID:")){
-                        String process = str.substring(str.indexOf("ID:")+3,str.indexOf("]"));
-                        System.out.println("\n\n\nProcess:"+process);
-                        System.out.println("ID:"+process+"]");
-                        
-                        str=str.replace("ID:"+process,"1]");
-                    }
+                         for (String annotation : annotations) {
+                                 LangPSLLexer lexer = new LangPSLLexer(CharStreams.fromString(annotation));
+                                 LangPSLParser parser = new LangPSLParser(new CommonTokenStream(lexer));
+                                 ParseTree tree = parser.fl_property();
+                                 PSLToColVisitor<T> visitor = new PSLToColVisitor(sc_system, col_system);
+                                 //System.out.println(tree.toStringTree(parser) + "\n\n\n\n\n");
+                                 Expr<T> result = visitor.visit(tree);
+                                 conditions.add(result);
+                         }
+                         System.out.println(conditions + "\n\n\n\n\n");
+                 } catch (NullPointerException ignored) {
+                         throw new ExpressionParseException(
+                                         "PSL expression "+ psl_expressions.toString()+" could not be parsed!");
+                 }
 
-                    System.out.println(str+"\n\n\n\n\n");
-                    Expr<T> expr = expression_transformer.transform_simple_expression(psl_expression);
-                    if (expr == null) throw new NullPointerException();
-                    // parse expr using antlr4
-                    conditions.add(expr);
-                } catch (NullPointerException ignored) {
-                    throw new ExpressionParseException("PSL expression " + psl_expression + " could not be parsed!");
-                }
-            }
-        }
+                 /*
+                  * for (MarkerExpression psl_expression : psl_expressions){
+                  * String str = psl_expression.toString();
+                  * 
+                  * /*java.lang.Class clz = InstanceField.class;
+                  * 
+                  * Method[] methods = clz.getDeclaredMethods();
+                  * for(Method m: methods){
+                  * System.out.println(m);
+                  * }
+                  * try {
+                  * while(str.contains("ID:")){
+                  * String process_name =
+                  * str.substring(str.indexOf("process_state[")+3,str.indexOf("]"));
+                  * String[] process_instance_names = new
+                  * String[ProcessClass.get_nr_processes()];
+                  * for(InstanceField<T> process : processes){
+                  * String process_instance_name = process.toString().split(" ")[1];
+                  * process_instance_name = process_instance_name.substring(0,1).toLowerCase() +
+                  * process_instance_name.substring(1);
+                  * Ref<T, InstanceField<T>> process_state_ref = new
+                  * DirectRef<>(col_system.get_process_state(),
+                  * ClassTag$.MODULE$.apply(InstanceField.class));
+                  * Deref<T> process_state_deref = new Deref<>(col_system.THIS,
+                  * process_state_ref, new GeneratedBlame<>(),
+                  * OriGen.create());
+                  * System.out.println(process_state_deref);
+                  * }
+                  * str=str.replace("ID:"+process_name,"1]");
+                  * if(false){
+                  * throw new IllegalArgumentException("Unknown process: "+process_name);
+                  * }
+                  * }
+                  * 
+                  * System.out.println(str+"\n\n\n\n\n");
+                  * if (expr == null) throw new NullPointerException();
+                  * // parse expr using antlr4
+                  * conditions.add(expr);
+                  * } catch (NullPointerException ignored) {
+                  * throw new ExpressionParseException("PSL expression " + psl_expression +
+                  * " could not be parsed!");
+                  * }
+                  * }
+                  */
+         }
 
         psl_invariant = new InstancePredicate<>(col_system.NO_VARS, Option.apply(col_system.fold_star(conditions)),
                             false, true, OriGen.create("psl_invariant"));
