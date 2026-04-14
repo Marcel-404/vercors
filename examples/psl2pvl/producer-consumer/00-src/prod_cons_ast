@@ -1,0 +1,147 @@
+
+
+
+
+
+
+
+SC_MODULE(consumer)
+{
+    sc_port<myfifo_if> fifo;
+
+    void consume(int c_param)
+    {
+      wait(200, SC_US);
+      cout << sc_time_stamp() << " consumer: " << c_param << " consumed" << std::endl;
+    }
+
+    void main_method(void)
+    {
+      int c = 0;
+      while(true)
+      {
+        c = fifo->read();
+     consume(c);
+      }
+    }
+
+
+    SC_CTOR(consumer)
+    {
+     SC_THREAD(main_method);
+    }
+
+
+};
+
+
+
+
+
+
+class myfifo_if :
+virtual public sc_interface
+{
+  public:
+    virtual void write(int c) = 0;
+    virtual int read(void) = 0;
+};
+
+class myfifo :
+public sc_channel, public myfifo_if
+{
+
+  private:
+
+    int buffer[4];
+    int n, r_pos, w_pos;
+  public:
+    sc_event w_event, r_event;
+
+    SC_CTOR(myfifo){
+      n = 0;
+      r_pos = 0;
+      w_pos = 0;
+    }
+
+  void write(int c)
+  {
+    if (n == 4)
+ {
+ wait(r_event);
+      }
+    if (c == 8)
+      cout << "fifo: input " << c << endl;
+    buffer[w_pos] = c;
+    n = n + 1;
+    w_pos = (w_pos + 1)%4;
+    w_event.notify(0, SC_NS);
+  }
+
+  int read(void)
+  {
+    int c;
+    if (n == 0)
+      {
+ wait(w_event);
+      }
+    c = buffer[r_pos];
+    n = n - 1;
+    r_pos = (r_pos + 1)%4;
+    r_event.notify(0, SC_NS);
+    return c;
+  }
+};
+
+
+
+
+
+
+
+SC_MODULE(producer)
+{
+
+    sc_port<myfifo_if> fifo;
+
+    int pid;
+
+    int produce(int c_param)
+    {
+      int wait_time = 100;
+      wait(wait_time, SC_NS);
+      c_param = (c_param + 1)%8;
+      return c_param;
+    }
+
+    void main_method(void)
+    {
+      int c = 0;
+      while(true)
+      {
+        fifo->write(c);
+        c = produce(c);
+      }
+    }
+
+    //    SC_HAS_PROCESS(producer);
+
+    SC_CTOR(producer)
+    {
+     SC_THREAD(main_method);
+    }
+
+
+};
+
+
+int sc_main(int argc, char* argv[])
+{
+    myfifo fifo_inst("thisfifo");
+    producer prod_inst("producer");
+    consumer cons_inst("consumer");
+    prod_inst.fifo(fifo_inst);
+    cons_inst.fifo(fifo_inst);
+    sc_start(5000,SC_NS);
+    return 0;
+}

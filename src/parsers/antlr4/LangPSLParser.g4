@@ -27,16 +27,16 @@ hdl_clock_expr: Identifier; // SystemC_Event_expression
 
 //systemc_event_expression: sc_event | sc_event_finder | sc_event_and_list | sc_event_or_list | sc_signal | sc_port;
 
-//hdl_unit: Identifier; // SystemC_class_sc_module TODO
+//hdl_unit: Identifier; // Not needed since SystemC module already parsed in xml
 
-hdl_decl: declaration; //SystemC_declaration;
+hdl_decl: declaration; //declaration;
 
-hdl_stmt: statement; //SystemC_statement;
+hdl_stmt: statement; //statement;
 
-hdl_seq_stmt: statementSeq; // SystemC_statement;
+hdl_seq_stmt: statementSeq; // statementSeq;
 
 hdl_variable_type:
-	simpleTypeSpecifier; // SystemC_simple_type_specifier;
+	simpleTypeSpecifier; // simpleTypeSpecifier;
 
 // hdl_range: ; (Only for VHDL)
 

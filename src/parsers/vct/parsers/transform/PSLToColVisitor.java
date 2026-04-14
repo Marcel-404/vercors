@@ -1,45 +1,33 @@
 package vct.parsers.transform;
 
 import de.tub.pes.syscir.sc_model.SCSystem;
-import de.tub.pes.syscir.sc_model.SCVariable;
-import de.tub.pes.syscir.sc_model.expressions.Expression;
-import de.tub.pes.syscir.sc_model.expressions.PSLExpression;
-import de.tub.pes.syscir.sc_model.expressions.MarkerExpression;
-import de.tub.pes.syscir.sc_model.expressions.SCVariableDeclarationExpression;
-import de.tub.pes.syscir.sc_model.variables.SCArray;
-import de.tub.pes.syscir.sc_model.variables.SCClassInstance;
-import de.tub.pes.syscir.sc_model.variables.SCKnownType;
-import scala.Option;
-import scala.Tuple2;
-import scala.collection.immutable.List;
-import scala.jdk.javaapi.CollectionConverters;
+import de.tub.pes.syscir.sc_model.expressions.ConstantExpression;
+import de.tub.pes.syscir.sc_model.SCClass;
+
 import scala.math.BigInt;
 import scala.reflect.ClassTag$;
 import vct.col.ast.*;
 import vct.col.ast.Class;
-import vct.col.ast.ByReferenceClass;
 import vct.col.ref.DirectRef;
-import vct.col.ref.LazyRef;
 import vct.col.ref.Ref;
-import vct.parsers.transform.systemctocol.exceptions.ExpressionParseException;
+import vct.parsers.transform.systemctocol.engine.ExpressionTransformer;
 import vct.parsers.transform.systemctocol.colmodel.COLClass;
 import vct.parsers.transform.systemctocol.colmodel.COLSystem;
 import vct.parsers.transform.systemctocol.colmodel.ProcessClass;
 import vct.parsers.transform.systemctocol.colmodel.StateClass;
-import vct.parsers.transform.systemctocol.util.Constants;
 import vct.parsers.transform.systemctocol.util.GeneratedBlame;
 import vct.parsers.transform.systemctocol.util.OriGen;
 import vct.parsers.transform.systemctocol.util.Seqs;
+import vct.parsers.transform.CPPToCol;
+import vct.parsers.parser.ColCPPParser;
 
+import java.util.HashMap;
 import java.util.LinkedList;
-
-import javax.lang.model.util.Elements.Origin;
 
 import org.antlr.v4.runtime.*;
 
 import vct.antlr4.generated.LangPSLParser;
 import vct.antlr4.generated.LangPSLParserBaseVisitor;
-import vct.antlr4.generated.LangPSLLexer;
 
 public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
@@ -47,120 +35,128 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         private final COLSystem<T> col_system;
 
+        String bound_module;
+
+        java.util.Map<String, SCClass> modules = new HashMap<>();
+
         int newest_event_index;
 
-        int event_value;
+        int event_value = 0;
+
+        Ref<T, InstanceField<T>> event_state_ref;
+        Deref<T> event_state_deref;
+        Ref<T, InstanceField<T>> proc_state_ref;
+        Deref<T> proc_state_deref;
+
+        ColCPPParser cppparser;
 
         public PSLToColVisitor(SCSystem sc_system, COLSystem<T> col_system) {
                 this.sc_system = sc_system;
                 this.col_system = col_system;
                 this.newest_event_index = col_system.get_total_nr_events();
                 this.event_value = 0;
-        }
+                this.event_state_ref = new DirectRef<>(col_system.get_event_state(),
+                                ClassTag$.MODULE$.apply(InstanceField.class));
+                this.event_state_deref = new Deref<>(col_system.THIS, event_state_ref, new GeneratedBlame<>(),
+                                OriGen.create());
 
-        /*
-         * @Override
-         * public Expr<T>
-         * visitPsl_specification0(LangPSLParser.Psl_specification0Context ctx) {
-         * for (LangPSLParser.Verification_itemContext item : ctx.verification_item()) {
-         * result = result + visit(item) + "\n";
-         * }
-         * return result;
-         * }
-         * 
-         * @Override
-         * public Expr<T> visitVerificationUnitVerificationItem(LangPSLParser.
-         * VerificationUnitVerificationItemContext ctx) {
-         * return visit(ctx.verification_unit());
-         * }
-         * 
-         * @Override
-         * public Expr<T>
-         * visitVerification_unit0(LangPSLParser.Verification_unit0Context ctx) {
-         * 
-         * for (LangPSLParser.Vunit_itemContext assertion : ctx.vunit_item()) {
-         * visit(assertion);
-         * }
-         * return conditions;
-         * }
-         * 
-         * @Override
-         * public Expr<T>
-         * visitPslDirectiveVunitItem(LangPSLParser.PslDirectiveVunitItemContext ctx) {
-         * return visit(ctx.psl_directive());
-         * }
-         * 
-         * @Override
-         * public Expr<T> visitAssertDirectiveVerificationDirective(
-         * LangPSLParser.AssertDirectiveVerificationDirectiveContext ctx) {
-         * return visit(ctx.assert_directive());
-         * }
-         * 
-         * @Override
-         * public Expr<T> visitAssert_directive0(LangPSLParser.Assert_directive0Context
-         * ctx) {
-         * return visit(ctx.property());
-         * }
-         * 
-         * @Override
-         * public Expr<T>
-         * visitFlPropertyProperty(LangPSLParser.FlPropertyPropertyContext ctx) {
-         * 
-         * return visit(ctx.fl_property());
-         * }
-         * 
-         * @Override
-         * public Expr<T> visitBoolValFlProperty(LangPSLParser.BoolValFlPropertyContext
-         * ctx) {
-         * return visit(ctx.bool_val());
-         * }
-         * 
-         * @Override
-         * public Expr<T> visitBool_val0(LangPSLParser.Bool_val0Context ctx) {
-         * return visit(ctx.hdl_or_psl_expression());
-         * }
-         * 
-         * @Override
-         * public Expr<T> visitHdl_expression0(LangPSLParser.Hdl_expression0Context ctx)
-         * {
-         * return visit(ctx.hdl_expr());
-         * }
-         * 
-         * @Override
-         * public Expr<T> visitHdl_expr0(LangPSLParser.Hdl_expr0Context ctx) {
-         * return ctx.getText(); // TODO CHANGE TO EXPRESSION
-         * }
-         * 
-         * @Override
-         * public Expr<T> visitBool_val0(LangPSLParser.Number_val0Context ctx) {
-         * return visit(ctx.hdl_or_psl_expression());
-         * }
-         * 
-         * @Override
-         * public Expr<T> visitBuiltInFunctionCallHdlOrPslExpression(
-         * LangPSLParser.BuiltInFunctionCallHdlOrPslExpressionContext ctx) {
-         * return visit(ctx.build_in_function_call());
-         * }
-         * private String extractBetween(String input, String left, String right) {
-         * String result = "";
-         * if (input.contains(left)) {
-         * int start = input.indexOf(left) + left.length();
-         * result = input.substring(start, input.indexOf(right, start));
-         * }
-         * return result;
-         * }
-         */
+                this.proc_state_ref = new DirectRef<>(col_system.get_process_state(),
+                                ClassTag$.MODULE$.apply(InstanceField.class));
+                this.proc_state_deref = new Deref<>(col_system.THIS, proc_state_ref, new GeneratedBlame<>(),
+                                OriGen.create());
+        }
 
         @Override
         public Expr<T> visitHdl_expr0(LangPSLParser.Hdl_expr0Context ctx) {
-                /*
-                 * ExpressionTransformer<T> expression_transformer = new
-                 * ExpressionTransformer<>(null, col_system, null,
-                 * null, new java.util.HashMap<>());
-                 * expression_transformer.transform_simple_expression(psl_expression)
-                 */
-
+                String expression = ctx.getText();
+                java.io.Reader reader = new java.io.StringReader(expression);
+                // Statement<T> stmt = CPPToCol$.MODULE$.convert(ctx.expression()); // TODO:
+                // call CPPPtransform to transform this expression, statement expression
+                // mismatch
                 return new StringValue<>(ctx.getChild(0).getText(), OriGen.create());
+        }
+
+        @Override
+        public Expr<T> visitHdl_decl0(LangPSLParser.Hdl_decl0Context ctx) {
+                System.out.println(ctx.toString() + "\n\n\n\n\n");
+                return new StringValue<>(ctx.getChild(0).getText(), OriGen.create());
+
+        }
+
+        @Override
+        public Expr<T> visitPsl_specification0(LangPSLParser.Psl_specification0Context ctx) {
+                return null;
+        }
+        
+        @Override
+        public Expr<T> visitVerificationUnitVerificationItem(
+                        LangPSLParser.VerificationUnitVerificationItemContext ctx) {
+                return visit(ctx.verification_unit());
+        }
+
+        @Override
+        public Expr<T> visitVerification_unit0(LangPSLParser.Verification_unit0Context ctx) {
+                /*
+                 * for (LangPSLParser.ModulesContext module : ctx.modules()) {
+                 * visit(module);
+                 * }
+                 */
+                java.util.List<Expr<T>> vunit_items = new java.util.ArrayList<>();
+                for (LangPSLParser.Vunit_itemContext assertion : ctx.vunit_item()) {
+                        vunit_items.add(visit(assertion));
+                }
+                return col_system.fold_star(vunit_items);
+        }
+
+        @Override
+        public Expr<T> visitBindingSpecContextSpec(LangPSLParser.BindingSpecContextSpecContext ctx) {
+                return visit(ctx.binding_spec());
+        }
+
+        @Override
+        public Expr<T> visitHierarchical_hdl_name0(LangPSLParser.Hierarchical_hdl_name0Context ctx) {
+                if (false) {
+                        throw new IllegalArgumentException("Module not recognised: " + bound_module);
+                }
+                return null;
+        }
+
+        @Override
+        public Expr<T> visitPslDirectiveVunitItem(LangPSLParser.PslDirectiveVunitItemContext ctx) {
+                return visit(ctx.psl_directive());
+        }
+
+        @Override
+        public Expr<T> visitPslDeclarationVunitItem(LangPSLParser.PslDeclarationVunitItemContext ctx) {
+                return visit(ctx.psl_declaration());
+        }
+
+        @Override
+        public Expr<T> visitPsl_directive0(LangPSLParser.Psl_directive0Context ctx) {
+                return visit(ctx.verification_directive());
+        }
+
+        @Override
+        public Expr<T> visitAssertDirectiveVerificationDirective(
+                        LangPSLParser.AssertDirectiveVerificationDirectiveContext ctx) {
+                return visit(ctx.assert_directive());
+        }
+
+        @Override
+        public Expr<T> visitAssumeDirectiveVerificationDirective(
+                        LangPSLParser.AssumeDirectiveVerificationDirectiveContext ctx) {
+                throw new IllegalArgumentException("Verification Directive not supported: Assume");
+        }
+
+        @Override
+        public Expr<T> visitAssert_directive0(LangPSLParser.Assert_directive0Context ctx) {
+                return visit(ctx.property());
+        }
+
+        @Override
+        public Expr<T> visitFlPropertyProperty(LangPSLParser.FlPropertyPropertyContext ctx) {
+
+                return visit(ctx.fl_property());
         }
 
         @Override
@@ -264,7 +260,7 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
                         IntegerValue<T> event_index = new IntegerValue<>(BigInt.apply(event_value), OriGen.create());
                         Eq<T> equals = new Eq<>(getEventState(), event_index, OriGen.create());
                         Implies<T> left = new Implies<>(visit(ctx.fl_property(0)), equals, OriGen.create());
-                        
+
                         expression.add(left);
                         expression.add(right);
                         return col_system.fold_star(expression);
@@ -283,7 +279,8 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         public Expr<T> visitWithinTFlProperty(LangPSLParser.WithinTFlPropertyContext ctx) {
                 col_system.add_wait_event();
                 this.newest_event_index = this.newest_event_index + 1;
-                this.event_value = Integer.parseInt(ctx.number_val().getText()); // TODO: IDENTIFY WHAT HAPPENS IF THIS IS A STRING I.E. int x =1;
+                this.event_value = Integer.parseInt(ctx.number_val().getText()); // TODO: IDENTIFY WHAT HAPPENS IF THIS
+                                                                                 // IS A STRING I.E. int x =1;
                 Greater<T> equation = new Greater<>(getEventState(), col_system.ZERO, OriGen.create());
                 return new Implies<>(visit(ctx.fl_property()), equation, OriGen.create());
         }
@@ -292,12 +289,7 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         @Override
         public Expr<T> visitActiveBuiltInFunctionCall(LangPSLParser.ActiveBuiltInFunctionCallContext ctx) {
-                int process_id = getProcessId(ctx.Identifier().getText());
-
-                Ref<T, InstanceField<T>> proc_state_ref = new DirectRef<>(col_system.get_process_state(),
-                                ClassTag$.MODULE$.apply(InstanceField.class));
-                Deref<T> proc_state_deref = new Deref<>(col_system.THIS, proc_state_ref, new GeneratedBlame<>(),
-                                OriGen.create());
+                int process_id = 0;
 
                 IntegerValue<T> index = new IntegerValue<>(BigInt.apply(process_id), OriGen.create());
                 SeqSubscript<T> proc_index = new SeqSubscript<>(proc_state_deref, index, new GeneratedBlame<>(),
@@ -308,13 +300,10 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         @Override
         public Expr<T> visitWaitingBuiltInFunctionCall(LangPSLParser.WaitingBuiltInFunctionCallContext ctx) {
-                int process_id = getProcessId(ctx.Identifier().getText());
+                String process = ctx.Identifier().getText();
+                int process_id = getProcessId("ecu_absasr.read_s");
 
                 // int id = FINDPROCESS;
-                Ref<T, InstanceField<T>> proc_state_ref = new DirectRef<>(col_system.get_process_state(),
-                                ClassTag$.MODULE$.apply(InstanceField.class));
-                Deref<T> proc_state_deref = new Deref<>(col_system.THIS, proc_state_ref, new GeneratedBlame<>(),
-                                OriGen.create());
 
                 IntegerValue<T> index = new IntegerValue<>(BigInt.apply(process_id), OriGen.create());
                 SeqSubscript<T> proc_index = new SeqSubscript<>(proc_state_deref, index, new GeneratedBlame<>(),
@@ -323,21 +312,21 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
                 return new GreaterEq<>(proc_index, col_system.ZERO, OriGen.create());
         }
 
+        // Helper methods
+
         private int getProcessId(String process_name) {
-                String processes = col_system.get_all_processes().toString();
-                int id = 0;
-                // System.out.println(processes + "\n\n\n\n\n");
-                if (false) {
-                        throw new IllegalArgumentException("Unknown process in PSL annotation: " + process_name);
-                }
-                return id;
+                SCClass systemc_module = modules.get(process_name);
+                /*
+                 * if (systemc_module == null) {
+                 * throw new
+                 * IllegalArgumentException("Unknown process in PSL verification unit: " +
+                 * process_name);
+                 * }
+                 */
+                return 0;
         }
 
         private Expr<T> getEventState() {
-                Ref<T, InstanceField<T>> event_state_ref = new DirectRef<>(col_system.get_event_state(),
-                                ClassTag$.MODULE$.apply(InstanceField.class));
-                Deref<T> event_state_deref = new Deref<>(col_system.THIS, event_state_ref, new GeneratedBlame<>(),
-                                OriGen.create());
                 IntegerValue<T> event_id = new IntegerValue<>(BigInt.apply(this.newest_event_index),
                                 OriGen.create());
                 SeqSubscript<T> proc_i = new SeqSubscript<>(event_state_deref, event_id, new GeneratedBlame<>(),
