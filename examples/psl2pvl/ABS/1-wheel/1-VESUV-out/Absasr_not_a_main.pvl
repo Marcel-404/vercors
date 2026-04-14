@@ -2,11 +2,23 @@
 class Absasr_not_a_main {
     Main m;
     
+    int absasr_not_a_main_timer_value;
+    
     int i__abs;
+    
+    boolean absasr_not_a_main_timer_reset;
+    
+    boolean absasr_not_a_main_init;
+    
+    boolean absasr_not_a_main_timer_set;
     
     ensures Perm(this.m, write);
     ensures this.m == m_param;
+    ensures Perm(this.absasr_not_a_main_timer_value, write);
     ensures Perm(this.i__abs, write);
+    ensures Perm(this.absasr_not_a_main_timer_reset, write);
+    ensures Perm(this.absasr_not_a_main_init, write);
+    ensures Perm(this.absasr_not_a_main_timer_set, write);
     ensures idle(this);
     constructor(
         Main m_param

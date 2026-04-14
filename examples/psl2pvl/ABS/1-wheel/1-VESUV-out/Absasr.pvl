@@ -2,9 +2,19 @@
 class Absasr {
     Main m;
     
+    int temp_fv;
+    
+    boolean absasr_timer_reset;
+    
+    int fv;
+    
+    boolean absasr_init;
+    
+    int[] v;
+    
     int[] p;
     
-    int temp_fv;
+    boolean absasr_timer_set;
     
     int j__asr;
     
@@ -18,16 +28,21 @@ class Absasr {
     
     int[] s;
     
-    int fv;
-    
-    int[] v;
+    int absasr_timer_value;
     
     ensures Perm(this.m, write);
     ensures this.m == m_param;
+    ensures Perm(this.temp_fv, write);
+    ensures Perm(this.absasr_timer_reset, write);
+    ensures Perm(this.fv, write);
+    ensures Perm(this.absasr_init, write);
+    ensures Perm(this.v, read);
+    ensures \array(this.v, 1);
+    ensures Perm(this.v[*], write);
     ensures Perm(this.p, read);
     ensures \array(this.p, 1);
     ensures Perm(this.p[*], write);
-    ensures Perm(this.temp_fv, write);
+    ensures Perm(this.absasr_timer_set, write);
     ensures Perm(this.j__asr, write);
     ensures Perm(this.i__abs, write);
     ensures Perm(this.fa, write);
@@ -40,10 +55,7 @@ class Absasr {
     ensures Perm(this.s, read);
     ensures \array(this.s, 1);
     ensures Perm(this.s[*], write);
-    ensures Perm(this.fv, write);
-    ensures Perm(this.v, read);
-    ensures \array(this.v, 1);
-    ensures Perm(this.v[*], write);
+    ensures Perm(this.absasr_timer_value, write);
     constructor(
         Main m_param
     ) {

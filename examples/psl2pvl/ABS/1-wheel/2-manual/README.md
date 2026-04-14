@@ -22,6 +22,8 @@ The verifiable program can be found in `./verifiable`.
 
 ### Properties
 
+Generated along with VESUV transformation depending on PSL definitions
+
 We encode the same properties as in _Deductive Verification of Parameterized Embedded Systems Modeled in SystemC_ (VMCAI 2024), that is:
 - Correct functioning of the initialization in `Absasr_not_a_main.pvl`
 - Adherence to the ABS and ASR state machine specifications of the respective algorithms

@@ -2,10 +2,22 @@
 class Absasr_read_s {
     Main m;
     
+    int absasr_read_s_timer_value;
+    
+    boolean absasr_read_s_timer_set;
+    
+    boolean absasr_read_s_init;
+    
+    boolean absasr_read_s_timer_reset;
+    
     int tmp_0_read_s;
     
     ensures Perm(this.m, write);
     ensures this.m == m_param;
+    ensures Perm(this.absasr_read_s_timer_value, write);
+    ensures Perm(this.absasr_read_s_timer_set, write);
+    ensures Perm(this.absasr_read_s_init, write);
+    ensures Perm(this.absasr_read_s_timer_reset, write);
     ensures Perm(this.tmp_0_read_s, write);
     ensures idle(this);
     constructor(

@@ -2,13 +2,25 @@
 class Tickcounter_send {
     Main m;
     
+    boolean tickcounter_send_timer_reset;
+    
     int ticks;
+    
+    boolean tickcounter_send_timer_set;
+    
+    int tickcounter_send_timer_value;
+    
+    boolean tickcounter_send_init;
     
     int speed_send;
     
     ensures Perm(this.m, write);
     ensures this.m == m_param;
+    ensures Perm(this.tickcounter_send_timer_reset, write);
     ensures Perm(this.ticks, write);
+    ensures Perm(this.tickcounter_send_timer_set, write);
+    ensures Perm(this.tickcounter_send_timer_value, write);
+    ensures Perm(this.tickcounter_send_init, write);
     ensures Perm(this.speed_send, write);
     ensures idle(this);
     constructor(
