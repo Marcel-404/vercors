@@ -10,7 +10,7 @@ public class Main {
         String expressions = Files.readString(Paths.get("test/psl/expressions.psl"));
 
         FileWriter writer = new FileWriter("test/psl/output.pvl");
-        writer.write(expressions);
+        writer.write("Generated Output");
         writer.close();
 
     }

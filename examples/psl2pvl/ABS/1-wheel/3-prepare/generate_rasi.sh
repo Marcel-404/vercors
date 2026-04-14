@@ -1,3 +1,6 @@
+#!/bin/bash
+
+cd "$(dirname "$0")"
 SRC_PATH=$PWD/0-src
 OUT_PATH=$PWD/1-VESUV-out
 MAN_PATH=$PWD/2-manual
