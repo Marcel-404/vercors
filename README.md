@@ -102,16 +102,59 @@ The license to VerCors is a mozilla open source license as described in LICENSE.
 
 # PSL2PVL Transformation 
 
-Verify examples: 
+Run all experiments: 
 
 ```shell script
-$ ./examples/psl2pvl/verify_examples 
+$ ./examples/psl2pvl/run_experiments.sh 
+[INFO] Choose one of the following modes:
+1) Transform SystemC Design
+2) Generate RASI
+3) Verify SystemC Design
+```
+
+Transform SystemC designs: 
+
+```shell script
+$ ./examples/psl2pvl/transform.sh 
+[INFO] Transform which SystemC Design?:
+1) ABS/1-wheel
+2) ABS/4-wheels
+3) producer-consumer
+4) crossroad
+5) All SystemC designs
+6) Back to previous menu
+```
+
+Generate RASI: 
+
+```shell script
+$ ./examples/psl2pvl/generate_rasi.sh 
+[INFO] Generate RASI for which SystemC Design?:
+1) ABS/1-wheel
+2) ABS/4-wheels
+3) producer-consumer
+4) crossroad
+5) All SystemC designs
+6) Back to previous menu
+```
+
+Verify SystemC designs: 
+
+```shell script
+$ ./examples/psl2pvl/verify.sh 
+[INFO] Verify which SystemC Design?:
+1) ABS/1-wheel
+2) ABS/4-wheels
+3) producer-consumer
+4) crossroad
+5) All SystemC designs
+6) Back to previous menu
 ```
 
 Run transformation tests: 
 
 ```shell script
-$ ./test/psl2pvl/run_tests 
-Transforming PSL expressions...
-Transformation complete.
+$ ./test/psl2pvl/run_tests.sh
+[INFO] Transforming PSL expressions...
+[INFO] Transformation complete.
 ```
