@@ -1,0 +1,108 @@
+
+class Absasr_not_a_main {
+    Main m;
+    
+    int absasr_not_a_main_timer_value;
+    
+    int i__abs;
+    
+    boolean absasr_not_a_main_timer_reset;
+    
+    boolean absasr_not_a_main_init;
+    
+    boolean absasr_not_a_main_timer_set;
+    
+    ensures Perm(this.m, write);
+    ensures this.m == m_param;
+    ensures Perm(this.absasr_not_a_main_timer_value, write);
+    ensures Perm(this.i__abs, write);
+    ensures Perm(this.absasr_not_a_main_timer_reset, write);
+    ensures Perm(this.absasr_not_a_main_init, write);
+    ensures Perm(this.absasr_not_a_main_timer_set, write);
+    ensures idle(this);
+    constructor(
+        Main m_param
+    ) {
+        this.m = m_param;
+    }
+    
+    requires Perm(this.m, 1 \ 2);
+    requires this.m != null;
+    requires committed(this.m);
+    requires Perm(this.m.ecu_absasr_absasr_not_a_main, read);
+    requires this.m.ecu_absasr_absasr_not_a_main == this;
+    ensures Perm(this.m, 1 \ 2);
+    ensures this.m != null;
+    ensures committed(this.m);
+    ensures Perm(this.m.ecu_absasr_absasr_not_a_main, read);
+    ensures this.m.ecu_absasr_absasr_not_a_main == this;
+    run {
+        lock this.m;
+        loop_invariant Perm(this.m, 1 \ 2);
+        loop_invariant this.m != null;
+        loop_invariant committed(this.m);
+        loop_invariant held(this.m);
+        loop_invariant Perm(this.m.global_invariant(), 1);
+        loop_invariant this.m.ecu_absasr_absasr_not_a_main == this;
+        for (this.i__abs = 0; this.i__abs < 4; this.i__abs = this.i__abs + 1) {
+            this.m.ecu_absasr_absasr.s[this.i__abs] = 1;
+            this.m.ecu_absasr_absasr.v[this.i__abs] = 0;
+            this.m.ecu_absasr_absasr.a[this.i__abs] = 0;
+        }
+        loop_invariant Perm(this.m, 1 \ 2);
+        loop_invariant this.m != null;
+        loop_invariant committed(this.m);
+        loop_invariant held(this.m);
+        loop_invariant Perm(this.m.global_invariant(), 1);
+        loop_invariant this.m.ecu_absasr_absasr_not_a_main == this;
+        while (true) {
+            this.m.process_state = this.m.process_state.update(4, 12);
+            this.m.event_state = this.m.event_state.update(12, 1);
+            loop_invariant Perm(this.m, 1 \ 2);
+            loop_invariant this.m != null;
+            loop_invariant committed(this.m);
+            loop_invariant held(this.m);
+            loop_invariant Perm(this.m.global_invariant(), 1);
+            loop_invariant this.m.ecu_absasr_absasr_not_a_main == this;
+            while (this.m.process_state[4] != -1 || this.m.event_state[12] != -2) {
+                unlock this.m;
+                lock this.m;
+            }
+            this.i__abs = 0;
+            if (
+                this.m.ecu_absasr_absasr.abs(this.m.ecu_absasr_absasr.a[1]) <
+                this.m.ecu_absasr_absasr.abs(this.m.ecu_absasr_absasr.a[this.i__abs])
+            ) {
+                this.i__abs = 1;
+            }
+            if (
+                this.m.ecu_absasr_absasr.abs(this.m.ecu_absasr_absasr.a[2]) <
+                this.m.ecu_absasr_absasr.abs(this.m.ecu_absasr_absasr.a[this.i__abs])
+            ) {
+                this.i__abs = 2;
+            }
+            if (
+                this.m.ecu_absasr_absasr.abs(this.m.ecu_absasr_absasr.a[3]) <
+                this.m.ecu_absasr_absasr.abs(this.m.ecu_absasr_absasr.a[this.i__abs])
+            ) {
+                this.i__abs = 3;
+            }
+            this.m.ecu_absasr_absasr.temp_fv = this.m.ecu_absasr_absasr.v[this.i__abs];
+            this.m.ecu_absasr_absasr.fa = this.m.ecu_absasr_absasr.temp_fv - this.m.ecu_absasr_absasr.fv;
+            if (this.m.ecu_absasr_absasr.fa < 0) {
+                if (this.m.ecu_absasr_absasr.fa < -14) {
+                    this.m.ecu_absasr_absasr.fv = this.m.ecu_absasr_absasr.fv + -2;
+                } else {
+                    this.m.ecu_absasr_absasr.fv = this.m.ecu_absasr_absasr.temp_fv;
+                }
+                this.m.ecu_absasr_absasr._abs();
+            } else {
+                if (this.m.ecu_absasr_absasr.fa > 0) {
+                    this.m.ecu_absasr_absasr.fv = this.m.ecu_absasr_absasr.temp_fv;
+                    this.m.ecu_absasr_absasr._asr();
+                }
+            }
+        }
+        unlock this.m;
+    }
+}

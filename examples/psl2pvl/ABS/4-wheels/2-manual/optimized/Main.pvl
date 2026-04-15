@@ -1,0 +1,666 @@
+lock_invariant this.global_invariant();
+class Main {
+    seq<int> process_state;
+    seq<int> event_state;
+    seq<boolean> primitive_channel_update;
+    Tickcounter_vl_send vl_tickcounter_vl_send;
+    Tickcounter_vr_send vr_tickcounter_vr_send;
+    Tickcounter_hl_send hl_tickcounter_hl_send;
+    Tickcounter_hr_send hr_tickcounter_hr_send;
+    Absasr_not_a_main ecu_absasr_absasr_not_a_main;
+    Absasr_read_vr ecu_absasr_absasr_read_vr;
+    Absasr_read_vl ecu_absasr_absasr_read_vl;
+    Absasr_read_hr ecu_absasr_absasr_read_hr;
+    Absasr_read_hl ecu_absasr_absasr_read_hl;
+    Absasr ecu_absasr_absasr;
+    Sc_fifo_int_speed_vl sc_fifo_int_speed_vl;
+    Sc_fifo_int_speed_vr sc_fifo_int_speed_vr;
+    Sc_fifo_int_speed_hl sc_fifo_int_speed_hl;
+    Sc_fifo_int_speed_hr sc_fifo_int_speed_hr;
+    int buffer_size;
+    
+    
+    inline resource update_permission_invariant() =
+        Perm(this.primitive_channel_update, write) ** |this.primitive_channel_update| == 4;
+        
+        
+    inline resource scheduler_invariant() =
+        this.update_permission_invariant() **
+        Perm(this.process_state, write) **
+        |this.process_state| == 9 **
+        Perm(this.event_state, write) **
+        |this.event_state| == 13 **
+        (\forall int i;
+            i >= 0 && i < |this.process_state| ==>
+            {: this.process_state[i] :} == -1 ||
+            0 <= this.process_state[i] && this.process_state[i] < |this.event_state|
+        );
+        
+        
+    inline resource parameter_invariant() = Perm(this.buffer_size, read) ** this.buffer_size > 0;
+    
+    
+    inline resource sc_fifo_int_speed_hr_permission_invariant() =
+        Perm(this.sc_fifo_int_speed_hr, read) **
+        this.sc_fifo_int_speed_hr != null **
+        Perm(this.sc_fifo_int_speed_hr.m, read) **
+        this.sc_fifo_int_speed_hr.m == this **
+        Perm(this.sc_fifo_int_speed_hr.buffer, write) **
+        Perm(this.sc_fifo_int_speed_hr.num_read, write) **
+        0 <= this.sc_fifo_int_speed_hr.num_read **
+        this.sc_fifo_int_speed_hr.num_read <= |this.sc_fifo_int_speed_hr.buffer| **
+        Perm(this.sc_fifo_int_speed_hr.written, write) **
+        |this.sc_fifo_int_speed_hr.buffer| + |this.sc_fifo_int_speed_hr.written| <= this.buffer_size;
+        
+        
+    inline resource sc_fifo_int_speed_vr_permission_invariant() =
+        Perm(this.sc_fifo_int_speed_vr, read) **
+        this.sc_fifo_int_speed_vr != null **
+        Perm(this.sc_fifo_int_speed_vr.m, read) **
+        this.sc_fifo_int_speed_vr.m == this **
+        Perm(this.sc_fifo_int_speed_vr.buffer, write) **
+        Perm(this.sc_fifo_int_speed_vr.num_read, write) **
+        0 <= this.sc_fifo_int_speed_vr.num_read **
+        this.sc_fifo_int_speed_vr.num_read <= |this.sc_fifo_int_speed_vr.buffer| **
+        Perm(this.sc_fifo_int_speed_vr.written, write) **
+        |this.sc_fifo_int_speed_vr.buffer| + |this.sc_fifo_int_speed_vr.written| <= this.buffer_size;
+        
+        
+    inline resource sc_fifo_int_speed_hl_permission_invariant() =
+        Perm(this.sc_fifo_int_speed_hl, read) **
+        this.sc_fifo_int_speed_hl != null **
+        Perm(this.sc_fifo_int_speed_hl.m, read) **
+        this.sc_fifo_int_speed_hl.m == this **
+        Perm(this.sc_fifo_int_speed_hl.buffer, write) **
+        Perm(this.sc_fifo_int_speed_hl.num_read, write) **
+        0 <= this.sc_fifo_int_speed_hl.num_read **
+        this.sc_fifo_int_speed_hl.num_read <= |this.sc_fifo_int_speed_hl.buffer| **
+        Perm(this.sc_fifo_int_speed_hl.written, write) **
+        |this.sc_fifo_int_speed_hl.buffer| + |this.sc_fifo_int_speed_hl.written| <= this.buffer_size;
+        
+        
+    inline resource sc_fifo_int_speed_vl_permission_invariant() =
+        Perm(this.sc_fifo_int_speed_vl, read) **
+        this.sc_fifo_int_speed_vl != null **
+        Perm(this.sc_fifo_int_speed_vl.m, read) **
+        this.sc_fifo_int_speed_vl.m == this **
+        Perm(this.sc_fifo_int_speed_vl.buffer, write) **
+        Perm(this.sc_fifo_int_speed_vl.num_read, write) **
+        0 <= this.sc_fifo_int_speed_vl.num_read **
+        this.sc_fifo_int_speed_vl.num_read <= |this.sc_fifo_int_speed_vl.buffer| **
+        Perm(this.sc_fifo_int_speed_vl.written, write) **
+        |this.sc_fifo_int_speed_vl.buffer| + |this.sc_fifo_int_speed_vl.written| <= this.buffer_size;
+        
+        
+    inline resource global_invariant() =
+        this.scheduler_invariant() **
+        this.parameter_invariant() **
+        this.sc_fifo_int_speed_vl_permission_invariant() **
+        this.sc_fifo_int_speed_vr_permission_invariant() **
+        this.sc_fifo_int_speed_hl_permission_invariant() **
+        this.sc_fifo_int_speed_hr_permission_invariant() **
+        Perm(this.vl_tickcounter_vl_send, read) **
+        this.vl_tickcounter_vl_send != null **
+        Perm(this.vl_tickcounter_vl_send.ticks, write) ** Perm(this.vl_tickcounter_vl_send.speed_send, write) **
+        Perm(this.vr_tickcounter_vr_send, read) **
+        this.vr_tickcounter_vr_send != null **
+        Perm(this.vr_tickcounter_vr_send.ticks, write) ** Perm(this.vr_tickcounter_vr_send.speed_send, write) **
+        Perm(this.hl_tickcounter_hl_send, read) **
+        this.hl_tickcounter_hl_send != null **
+        Perm(this.hl_tickcounter_hl_send.ticks, write) ** Perm(this.hl_tickcounter_hl_send.speed_send, write) **
+        Perm(this.hr_tickcounter_hr_send, read) **
+        this.hr_tickcounter_hr_send != null **
+        Perm(this.hr_tickcounter_hr_send.ticks, write) ** Perm(this.hr_tickcounter_hr_send.speed_send, write) **
+        Perm(this.ecu_absasr_absasr_not_a_main, read) **
+        this.ecu_absasr_absasr_not_a_main != null **
+        Perm(this.ecu_absasr_absasr_read_vr, read) **
+        this.ecu_absasr_absasr_read_vr != null ** Perm(this.ecu_absasr_absasr_read_vr.tmp_0_read_vr, write) **
+        Perm(this.ecu_absasr_absasr_read_vl, read) **
+        this.ecu_absasr_absasr_read_vl != null ** Perm(this.ecu_absasr_absasr_read_vl.tmp_1_read_vl, write) **
+        Perm(this.ecu_absasr_absasr_read_hr, read) **
+        this.ecu_absasr_absasr_read_hr != null ** Perm(this.ecu_absasr_absasr_read_hr.tmp_2_read_hr, write) **
+        Perm(this.ecu_absasr_absasr_read_hl, read) **
+        this.ecu_absasr_absasr_read_hl != null ** Perm(this.ecu_absasr_absasr_read_hl.tmp_3_read_hl, write) **
+        Perm(this.ecu_absasr_absasr, read) **
+        this.ecu_absasr_absasr != null **
+        Perm(this.ecu_absasr_absasr.temp_fv, write) **
+        Perm(this.ecu_absasr_absasr.lambda, write) **
+        |this.ecu_absasr_absasr.lambda| == 4 **
+        Perm(this.ecu_absasr_absasr.s, write) **
+        |this.ecu_absasr_absasr.s| == 4 **
+        Perm(this.ecu_absasr_absasr.fa, write) **
+        Perm(this.ecu_absasr_absasr.a, write) **
+        |this.ecu_absasr_absasr.a| == 4 **
+        Perm(this.ecu_absasr_absasr.p, write) **
+        |this.ecu_absasr_absasr.p| == 4 **
+        Perm(this.ecu_absasr_absasr.v, write) **
+        |this.ecu_absasr_absasr.v| == 4 ** Perm(this.ecu_absasr_absasr.fv, write) **
+        Perm(this.ecu_absasr_absasr.m, read) ** this.ecu_absasr_absasr.m == this;
+        
+        
+    ensures Perm(this.vl_tickcounter_vl_send, read);
+    ensures this.vl_tickcounter_vl_send != null;
+    ensures Perm(this.vl_tickcounter_vl_send.m, 1 \ 2);
+    ensures this.vl_tickcounter_vl_send.m == this;
+    ensures idle(this.vl_tickcounter_vl_send);
+    ensures Perm(this.vr_tickcounter_vr_send, read);
+    ensures this.vr_tickcounter_vr_send != null;
+    ensures Perm(this.vr_tickcounter_vr_send.m, 1 \ 2);
+    ensures this.vr_tickcounter_vr_send.m == this;
+    ensures idle(this.vr_tickcounter_vr_send);
+    ensures Perm(this.hl_tickcounter_hl_send, read);
+    ensures this.hl_tickcounter_hl_send != null;
+    ensures Perm(this.hl_tickcounter_hl_send.m, 1 \ 2);
+    ensures this.hl_tickcounter_hl_send.m == this;
+    ensures idle(this.hl_tickcounter_hl_send);
+    ensures Perm(this.hr_tickcounter_hr_send, read);
+    ensures this.hr_tickcounter_hr_send != null;
+    ensures Perm(this.hr_tickcounter_hr_send.m, 1 \ 2);
+    ensures this.hr_tickcounter_hr_send.m == this;
+    ensures idle(this.hr_tickcounter_hr_send);
+    ensures Perm(this.ecu_absasr_absasr_not_a_main, read);
+    ensures this.ecu_absasr_absasr_not_a_main != null;
+    ensures Perm(this.ecu_absasr_absasr_not_a_main.m, 1 \ 2);
+    ensures this.ecu_absasr_absasr_not_a_main.m == this;
+    ensures idle(this.ecu_absasr_absasr_not_a_main);
+    ensures Perm(this.ecu_absasr_absasr_read_vr, read);
+    ensures this.ecu_absasr_absasr_read_vr != null;
+    ensures Perm(this.ecu_absasr_absasr_read_vr.m, 1 \ 2);
+    ensures this.ecu_absasr_absasr_read_vr.m == this;
+    ensures idle(this.ecu_absasr_absasr_read_vr);
+    ensures Perm(this.ecu_absasr_absasr_read_vl, read);
+    ensures this.ecu_absasr_absasr_read_vl != null;
+    ensures Perm(this.ecu_absasr_absasr_read_vl.m, 1 \ 2);
+    ensures this.ecu_absasr_absasr_read_vl.m == this;
+    ensures idle(this.ecu_absasr_absasr_read_vl);
+    ensures Perm(this.ecu_absasr_absasr_read_hr, read);
+    ensures this.ecu_absasr_absasr_read_hr != null;
+    ensures Perm(this.ecu_absasr_absasr_read_hr.m, 1 \ 2);
+    ensures this.ecu_absasr_absasr_read_hr.m == this;
+    ensures idle(this.ecu_absasr_absasr_read_hr);
+    ensures Perm(this.ecu_absasr_absasr_read_hl, read);
+    ensures this.ecu_absasr_absasr_read_hl != null;
+    ensures Perm(this.ecu_absasr_absasr_read_hl.m, 1 \ 2);
+    ensures this.ecu_absasr_absasr_read_hl.m == this;
+    ensures idle(this.ecu_absasr_absasr_read_hl);
+    ensures committed(this);
+    constructor() {
+        this.process_state = seq<int>{-1, -1, -1, -1, -1, -1, -1, -1, -1};
+        this.event_state = seq<int>{-3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3};
+        this.primitive_channel_update = seq<boolean>{false, false, false, false};
+        this.sc_fifo_int_speed_vl = new Sc_fifo_int_speed_vl(this);
+        this.sc_fifo_int_speed_vr = new Sc_fifo_int_speed_vr(this);
+        this.sc_fifo_int_speed_hl = new Sc_fifo_int_speed_hl(this);
+        this.sc_fifo_int_speed_hr = new Sc_fifo_int_speed_hr(this);
+        this.ecu_absasr_absasr = new Absasr(this);
+        this.vl_tickcounter_vl_send = new Tickcounter_vl_send(this);
+        this.vr_tickcounter_vr_send = new Tickcounter_vr_send(this);
+        this.hl_tickcounter_hl_send = new Tickcounter_hl_send(this);
+        this.hr_tickcounter_hr_send = new Tickcounter_hr_send(this);
+        this.ecu_absasr_absasr_not_a_main = new Absasr_not_a_main(this);
+        this.ecu_absasr_absasr_read_vr = new Absasr_read_vr(this);
+        this.ecu_absasr_absasr_read_vl = new Absasr_read_vl(this);
+        this.ecu_absasr_absasr_read_hr = new Absasr_read_hr(this);
+        this.ecu_absasr_absasr_read_hl = new Absasr_read_hl(this);
+        commit this;
+    }
+    
+    
+    requires Perm(this.vl_tickcounter_vl_send, read);
+    requires this.vl_tickcounter_vl_send != null;
+    requires Perm(this.vl_tickcounter_vl_send.m, 1 \ 2);
+    requires this.vl_tickcounter_vl_send.m == this;
+    requires idle(this.vl_tickcounter_vl_send);
+    requires Perm(this.vr_tickcounter_vr_send, read);
+    requires this.vr_tickcounter_vr_send != null;
+    requires Perm(this.vr_tickcounter_vr_send.m, 1 \ 2);
+    requires this.vr_tickcounter_vr_send.m == this;
+    requires idle(this.vr_tickcounter_vr_send);
+    requires Perm(this.hl_tickcounter_hl_send, read);
+    requires this.hl_tickcounter_hl_send != null;
+    requires Perm(this.hl_tickcounter_hl_send.m, 1 \ 2);
+    requires this.hl_tickcounter_hl_send.m == this;
+    requires idle(this.hl_tickcounter_hl_send);
+    requires Perm(this.hr_tickcounter_hr_send, read);
+    requires this.hr_tickcounter_hr_send != null;
+    requires Perm(this.hr_tickcounter_hr_send.m, 1 \ 2);
+    requires this.hr_tickcounter_hr_send.m == this;
+    requires idle(this.hr_tickcounter_hr_send);
+    requires Perm(this.ecu_absasr_absasr_not_a_main, read);
+    requires this.ecu_absasr_absasr_not_a_main != null;
+    requires Perm(this.ecu_absasr_absasr_not_a_main.m, 1 \ 2);
+    requires this.ecu_absasr_absasr_not_a_main.m == this;
+    requires idle(this.ecu_absasr_absasr_not_a_main);
+    requires Perm(this.ecu_absasr_absasr_read_vr, read);
+    requires this.ecu_absasr_absasr_read_vr != null;
+    requires Perm(this.ecu_absasr_absasr_read_vr.m, 1 \ 2);
+    requires this.ecu_absasr_absasr_read_vr.m == this;
+    requires idle(this.ecu_absasr_absasr_read_vr);
+    requires Perm(this.ecu_absasr_absasr_read_vl, read);
+    requires this.ecu_absasr_absasr_read_vl != null;
+    requires Perm(this.ecu_absasr_absasr_read_vl.m, 1 \ 2);
+    requires this.ecu_absasr_absasr_read_vl.m == this;
+    requires idle(this.ecu_absasr_absasr_read_vl);
+    requires Perm(this.ecu_absasr_absasr_read_hr, read);
+    requires this.ecu_absasr_absasr_read_hr != null;
+    requires Perm(this.ecu_absasr_absasr_read_hr.m, 1 \ 2);
+    requires this.ecu_absasr_absasr_read_hr.m == this;
+    requires idle(this.ecu_absasr_absasr_read_hr);
+    requires Perm(this.ecu_absasr_absasr_read_hl, read);
+    requires this.ecu_absasr_absasr_read_hl != null;
+    requires Perm(this.ecu_absasr_absasr_read_hl.m, 1 \ 2);
+    requires this.ecu_absasr_absasr_read_hl.m == this;
+    requires idle(this.ecu_absasr_absasr_read_hl);
+    requires committed(this);
+    ensures Perm(this.vl_tickcounter_vl_send, read);
+    ensures this.vl_tickcounter_vl_send != null;
+    ensures Perm(this.vl_tickcounter_vl_send.m, 1 \ 2);
+    ensures this.vl_tickcounter_vl_send.m == this;
+    ensures idle(this.vl_tickcounter_vl_send);
+    ensures Perm(this.vr_tickcounter_vr_send, read);
+    ensures this.vr_tickcounter_vr_send != null;
+    ensures Perm(this.vr_tickcounter_vr_send.m, 1 \ 2);
+    ensures this.vr_tickcounter_vr_send.m == this;
+    ensures idle(this.vr_tickcounter_vr_send);
+    ensures Perm(this.hl_tickcounter_hl_send, read);
+    ensures this.hl_tickcounter_hl_send != null;
+    ensures Perm(this.hl_tickcounter_hl_send.m, 1 \ 2);
+    ensures this.hl_tickcounter_hl_send.m == this;
+    ensures idle(this.hl_tickcounter_hl_send);
+    ensures Perm(this.hr_tickcounter_hr_send, read);
+    ensures this.hr_tickcounter_hr_send != null;
+    ensures Perm(this.hr_tickcounter_hr_send.m, 1 \ 2);
+    ensures this.hr_tickcounter_hr_send.m == this;
+    ensures idle(this.hr_tickcounter_hr_send);
+    ensures Perm(this.ecu_absasr_absasr_not_a_main, read);
+    ensures this.ecu_absasr_absasr_not_a_main != null;
+    ensures Perm(this.ecu_absasr_absasr_not_a_main.m, 1 \ 2);
+    ensures this.ecu_absasr_absasr_not_a_main.m == this;
+    ensures idle(this.ecu_absasr_absasr_not_a_main);
+    ensures Perm(this.ecu_absasr_absasr_read_vr, read);
+    ensures this.ecu_absasr_absasr_read_vr != null;
+    ensures Perm(this.ecu_absasr_absasr_read_vr.m, 1 \ 2);
+    ensures this.ecu_absasr_absasr_read_vr.m == this;
+    ensures idle(this.ecu_absasr_absasr_read_vr);
+    ensures Perm(this.ecu_absasr_absasr_read_vl, read);
+    ensures this.ecu_absasr_absasr_read_vl != null;
+    ensures Perm(this.ecu_absasr_absasr_read_vl.m, 1 \ 2);
+    ensures this.ecu_absasr_absasr_read_vl.m == this;
+    ensures idle(this.ecu_absasr_absasr_read_vl);
+    ensures Perm(this.ecu_absasr_absasr_read_hr, read);
+    ensures this.ecu_absasr_absasr_read_hr != null;
+    ensures Perm(this.ecu_absasr_absasr_read_hr.m, 1 \ 2);
+    ensures this.ecu_absasr_absasr_read_hr.m == this;
+    ensures idle(this.ecu_absasr_absasr_read_hr);
+    ensures Perm(this.ecu_absasr_absasr_read_hl, read);
+    ensures this.ecu_absasr_absasr_read_hl != null;
+    ensures Perm(this.ecu_absasr_absasr_read_hl.m, 1 \ 2);
+    ensures this.ecu_absasr_absasr_read_hl.m == this;
+    ensures idle(this.ecu_absasr_absasr_read_hl);
+    ensures committed(this);
+    void main() {
+        lock this;
+        fork this.vl_tickcounter_vl_send;
+        fork this.vr_tickcounter_vr_send;
+        fork this.hl_tickcounter_hl_send;
+        fork this.hr_tickcounter_hr_send;
+        fork this.ecu_absasr_absasr_not_a_main;
+        fork this.ecu_absasr_absasr_read_vr;
+        fork this.ecu_absasr_absasr_read_vl;
+        fork this.ecu_absasr_absasr_read_hr;
+        fork this.ecu_absasr_absasr_read_hl;
+        unlock this;
+        loop_invariant committed(this);
+        while (true) {
+            lock this;
+            this.immediate_wakeup();
+            this.reset_events_no_delta();
+            if (
+                this.process_state[0] != -1 &&
+                this.process_state[1] != -1 &&
+                this.process_state[2] != -1 &&
+                this.process_state[3] != -1 &&
+                this.process_state[4] != -1 &&
+                this.process_state[5] != -1 &&
+                this.process_state[6] != -1 && this.process_state[7] != -1 && this.process_state[8] != -1
+            ) {
+                this.sc_fifo_int_speed_vl.fifo_update();
+                this.sc_fifo_int_speed_vr.fifo_update();
+                this.sc_fifo_int_speed_hl.fifo_update();
+                this.sc_fifo_int_speed_hr.fifo_update();
+                this.primitive_channel_update = seq<boolean>{false, false, false, false};
+                int min_advance;
+                min_advance =
+                    this.find_minimum_advance(
+                        this.event_state[0],
+                        this.event_state[1],
+                        this.event_state[2],
+                        this.event_state[3],
+                        this.event_state[4],
+                        this.event_state[5],
+                        this.event_state[6],
+                        this.event_state[7],
+                        this.event_state[8],
+                        this.event_state[9],
+                        this.event_state[10],
+                        this.event_state[11],
+                        this.event_state[12]
+                    );
+                if (min_advance <= -1) {
+                    min_advance = 0;
+                }
+                this.update_events(min_advance);
+                this.wakeup_after_wait();
+                this.reset_all_events();
+            }
+            unlock this;
+        }
+        join this.vl_tickcounter_vl_send;
+        join this.vr_tickcounter_vr_send;
+        join this.hl_tickcounter_hl_send;
+        join this.hr_tickcounter_hr_send;
+        join this.ecu_absasr_absasr_not_a_main;
+        join this.ecu_absasr_absasr_read_vr;
+        join this.ecu_absasr_absasr_read_vl;
+        join this.ecu_absasr_absasr_read_hr;
+        join this.ecu_absasr_absasr_read_hl;
+    }
+    
+    
+    requires held(this);
+    requires this.scheduler_invariant();
+    ensures held(this);
+    ensures this.scheduler_invariant();
+    ensures this.event_state == \old(this.event_state);
+    ensures this.primitive_channel_update == \old(this.primitive_channel_update);
+    ensures \old(this.process_state[0]) >= 0 && \old(this.event_state[\old(this.process_state[0])]) == 0 ==>
+    this.process_state[0] == -1;
+    ensures \old(this.process_state[1]) >= 0 && \old(this.event_state[\old(this.process_state[1])]) == 0 ==>
+    this.process_state[1] == -1;
+    ensures \old(this.process_state[2]) >= 0 && \old(this.event_state[\old(this.process_state[2])]) == 0 ==>
+    this.process_state[2] == -1;
+    ensures \old(this.process_state[3]) >= 0 && \old(this.event_state[\old(this.process_state[3])]) == 0 ==>
+    this.process_state[3] == -1;
+    ensures \old(this.process_state[4]) >= 0 && \old(this.event_state[\old(this.process_state[4])]) == 0 ==>
+    this.process_state[4] == -1;
+    ensures \old(this.process_state[5]) >= 0 && \old(this.event_state[\old(this.process_state[5])]) == 0 ==>
+    this.process_state[5] == -1;
+    ensures \old(this.process_state[6]) >= 0 && \old(this.event_state[\old(this.process_state[6])]) == 0 ==>
+    this.process_state[6] == -1;
+    ensures \old(this.process_state[7]) >= 0 && \old(this.event_state[\old(this.process_state[7])]) == 0 ==>
+    this.process_state[7] == -1;
+    ensures \old(this.process_state[8]) >= 0 && \old(this.event_state[\old(this.process_state[8])]) == 0 ==>
+    this.process_state[8] == -1;
+    ensures !(\old(this.process_state[0]) >= 0 && \old(this.event_state[\old(this.process_state[0])]) == 0) ==>
+    this.process_state[0] == \old(this.process_state[0]);
+    ensures !(\old(this.process_state[1]) >= 0 && \old(this.event_state[\old(this.process_state[1])]) == 0) ==>
+    this.process_state[1] == \old(this.process_state[1]);
+    ensures !(\old(this.process_state[2]) >= 0 && \old(this.event_state[\old(this.process_state[2])]) == 0) ==>
+    this.process_state[2] == \old(this.process_state[2]);
+    ensures !(\old(this.process_state[3]) >= 0 && \old(this.event_state[\old(this.process_state[3])]) == 0) ==>
+    this.process_state[3] == \old(this.process_state[3]);
+    ensures !(\old(this.process_state[4]) >= 0 && \old(this.event_state[\old(this.process_state[4])]) == 0) ==>
+    this.process_state[4] == \old(this.process_state[4]);
+    ensures !(\old(this.process_state[5]) >= 0 && \old(this.event_state[\old(this.process_state[5])]) == 0) ==>
+    this.process_state[5] == \old(this.process_state[5]);
+    ensures !(\old(this.process_state[6]) >= 0 && \old(this.event_state[\old(this.process_state[6])]) == 0) ==>
+    this.process_state[6] == \old(this.process_state[6]);
+    ensures !(\old(this.process_state[7]) >= 0 && \old(this.event_state[\old(this.process_state[7])]) == 0) ==>
+    this.process_state[7] == \old(this.process_state[7]);
+    ensures !(\old(this.process_state[8]) >= 0 && \old(this.event_state[\old(this.process_state[8])]) == 0) ==>
+    this.process_state[8] == \old(this.process_state[8]);
+    void immediate_wakeup();
+    
+    
+    requires held(this);
+    requires this.scheduler_invariant();
+    ensures held(this);
+    ensures this.scheduler_invariant();
+    ensures this.process_state == \old(this.process_state);
+    ensures this.primitive_channel_update == \old(this.primitive_channel_update);
+    ensures \old(this.event_state[0]) == 0 ==> this.event_state[0] == -2;
+    ensures \old(this.event_state[1]) == 0 ==> this.event_state[1] == -2;
+    ensures \old(this.event_state[2]) == 0 ==> this.event_state[2] == -2;
+    ensures \old(this.event_state[3]) == 0 ==> this.event_state[3] == -2;
+    ensures \old(this.event_state[4]) == 0 ==> this.event_state[4] == -2;
+    ensures \old(this.event_state[5]) == 0 ==> this.event_state[5] == -2;
+    ensures \old(this.event_state[6]) == 0 ==> this.event_state[6] == -2;
+    ensures \old(this.event_state[7]) == 0 ==> this.event_state[7] == -2;
+    ensures \old(this.event_state[8]) == 0 ==> this.event_state[8] == -2;
+    ensures \old(this.event_state[9]) == 0 ==> this.event_state[9] == -2;
+    ensures \old(this.event_state[10]) == 0 ==> this.event_state[10] == -2;
+    ensures \old(this.event_state[11]) == 0 ==> this.event_state[11] == -2;
+    ensures \old(this.event_state[12]) == 0 ==> this.event_state[12] == -2;
+    ensures \old(this.event_state[0]) != 0 ==> this.event_state[0] == \old(this.event_state[0]);
+    ensures \old(this.event_state[1]) != 0 ==> this.event_state[1] == \old(this.event_state[1]);
+    ensures \old(this.event_state[2]) != 0 ==> this.event_state[2] == \old(this.event_state[2]);
+    ensures \old(this.event_state[3]) != 0 ==> this.event_state[3] == \old(this.event_state[3]);
+    ensures \old(this.event_state[4]) != 0 ==> this.event_state[4] == \old(this.event_state[4]);
+    ensures \old(this.event_state[5]) != 0 ==> this.event_state[5] == \old(this.event_state[5]);
+    ensures \old(this.event_state[6]) != 0 ==> this.event_state[6] == \old(this.event_state[6]);
+    ensures \old(this.event_state[7]) != 0 ==> this.event_state[7] == \old(this.event_state[7]);
+    ensures \old(this.event_state[8]) != 0 ==> this.event_state[8] == \old(this.event_state[8]);
+    ensures \old(this.event_state[9]) != 0 ==> this.event_state[9] == \old(this.event_state[9]);
+    ensures \old(this.event_state[10]) != 0 ==> this.event_state[10] == \old(this.event_state[10]);
+    ensures \old(this.event_state[11]) != 0 ==> this.event_state[11] == \old(this.event_state[11]);
+    ensures \old(this.event_state[12]) != 0 ==> this.event_state[12] == \old(this.event_state[12]);
+    void reset_events_no_delta();
+    
+    
+    ensures val0 < -1 || \result <= val0;
+    ensures val1 < -1 || \result <= val1;
+    ensures val2 < -1 || \result <= val2;
+    ensures val3 < -1 || \result <= val3;
+    ensures val4 < -1 || \result <= val4;
+    ensures val5 < -1 || \result <= val5;
+    ensures val6 < -1 || \result <= val6;
+    ensures val7 < -1 || \result <= val7;
+    ensures val8 < -1 || \result <= val8;
+    ensures val9 < -1 || \result <= val9;
+    ensures val10 < -1 || \result <= val10;
+    ensures val11 < -1 || \result <= val11;
+    ensures val12 < -1 || \result <= val12;
+    ensures val0 < -1 &&
+    val1 < -1 &&
+    val2 < -1 &&
+    val3 < -1 &&
+    val4 < -1 &&
+    val5 < -1 && val6 < -1 && val7 < -1 && val8 < -1 && val9 < -1 && val10 < -1 && val11 < -1 && val12 < -1 ==>
+    \result == 0;
+    ensures val0 >= -1 ||
+    val1 >= -1 ||
+    val2 >= -1 ||
+    val3 >= -1 ||
+    val4 >= -1 ||
+    val5 >= -1 || val6 >= -1 || val7 >= -1 || val8 >= -1 || val9 >= -1 || val10 >= -1 || val11 >= -1 || val12 >= -1 ==>
+    val0 >= -1 && \result == val0 ||
+    val1 >= -1 && \result == val1 ||
+    val2 >= -1 && \result == val2 ||
+    val3 >= -1 && \result == val3 ||
+    val4 >= -1 && \result == val4 ||
+    val5 >= -1 && \result == val5 ||
+    val6 >= -1 && \result == val6 ||
+    val7 >= -1 && \result == val7 ||
+    val8 >= -1 && \result == val8 ||
+    val9 >= -1 && \result == val9 ||
+    val10 >= -1 && \result == val10 || val11 >= -1 && \result == val11 || val12 >= -1 && \result == val12;
+    pure int find_minimum_advance(
+        int val0,
+        int val1,
+        int val2,
+        int val3,
+        int val4,
+        int val5,
+        int val6,
+        int val7,
+        int val8,
+        int val9,
+        int val10,
+        int val11,
+        int val12
+    );
+    
+    
+    requires held(this);
+    requires this.scheduler_invariant();
+    ensures held(this);
+    ensures this.scheduler_invariant();
+    ensures this.process_state == \old(this.process_state);
+    ensures this.primitive_channel_update == \old(this.primitive_channel_update);
+    ensures \old(this.event_state[0]) < -1 ==> this.event_state[0] == -3;
+    ensures \old(this.event_state[0]) >= -1 ==> this.event_state[0] == \old(this.event_state[0]) - advance;
+    ensures \old(this.event_state[1]) < -1 ==> this.event_state[1] == -3;
+    ensures \old(this.event_state[1]) >= -1 ==> this.event_state[1] == \old(this.event_state[1]) - advance;
+    ensures \old(this.event_state[2]) < -1 ==> this.event_state[2] == -3;
+    ensures \old(this.event_state[2]) >= -1 ==> this.event_state[2] == \old(this.event_state[2]) - advance;
+    ensures \old(this.event_state[3]) < -1 ==> this.event_state[3] == -3;
+    ensures \old(this.event_state[3]) >= -1 ==> this.event_state[3] == \old(this.event_state[3]) - advance;
+    ensures \old(this.event_state[4]) < -1 ==> this.event_state[4] == -3;
+    ensures \old(this.event_state[4]) >= -1 ==> this.event_state[4] == \old(this.event_state[4]) - advance;
+    ensures \old(this.event_state[5]) < -1 ==> this.event_state[5] == -3;
+    ensures \old(this.event_state[5]) >= -1 ==> this.event_state[5] == \old(this.event_state[5]) - advance;
+    ensures \old(this.event_state[6]) < -1 ==> this.event_state[6] == -3;
+    ensures \old(this.event_state[6]) >= -1 ==> this.event_state[6] == \old(this.event_state[6]) - advance;
+    ensures \old(this.event_state[7]) < -1 ==> this.event_state[7] == -3;
+    ensures \old(this.event_state[7]) >= -1 ==> this.event_state[7] == \old(this.event_state[7]) - advance;
+    ensures \old(this.event_state[8]) < -1 ==> this.event_state[8] == -3;
+    ensures \old(this.event_state[8]) >= -1 ==> this.event_state[8] == \old(this.event_state[8]) - advance;
+    ensures \old(this.event_state[9]) < -1 ==> this.event_state[9] == -3;
+    ensures \old(this.event_state[9]) >= -1 ==> this.event_state[9] == \old(this.event_state[9]) - advance;
+    ensures \old(this.event_state[10]) < -1 ==> this.event_state[10] == -3;
+    ensures \old(this.event_state[10]) >= -1 ==> this.event_state[10] == \old(this.event_state[10]) - advance;
+    ensures \old(this.event_state[11]) < -1 ==> this.event_state[11] == -3;
+    ensures \old(this.event_state[11]) >= -1 ==> this.event_state[11] == \old(this.event_state[11]) - advance;
+    ensures \old(this.event_state[12]) < -1 ==> this.event_state[12] == -3;
+    ensures \old(this.event_state[12]) >= -1 ==> this.event_state[12] == \old(this.event_state[12]) - advance;
+    void update_events(int advance);
+    
+    
+    requires held(this);
+    requires this.scheduler_invariant();
+    ensures held(this);
+    ensures this.scheduler_invariant();
+    ensures this.event_state == \old(this.event_state);
+    ensures this.primitive_channel_update == \old(this.primitive_channel_update);
+    ensures \old(this.process_state[0]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[0])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[0])]) == -1) ==>
+    this.process_state[0] == -1;
+    ensures \old(this.process_state[1]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[1])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[1])]) == -1) ==>
+    this.process_state[1] == -1;
+    ensures \old(this.process_state[2]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[2])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[2])]) == -1) ==>
+    this.process_state[2] == -1;
+    ensures \old(this.process_state[3]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[3])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[3])]) == -1) ==>
+    this.process_state[3] == -1;
+    ensures \old(this.process_state[4]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[4])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[4])]) == -1) ==>
+    this.process_state[4] == -1;
+    ensures \old(this.process_state[5]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[5])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[5])]) == -1) ==>
+    this.process_state[5] == -1;
+    ensures \old(this.process_state[6]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[6])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[6])]) == -1) ==>
+    this.process_state[6] == -1;
+    ensures \old(this.process_state[7]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[7])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[7])]) == -1) ==>
+    this.process_state[7] == -1;
+    ensures \old(this.process_state[8]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[8])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[8])]) == -1) ==>
+    this.process_state[8] == -1;
+    ensures !(\old(this.process_state[0]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[0])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[0])]) == -1)) ==>
+    this.process_state[0] == \old(this.process_state[0]);
+    ensures !(\old(this.process_state[1]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[1])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[1])]) == -1)) ==>
+    this.process_state[1] == \old(this.process_state[1]);
+    ensures !(\old(this.process_state[2]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[2])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[2])]) == -1)) ==>
+    this.process_state[2] == \old(this.process_state[2]);
+    ensures !(\old(this.process_state[3]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[3])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[3])]) == -1)) ==>
+    this.process_state[3] == \old(this.process_state[3]);
+    ensures !(\old(this.process_state[4]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[4])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[4])]) == -1)) ==>
+    this.process_state[4] == \old(this.process_state[4]);
+    ensures !(\old(this.process_state[5]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[5])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[5])]) == -1)) ==>
+    this.process_state[5] == \old(this.process_state[5]);
+    ensures !(\old(this.process_state[6]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[6])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[6])]) == -1)) ==>
+    this.process_state[6] == \old(this.process_state[6]);
+    ensures !(\old(this.process_state[7]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[7])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[7])]) == -1)) ==>
+    this.process_state[7] == \old(this.process_state[7]);
+    ensures !(\old(this.process_state[8]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[8])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[8])]) == -1)) ==>
+    this.process_state[8] == \old(this.process_state[8]);
+    void wakeup_after_wait();
+    
+    
+    requires held(this);
+    requires this.scheduler_invariant();
+    ensures held(this);
+    ensures this.scheduler_invariant();
+    ensures this.process_state == \old(this.process_state);
+    ensures this.primitive_channel_update == \old(this.primitive_channel_update);
+    ensures \old(this.event_state[0]) == 0 || \old(this.event_state[0]) == -1 ==> this.event_state[0] == -2;
+    ensures \old(this.event_state[1]) == 0 || \old(this.event_state[1]) == -1 ==> this.event_state[1] == -2;
+    ensures \old(this.event_state[2]) == 0 || \old(this.event_state[2]) == -1 ==> this.event_state[2] == -2;
+    ensures \old(this.event_state[3]) == 0 || \old(this.event_state[3]) == -1 ==> this.event_state[3] == -2;
+    ensures \old(this.event_state[4]) == 0 || \old(this.event_state[4]) == -1 ==> this.event_state[4] == -2;
+    ensures \old(this.event_state[5]) == 0 || \old(this.event_state[5]) == -1 ==> this.event_state[5] == -2;
+    ensures \old(this.event_state[6]) == 0 || \old(this.event_state[6]) == -1 ==> this.event_state[6] == -2;
+    ensures \old(this.event_state[7]) == 0 || \old(this.event_state[7]) == -1 ==> this.event_state[7] == -2;
+    ensures \old(this.event_state[8]) == 0 || \old(this.event_state[8]) == -1 ==> this.event_state[8] == -2;
+    ensures \old(this.event_state[9]) == 0 || \old(this.event_state[9]) == -1 ==> this.event_state[9] == -2;
+    ensures \old(this.event_state[10]) == 0 || \old(this.event_state[10]) == -1 ==> this.event_state[10] == -2;
+    ensures \old(this.event_state[11]) == 0 || \old(this.event_state[11]) == -1 ==> this.event_state[11] == -2;
+    ensures \old(this.event_state[12]) == 0 || \old(this.event_state[12]) == -1 ==> this.event_state[12] == -2;
+    ensures !(\old(this.event_state[0]) == 0 || \old(this.event_state[0]) == -1) ==>
+    this.event_state[0] == \old(this.event_state[0]);
+    ensures !(\old(this.event_state[1]) == 0 || \old(this.event_state[1]) == -1) ==>
+    this.event_state[1] == \old(this.event_state[1]);
+    ensures !(\old(this.event_state[2]) == 0 || \old(this.event_state[2]) == -1) ==>
+    this.event_state[2] == \old(this.event_state[2]);
+    ensures !(\old(this.event_state[3]) == 0 || \old(this.event_state[3]) == -1) ==>
+    this.event_state[3] == \old(this.event_state[3]);
+    ensures !(\old(this.event_state[4]) == 0 || \old(this.event_state[4]) == -1) ==>
+    this.event_state[4] == \old(this.event_state[4]);
+    ensures !(\old(this.event_state[5]) == 0 || \old(this.event_state[5]) == -1) ==>
+    this.event_state[5] == \old(this.event_state[5]);
+    ensures !(\old(this.event_state[6]) == 0 || \old(this.event_state[6]) == -1) ==>
+    this.event_state[6] == \old(this.event_state[6]);
+    ensures !(\old(this.event_state[7]) == 0 || \old(this.event_state[7]) == -1) ==>
+    this.event_state[7] == \old(this.event_state[7]);
+    ensures !(\old(this.event_state[8]) == 0 || \old(this.event_state[8]) == -1) ==>
+    this.event_state[8] == \old(this.event_state[8]);
+    ensures !(\old(this.event_state[9]) == 0 || \old(this.event_state[9]) == -1) ==>
+    this.event_state[9] == \old(this.event_state[9]);
+    ensures !(\old(this.event_state[10]) == 0 || \old(this.event_state[10]) == -1) ==>
+    this.event_state[10] == \old(this.event_state[10]);
+    ensures !(\old(this.event_state[11]) == 0 || \old(this.event_state[11]) == -1) ==>
+    this.event_state[11] == \old(this.event_state[11]);
+    ensures !(\old(this.event_state[12]) == 0 || \old(this.event_state[12]) == -1) ==>
+    this.event_state[12] == \old(this.event_state[12]);
+    void reset_all_events();
+}

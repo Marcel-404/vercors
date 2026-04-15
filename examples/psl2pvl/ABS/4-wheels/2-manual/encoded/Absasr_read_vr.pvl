@@ -1,0 +1,65 @@
+class Absasr_read_vr {
+    Main m;
+    int tmp_0_read_vr;
+    ensures Perm(this.m, write);
+    ensures this.m == m_param;
+    ensures Perm(this.tmp_0_read_vr, write);
+    ensures idle(this);
+    constructor(
+        Main m_param
+    ) {
+        this.m = m_param;
+    }
+    requires Perm(this.m, 1 \ 2);
+    requires this.m != null;
+    requires committed(this.m);
+    requires Perm(this.m.ecu_absasr_absasr_read_vr, read);
+    requires this.m.ecu_absasr_absasr_read_vr == this;
+    ensures Perm(this.m, 1 \ 2);
+    ensures this.m != null;
+    ensures committed(this.m);
+    ensures Perm(this.m.ecu_absasr_absasr_read_vr, read);
+    ensures this.m.ecu_absasr_absasr_read_vr == this;
+    run {
+        lock this.m;
+        this.tmp_0_read_vr = 0;
+        loop_invariant Perm(this.m, 1 \ 2);
+        loop_invariant this.m != null;
+        loop_invariant committed(this.m);
+        loop_invariant held(this.m);
+        loop_invariant this.m.global_invariant();
+        loop_invariant this.m.ecu_absasr_absasr_read_vr == this;
+        while (true) {
+            loop_invariant Perm(this.m, 1 \ 2);
+            loop_invariant this.m != null;
+            loop_invariant committed(this.m);
+            loop_invariant held(this.m);
+            loop_invariant this.m.global_invariant();
+            loop_invariant this.m.ecu_absasr_absasr_read_vr == this;
+            while (|this.m.sc_fifo_int_speed_vr.buffer| <= this.m.sc_fifo_int_speed_vr.num_read) {
+                this.m.process_state = this.m.process_state.update(5, 3);
+                loop_invariant Perm(this.m, 1 \ 2);
+                loop_invariant this.m != null;
+                loop_invariant committed(this.m);
+                loop_invariant held(this.m);
+                loop_invariant this.m.global_invariant();
+                loop_invariant this.m.ecu_absasr_absasr_read_vr == this;
+                while (this.m.process_state[5] != -1 || this.m.event_state[3] != -2) {
+                    unlock this.m;
+                    lock this.m;
+                }
+            }
+            this.m.ecu_absasr_absasr.v = this.m.ecu_absasr_absasr.v.update(0, this.m.sc_fifo_int_speed_vr.fifo_read());
+            this.m.ecu_absasr_absasr.a = this.m.ecu_absasr_absasr.a.update(0, this.m.ecu_absasr_absasr.v[0] - this.tmp_0_read_vr);
+            this.tmp_0_read_vr = this.m.ecu_absasr_absasr.v[0];
+            
+            // The correct data has been received
+            assert this.m.ecu_absasr_absasr.v[0] == this.m.vr_tickcounter_vr_send.speed_send;
+            
+            // It has been received in the allowed time frame
+            assert this.m.event_state[13] > 0;
+            this.m.event_state = this.m.event_state.update(13, -3);
+        }
+        unlock this.m;
+    }
+}

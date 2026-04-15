@@ -3,7 +3,7 @@ package vct.parsers.transform;
 import de.tub.pes.syscir.sc_model.SCSystem;
 import de.tub.pes.syscir.sc_model.expressions.ConstantExpression;
 import de.tub.pes.syscir.sc_model.SCClass;
-
+import de.tub.pes.syscir.sc_model.SCProcess;
 import scala.math.BigInt;
 import scala.reflect.ClassTag$;
 import vct.col.ast.*;
@@ -11,6 +11,7 @@ import vct.col.ast.Class;
 import vct.col.ref.DirectRef;
 import vct.col.ref.Ref;
 import vct.parsers.transform.systemctocol.engine.ExpressionTransformer;
+import vct.parsers.transform.systemctocol.engine.MainTransformer;
 import vct.parsers.transform.systemctocol.colmodel.COLClass;
 import vct.parsers.transform.systemctocol.colmodel.COLSystem;
 import vct.parsers.transform.systemctocol.colmodel.ProcessClass;
@@ -24,6 +25,8 @@ import vct.parsers.parser.ColCPPParser;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import javax.lang.model.util.Elements.Origin;
+
 import org.antlr.v4.runtime.*;
 
 import vct.antlr4.generated.LangPSLParser;
@@ -35,9 +38,9 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         private final COLSystem<T> col_system;
 
-        String bound_module;
+        String current_module;
 
-        java.util.Map<String, SCClass> modules = new HashMap<>();
+        java.util.Map<String, ProcessClass> processes = new HashMap<>();
 
         int newest_event_index;
 
@@ -53,8 +56,9 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         public PSLToColVisitor(SCSystem sc_system, COLSystem<T> col_system) {
                 this.sc_system = sc_system;
                 this.col_system = col_system;
-                this.newest_event_index = col_system.get_total_nr_events();
+                this.newest_event_index = col_system.get_total_nr_events()-1;
                 this.event_value = 0;
+                this.current_module = "";
                 this.event_state_ref = new DirectRef<>(col_system.get_event_state(),
                                 ClassTag$.MODULE$.apply(InstanceField.class));
                 this.event_state_deref = new Deref<>(col_system.THIS, event_state_ref, new GeneratedBlame<>(),
@@ -64,30 +68,38 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
                                 ClassTag$.MODULE$.apply(InstanceField.class));
                 this.proc_state_deref = new Deref<>(col_system.THIS, proc_state_ref, new GeneratedBlame<>(),
                                 OriGen.create());
+                for (ProcessClass proc : col_system.get_all_processes()) {
+                        processes.put(proc.get_generating_instance().getName() + "."
+                                        + proc.get_generating_function().getName(), proc);
+                }
         }
 
         @Override
         public Expr<T> visitHdl_expr0(LangPSLParser.Hdl_expr0Context ctx) {
                 String expression = ctx.getText();
+                if (expression.contains("data_written_event()")) {
+                        String x = expression.split("\\.")[0];
+                        // Check if x contained in Main
+                        return new Eq<>(getEventState(2), col_system.MINUS_TWO, OriGen.create());// TODO: Replace with actual event
+                } else if (expression.contains("data_read_event()")) {
+                        String x = expression.split("\\.")[0];
+                        // Check if x contained in Main
+                        return new Eq<>(getEventState(1), col_system.MINUS_TWO, OriGen.create());// Todo: Replace with actual event
+
+                }
                 java.io.Reader reader = new java.io.StringReader(expression);
                 // Statement<T> stmt = CPPToCol$.MODULE$.convert(ctx.expression()); // TODO:
                 // call CPPPtransform to transform this expression, statement expression
                 // mismatch
-                return new StringValue<>(ctx.getChild(0).getText(), OriGen.create());
+                return new StringValue<>(expression, OriGen.create());
         }
 
         @Override
         public Expr<T> visitHdl_decl0(LangPSLParser.Hdl_decl0Context ctx) {
-                System.out.println(ctx.toString() + "\n\n\n\n\n");
-                return new StringValue<>(ctx.getChild(0).getText(), OriGen.create());
+                return new StringValue<>(ctx.getText(), OriGen.create());
 
         }
 
-        @Override
-        public Expr<T> visitPsl_specification0(LangPSLParser.Psl_specification0Context ctx) {
-                return null;
-        }
-        
         @Override
         public Expr<T> visitVerificationUnitVerificationItem(
                         LangPSLParser.VerificationUnitVerificationItemContext ctx) {
@@ -96,11 +108,8 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         @Override
         public Expr<T> visitVerification_unit0(LangPSLParser.Verification_unit0Context ctx) {
-                /*
-                 * for (LangPSLParser.ModulesContext module : ctx.modules()) {
-                 * visit(module);
-                 * }
-                 */
+                if (current_module.equals("Main")) {
+                }
                 java.util.List<Expr<T>> vunit_items = new java.util.ArrayList<>();
                 for (LangPSLParser.Vunit_itemContext assertion : ctx.vunit_item()) {
                         vunit_items.add(visit(assertion));
@@ -114,11 +123,19 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         }
 
         @Override
+        public Expr<T> visitBinding_spec0(LangPSLParser.Binding_spec0Context ctx) {
+                return visit(ctx.hierarchical_hdl_name());
+        }
+
+        @Override
         public Expr<T> visitHierarchical_hdl_name0(LangPSLParser.Hierarchical_hdl_name0Context ctx) {
+                String bound_module = ctx.getText();
+                this.current_module = bound_module;
+                System.out.println(bound_module);
                 if (false) {
-                        throw new IllegalArgumentException("Module not recognised: " + bound_module);
+                        throw new IllegalArgumentException("Module not recognised: " + current_module);
                 }
-                return null;
+                return new StringValue<>(bound_module, OriGen.create());
         }
 
         @Override
@@ -136,6 +153,10 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
                 return visit(ctx.verification_directive());
         }
 
+        // ==============================================================================================================
+        // verification_directive:
+        // ==============================================================================================================
+
         @Override
         public Expr<T> visitAssertDirectiveVerificationDirective(
                         LangPSLParser.AssertDirectiveVerificationDirectiveContext ctx) {
@@ -145,19 +166,61 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         @Override
         public Expr<T> visitAssumeDirectiveVerificationDirective(
                         LangPSLParser.AssumeDirectiveVerificationDirectiveContext ctx) {
-                throw new IllegalArgumentException("Verification Directive not supported: Assume");
+                throw new IllegalArgumentException("Verification Directive not supported: assume");
         }
+
+        @Override
+        public Expr<T> visitRestrictDirectiveVerificationDirective(
+                        LangPSLParser.RestrictDirectiveVerificationDirectiveContext ctx) {
+                throw new IllegalArgumentException("Verification Directive not supported: restrict");
+        }
+
+        @Override
+        public Expr<T> visitRestrictStrongDirectiveVerificationDirective(
+                        LangPSLParser.RestrictStrongDirectiveVerificationDirectiveContext ctx) {
+                throw new IllegalArgumentException("Verification Directive not supported: restrict!");
+        }
+
+        @Override
+        public Expr<T> visitCoverDirectiveVerificationDirective(
+                        LangPSLParser.CoverDirectiveVerificationDirectiveContext ctx) {
+                throw new IllegalArgumentException("Verification Directive not supported: cover");
+        }
+
+        @Override
+        public Expr<T> visitFairnessStatementVerificationDirective(
+                        LangPSLParser.FairnessStatementVerificationDirectiveContext ctx) {
+                throw new IllegalArgumentException("Verification Directive not supported: fairness");
+        }
+
+        // ==============================================================================================================
+        // ==============================================================================================================
 
         @Override
         public Expr<T> visitAssert_directive0(LangPSLParser.Assert_directive0Context ctx) {
                 return visit(ctx.property());
         }
 
+        // ==============================================================================================================
+        // property:
+        // ==============================================================================================================
+        @Override
+        public Expr<T> visitReplicatorPropertyProperty(LangPSLParser.ReplicatorPropertyPropertyContext ctx) {
+                throw new IllegalArgumentException("Property not supported: Replicator Property");
+        }
+
         @Override
         public Expr<T> visitFlPropertyProperty(LangPSLParser.FlPropertyPropertyContext ctx) {
-
                 return visit(ctx.fl_property());
         }
+
+        @Override
+        public Expr<T> visitObePropertyProperty(LangPSLParser.ObePropertyPropertyContext ctx) {
+                throw new IllegalArgumentException("Property not supported: OBE Property");
+        }
+
+        // ==============================================================================================================
+        // ==============================================================================================================
 
         @Override
         public Expr<T> visitHdl_expression0(LangPSLParser.Hdl_expression0Context ctx) {
@@ -179,8 +242,6 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         @Override
         public Expr<T> visitArrowHdlOrPslExpression(LangPSLParser.ArrowHdlOrPslExpressionContext ctx) {
-                System.out.println(ctx.hdl_or_psl_expression(1).getText());
-
                 return new Implies<>(visit(ctx.hdl_or_psl_expression(0)), visit(ctx.hdl_or_psl_expression(1)),
                                 OriGen.create());
         }
@@ -229,6 +290,11 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         // FL property
 
         @Override
+        public Expr<T> visitAlwaysFlProperty(LangPSLParser.AlwaysFlPropertyContext ctx) {
+                return visit(ctx.fl_property());
+        }
+
+        @Override
         public Expr<T> visitBoolValFlProperty(LangPSLParser.BoolValFlPropertyContext ctx) {
                 return visit(ctx.bool_val());
         }
@@ -258,7 +324,7 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
                         // Left Side of equation
                         IntegerValue<T> event_index = new IntegerValue<>(BigInt.apply(event_value), OriGen.create());
-                        Eq<T> equals = new Eq<>(getEventState(), event_index, OriGen.create());
+                        Eq<T> equals = new Eq<>(getEventState(newest_event_index), event_index, OriGen.create());
                         Implies<T> left = new Implies<>(visit(ctx.fl_property(0)), equals, OriGen.create());
 
                         expression.add(left);
@@ -281,7 +347,7 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
                 this.newest_event_index = this.newest_event_index + 1;
                 this.event_value = Integer.parseInt(ctx.number_val().getText()); // TODO: IDENTIFY WHAT HAPPENS IF THIS
                                                                                  // IS A STRING I.E. int x =1;
-                Greater<T> equation = new Greater<>(getEventState(), col_system.ZERO, OriGen.create());
+                Greater<T> equation = new Greater<>(getEventState(newest_event_index), col_system.ZERO, OriGen.create());
                 return new Implies<>(visit(ctx.fl_property()), equation, OriGen.create());
         }
 
@@ -289,9 +355,13 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         @Override
         public Expr<T> visitActiveBuiltInFunctionCall(LangPSLParser.ActiveBuiltInFunctionCallContext ctx) {
-                int process_id = 0;
-
-                IntegerValue<T> index = new IntegerValue<>(BigInt.apply(process_id), OriGen.create());
+                String process_name = ctx.any_type().getText();
+                ProcessClass actual_process = processes.get(process_name);
+                if (actual_process == null) {
+                        throw new IllegalArgumentException("Process not recognised:" + process_name);
+                }
+                IntegerValue<T> index = new IntegerValue<>(BigInt.apply(actual_process.get_process_id()),
+                                OriGen.create());
                 SeqSubscript<T> proc_index = new SeqSubscript<>(proc_state_deref, index, new GeneratedBlame<>(),
                                 OriGen.create());
 
@@ -300,12 +370,13 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         @Override
         public Expr<T> visitWaitingBuiltInFunctionCall(LangPSLParser.WaitingBuiltInFunctionCallContext ctx) {
-                String process = ctx.Identifier().getText();
-                int process_id = getProcessId("ecu_absasr.read_s");
-
-                // int id = FINDPROCESS;
-
-                IntegerValue<T> index = new IntegerValue<>(BigInt.apply(process_id), OriGen.create());
+                String process_name = ctx.any_type().getText();
+                ProcessClass actual_process = processes.get(process_name);
+                if (actual_process == null) {
+                        throw new IllegalArgumentException("Process not recognised:" + process_name);
+                }
+                IntegerValue<T> index = new IntegerValue<>(BigInt.apply(actual_process.get_process_id()),
+                                OriGen.create());
                 SeqSubscript<T> proc_index = new SeqSubscript<>(proc_state_deref, index, new GeneratedBlame<>(),
                                 OriGen.create());
 
@@ -314,20 +385,8 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         // Helper methods
 
-        private int getProcessId(String process_name) {
-                SCClass systemc_module = modules.get(process_name);
-                /*
-                 * if (systemc_module == null) {
-                 * throw new
-                 * IllegalArgumentException("Unknown process in PSL verification unit: " +
-                 * process_name);
-                 * }
-                 */
-                return 0;
-        }
-
-        private Expr<T> getEventState() {
-                IntegerValue<T> event_id = new IntegerValue<>(BigInt.apply(this.newest_event_index),
+        private Expr<T> getEventState(int index) {
+                IntegerValue<T> event_id = new IntegerValue<>(BigInt.apply(index),
                                 OriGen.create());
                 SeqSubscript<T> proc_i = new SeqSubscript<>(event_state_deref, event_id, new GeneratedBlame<>(),
                                 OriGen.create());

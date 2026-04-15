@@ -4,19 +4,15 @@ class Absasr {
     
     int temp_fv;
     
-    int[] s;
-    
-    int[] v;
+    boolean absasr_timer_reset;
     
     int[] lambda;
     
-    boolean absasr_timer_reset;
+    int[] s;
     
     int fv;
     
     boolean absasr_init;
-    
-    int[] p;
     
     boolean absasr_timer_set;
     
@@ -30,32 +26,36 @@ class Absasr {
     
     int absasr_timer_value;
     
+    int[] p;
+    
+    int[] v;
+    
     ensures Perm(this.m, write);
     ensures this.m == m_param;
     ensures Perm(this.temp_fv, write);
-    ensures Perm(this.s, read);
-    ensures \array(this.s, 1);
-    ensures Perm(this.s[*], write);
-    ensures Perm(this.v, read);
-    ensures \array(this.v, 1);
-    ensures Perm(this.v[*], write);
-    ensures Perm(this.lambda, read);
-    ensures \array(this.lambda, 1);
-    ensures Perm(this.lambda[*], write);
     ensures Perm(this.absasr_timer_reset, write);
+    ensures Perm(this.lambda, read);
+    ensures \array(this.lambda, 4);
+    ensures Perm(this.lambda[*], write);
+    ensures Perm(this.s, read);
+    ensures \array(this.s, 4);
+    ensures Perm(this.s[*], write);
     ensures Perm(this.fv, write);
     ensures Perm(this.absasr_init, write);
-    ensures Perm(this.p, read);
-    ensures \array(this.p, 1);
-    ensures Perm(this.p[*], write);
     ensures Perm(this.absasr_timer_set, write);
     ensures Perm(this.a, read);
-    ensures \array(this.a, 1);
+    ensures \array(this.a, 4);
     ensures Perm(this.a[*], write);
     ensures Perm(this.j__asr, write);
     ensures Perm(this.i__abs, write);
     ensures Perm(this.fa, write);
     ensures Perm(this.absasr_timer_value, write);
+    ensures Perm(this.p, read);
+    ensures \array(this.p, 4);
+    ensures Perm(this.p[*], write);
+    ensures Perm(this.v, read);
+    ensures \array(this.v, 4);
+    ensures Perm(this.v[*], write);
     constructor(
         Main m_param
     ) {
@@ -83,7 +83,7 @@ class Absasr {
             loop_invariant Perm(this.m.global_invariant(), 1);
             loop_invariant this.m.ecu_absasr_absasr == this;
             loop_invariant this.fv > 22;
-            for (this.i__abs = 0; this.i__abs < 1; this.i__abs = this.i__abs + 1) {
+            for (this.i__abs = 0; this.i__abs < 4; this.i__abs = this.i__abs + 1) {
                 this.lambda[this.i__abs] = (this.fv - this.v[this.i__abs]) * 100 / this.fv;
                 if (this.s[this.i__abs] == 4) {
                     if (this.a[this.i__abs] > 98) {
@@ -143,14 +143,14 @@ class Absasr {
     ensures Perm(this.m.global_invariant(), 1);
     ensures this.m.ecu_absasr_absasr == this;
     void _asr() {
-        this.j__asr = 0;
+        this.j__asr = 3;
         loop_invariant Perm(this.m, read);
         loop_invariant this.m != null;
         loop_invariant committed(this.m);
         loop_invariant held(this.m);
         loop_invariant Perm(this.m.global_invariant(), 1);
         loop_invariant this.m.ecu_absasr_absasr == this;
-        for (this.i__abs = 0; this.i__abs < 1; this.i__abs = this.i__abs + 1) {
+        for (this.i__abs = 0; this.i__abs < 2; this.i__abs = this.i__abs + 1) {
             if (this.v[this.i__abs] > 0) {
                 this.lambda[this.i__abs] = (this.v[this.i__abs] - this.v[this.j__asr]) * 100 / this.v[this.i__abs];
                 if (this.lambda[this.i__abs] > 13) {
@@ -163,7 +163,15 @@ class Absasr {
                     this.p[this.i__abs] = -1;
                 }
             }
-            this.j__asr = 0;
+            this.j__asr = 2;
+        }
+    }
+    
+    pure int abs(int val) {
+        if (val >= 0) {
+            return val;
+        } else {
+            return -val;
         }
     }
 }

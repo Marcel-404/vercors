@@ -1,5 +1,6 @@
 package vct.parsers.transform.systemctocol.engine;
 
+import de.tub.pes.syscir.sc_model.SCFunction;
 import de.tub.pes.syscir.sc_model.SCSystem;
 import de.tub.pes.syscir.sc_model.SCVariable;
 import de.tub.pes.syscir.sc_model.expressions.Expression;
@@ -473,13 +474,13 @@ public class MainTransformer<T> {
  private void create_psl_invariant() {
          java.util.List<Expr<T>> conditions = new java.util.ArrayList<>();
          java.util.ArrayList<MarkerExpression> psl_expressions = sc_system.getAnnotations();
-         if (psl_expressions != null) {
+         if (!psl_expressions.isEmpty()) {
                  // Parse PSL expression
                  try {
                         // TODO: verify proc -> x -> within_t[(1,SC_MS)]
                          // Transform PSL expression to PVL
-                         String input = "vunit test (Main){TickCounter s; ABSASR ecu; assert !proc -> active(proc) ; assert send -> within_t[(1,SC_MS)] waiting(ecu); assert proc1 <-> proc2;}";
-
+                        String input = psl_expressions.get(0).toString();
+                        //System.out.println(input);
                          LangPSLLexer lexer = new LangPSLLexer(CharStreams.fromString(input));
                          LangPSLParser parser = new LangPSLParser(new CommonTokenStream(lexer));
                          ParseTree tree = parser.verification_item();
@@ -490,36 +491,9 @@ public class MainTransformer<T> {
                          System.out.println(conditions + "\n\n\n\n\n");
                  } catch (NullPointerException ignored) {
                          throw new ExpressionParseException(
-                                         "PSL expression " + psl_expressions.toString() + " could not be parsed!");
+                                         "PSL expression "  + " could not be parsed!");
                  }
-
-                  /*java.lang.Class clz = InstanceField.class;
-                  * 
-                  * Method[] methods = clz.getDeclaredMethods();
-                  * for(Method m: methods){
-                  * System.out.println(m);
-                  * }
-                  * try {
-                  * while(str.contains("ID:")){
-                  * String process_name =
-                  * for(InstanceField<T> process : processes){
-                  * String process_instance_name = process.toString().split(" ")[1];
-                  * process_instance_name = process_instance_name.substring(0,1).toLowerCase() +
-                  * process_instance_name.substring(1);
-                  * Ref<T, InstanceField<T>> process_state_ref = new
-                  * DirectRef<>(col_system.get_process_state(),
-                  * ClassTag$.MODULE$.apply(InstanceField.class));
-                  * Deref<T> process_state_deref = new Deref<>(col_system.THIS,
-                  * process_state_ref, new GeneratedBlame<>(),
-                  * OriGen.create());
-                  * System.out.println(process_state_deref);
-                  * }
-                  * str=str.replace("ID:"+process_name,"1]");
-                  * ions.add(expr);
-                  * }
-                  */
          }
-
         psl_invariant = new InstancePredicate<>(col_system.NO_VARS, Option.apply(col_system.fold_star(conditions)),
                             false, true, OriGen.create("psl_invariant"));
     }

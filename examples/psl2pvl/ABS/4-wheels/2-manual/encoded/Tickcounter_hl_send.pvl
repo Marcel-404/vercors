@@ -1,0 +1,80 @@
+class Tickcounter_hl_send {
+    Main m;
+    int ticks;
+    int speed_send;
+    
+    
+    ensures Perm(this.m, write);
+    ensures this.m == m_param;
+    ensures Perm(this.ticks, write);
+    ensures Perm(this.speed_send, write);
+    ensures idle(this);
+    constructor(
+        Main m_param
+    ) {
+        this.m = m_param;
+    }
+    
+    
+    requires Perm(this.m, 1 \ 2);
+    requires this.m != null;
+    requires committed(this.m);
+    requires Perm(this.m.hl_tickcounter_hl_send, read);
+    requires this.m.hl_tickcounter_hl_send == this;
+    ensures Perm(this.m, 1 \ 2);
+    ensures this.m != null;
+    ensures committed(this.m);
+    ensures Perm(this.m.hl_tickcounter_hl_send, read);
+    ensures this.m.hl_tickcounter_hl_send == this;
+    run {
+        lock this.m;
+        loop_invariant Perm(this.m, 1 \ 2);
+        loop_invariant this.m != null;
+        loop_invariant committed(this.m);
+        loop_invariant held(this.m);
+        loop_invariant this.m.global_invariant();
+        loop_invariant this.m.hl_tickcounter_hl_send == this;
+        while (true) {
+            this.m.process_state = this.m.process_state.update(2, 10);
+            this.m.event_state = this.m.event_state.update(10, 1);
+            loop_invariant Perm(this.m, 1 \ 2);
+            loop_invariant this.m != null;
+            loop_invariant committed(this.m);
+            loop_invariant held(this.m);
+            loop_invariant this.m.global_invariant();
+            loop_invariant this.m.hl_tickcounter_hl_send == this;
+            while (this.m.process_state[2] != -1 || this.m.event_state[10] != -2) {
+                unlock this.m;
+                lock this.m;
+            }
+            this.speed_send = this.generate__random__0();
+            loop_invariant Perm(this.m, 1 \ 2);
+            loop_invariant this.m != null;
+            loop_invariant committed(this.m);
+            loop_invariant held(this.m);
+            loop_invariant this.m.global_invariant();
+            loop_invariant this.m.hl_tickcounter_hl_send == this;
+            while (|this.m.sc_fifo_int_speed_hl.buffer| + |this.m.sc_fifo_int_speed_hl.written| >= this.m.buffer_size) {
+                this.m.process_state = this.m.process_state.update(2, 4);
+                loop_invariant Perm(this.m, 1 \ 2);
+                loop_invariant this.m != null;
+                loop_invariant committed(this.m);
+                loop_invariant held(this.m);
+                loop_invariant this.m.global_invariant();
+                loop_invariant this.m.hl_tickcounter_hl_send == this;
+                while (this.m.process_state[2] != -1 || this.m.event_state[4] != -2) {
+                    unlock this.m;
+                    lock this.m;
+                }
+            }
+            this.m.sc_fifo_int_speed_hl.fifo_write(this.speed_send);
+            if (this.m.event_state[16] == -3) {
+                this.m.event_state = this.m.event_state.update(16, 1);
+            }
+        }
+        unlock this.m;
+    }
+    
+    
+    pure int generate__random__0();
+}

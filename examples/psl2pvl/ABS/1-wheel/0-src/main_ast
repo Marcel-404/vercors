@@ -44,7 +44,8 @@
 
 
 
-/* psl
+SC_MODULE(ABSASR) {
+   /* psl
 
 vunit absasr {
 
@@ -116,6 +117,8 @@ stable(s))); assert always (active(_ABS()) -> low_speed);
 
     property abs_state3 = (fv > 22 -> forall z in {0:wheels-1}:
 
+
+
       ((a[z] < 2 && s[z] == 6) -> next (p[z] == 1 && s[z]==7)));
 
     assert always (active(_ABS()) -> abs_state3);
@@ -139,6 +142,8 @@ stable(s))); assert always (active(_ABS()) -> low_speed);
 
 
     // ASR
+
+
 
 
 
@@ -177,7 +182,6 @@ slippage_and_wheel_accelerating);
 }
 
 psl */
-SC_MODULE(ABSASR) {
     //-*-*-*-*-*-*-*-*-*-*-*-*  INTERFACE  *-*-*-*-*-*-*-*-*-*-*-*-
 
     sc_fifo_in<int> bus_s;
@@ -450,25 +454,23 @@ SC_MODULE ( TickCounter ) {
 
 /* psl 
 
-vunit main{
+vunit main(Main){
 
   // Properties using within_t:
 
-  assert always (active(s.send) && speed_s.data_written_event().triggered()) -> 
-
-    within_t[(1,SC_MS)] (active(ecu_absasr.read_s) && bus_s.data_read_event().triggered() && ecu_absasr.v[0] == s.speed);
+  assert always active(s.send) && speed_s.data_written_event().triggered() -> within_t[(1,SC_MS)] active(ecu_absasr.read_s) && bus_s.data_read_event().triggered() && v== s.speed;
 
   
 
-  assert always (active(ecu_absasr.read_s) && bus_s.data_read_event().triggered() -> 
+  //assert always (active(ecu_absasr.read_s) && bus_s.data_read_event().triggered() -> 
 
-    within[(1,SC_MS)] active(ecu_absasr.not_a_main) && ecu_absasr.fa == s.speed - ecu_absasr.fv);
+  //  within[(1,SC_MS)] active(ecu_absasr.not_a_main) && ecu_absasr.fa == s.speed - ecu_absasr.fv);
 
 
 
   // Properties using before:
 
-  assert always (active(s.send) && speed_s.data_written_event().triggered()) -> before (active(ecu_absasr.read_s) && bus_s.data_read_event().triggered()) 
+  // assert always (active(s.send) && speed_s.data_written_event().triggered()) -> before (active(ecu_absasr.read_s) && bus_s.data_read_event().triggered()) 
 
 
 
@@ -480,15 +482,15 @@ vunit main{
 
   // Already automatically checked by SystemC Transformation to PVL:
 
-  assert always (waiting(s.send) -> 
+  // assert always (waiting(s.send) -> 
 
-    within_t[(1,SC_MS)] active(s.send)); 
+  //  within_t[(1,SC_MS)] active(s.send)); 
 
 
 
-  assert always (waiting(ecu_absasr.not_a_main) -> 
+  // assert always (waiting(ecu_absasr.not_a_main) -> 
 
-    within_t[(1,SC_MS)] active(ecu_absasr.not_a_main)); 
+  //  within_t[(1,SC_MS)] active(ecu_absasr.not_a_main)); 
 
 
 

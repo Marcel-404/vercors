@@ -6,44 +6,6 @@ options {
 }
 import CPPParser;
 
-// Flavor Macros
-def_sym: Assign;
-
-range_sym: Colon;
-
-and_op: AndAnd;
-
-or_op: OrOr;
-
-not_op: Not;
-
-min_val: MINVAL;
-
-max_val: MAXVAL;
-
-hdl_expr: expression; //expression; 
-
-hdl_clock_expr: Identifier; // SystemC_Event_expression
-
-//systemc_event_expression: sc_event | sc_event_finder | sc_event_and_list | sc_event_or_list | sc_signal | sc_port;
-
-//hdl_unit: Identifier; // Not needed since SystemC module already parsed in xml
-
-hdl_decl: declaration; //declaration;
-
-hdl_stmt: statement; //statement;
-
-hdl_seq_stmt: statementSeq; // statementSeq;
-
-hdl_variable_type:
-	simpleTypeSpecifier; // simpleTypeSpecifier;
-
-// hdl_range: ; (Only for VHDL)
-
-left_sym: LeftParen;
-
-right_sym: RightParen;
-
 // Verification Units
 
 psl_specification: verification_item* EOF;
@@ -86,9 +48,9 @@ inherit_spec: NONTRANSITIVE? INHERIT name (Comma name)* Semi;
 vunit_item:
 	psl_declaration		# PslDeclarationVunitItem
 	| psl_directive		# PslDirectiveVunitItem
-	| vunit_instance	# VunitInstanceVunitItem
-	| hdl_decl			# HdlDeclVunitItem
-	| hdl_stmt			# HdlStmtVunitItem;
+	| vunit_instance	# VunitInstanceVunitItem;
+//	| hdl_decl			# HdlDeclVunitItem
+//	| hdl_stmt			# HdlStmtVunitItem;
 
 override_spec: Override name_list;
 
@@ -383,20 +345,6 @@ high_bound:
 	number_val	# NumberValHighBound
 	| MAXVAL	# MaxValHighBound;
 
-// Forms of expression
-
-any_type: hdl_or_psl_expression;
-
-bit_val: hdl_or_psl_expression;
-
-bool_val: hdl_or_psl_expression;
-
-bit_vector_val: hdl_or_psl_expression;
-
-number_val: hdl_or_psl_expression;
-
-string_val: hdl_or_psl_expression;
-
 hdl_or_psl_expression:
 	built_in_function_call										# BuiltInFunctionCallHdlOrPslExpression
 	| hdl_expression											# HdlExpressionHdlOrPslExpression
@@ -407,7 +355,9 @@ hdl_or_psl_expression:
 hdl_expression: hdl_expr;
 
 built_in_function_call:
-	PREV LeftParen any_type (
+	ACTIVE LeftParen any_type RightParen	# ActiveBuiltInFunctionCall
+	| WAITING LeftParen any_type RightParen	# WaitingBuiltInFunctionCall
+	| PREV LeftParen any_type (
 		Comma number_val (Comma clock_expression)?
 	)? RightParen														# PrevBuiltInFunctionCall
 	| NEXT LeftParen any_type RightParen								# NextBuiltInFunctionCall
@@ -420,15 +370,12 @@ built_in_function_call:
 	| ONEHOT LeftParen bit_vector_val RightParen						# OneHotBuiltInFunctionCall
 	| ONEHOT0 LeftParen bit_vector_val RightParen						# OneHot0BuiltInFunctionCall
 	| NONDET LeftParen value_set RightParen								# NonDetBuiltInFunctionCall
-	| NONDETVECTOR LeftParen number_val Comma value_set LeftParen		# NonDetVectorBuiltInFunctionCall
-	// VPSL function calls
-	| ACTIVE LeftParen Identifier RightParen	# ActiveBuiltInFunctionCall
-	| WAITING LeftParen Identifier RightParen	# WaitingBuiltInFunctionCall;
+	| NONDETVECTOR LeftParen number_val Comma value_set LeftParen		# NonDetVectorBuiltInFunctionCall;
+// VPSL function calls
 
 // Optional Branching Extension 
 obe_property:
-	bool_val													# BoolValObeProperty
-	| LeftParen obe_property RightParen							# ParenObeProperty
+	LeftParen obe_property RightParen							# ParenObeProperty
 	| Identifier (LeftParen actual_parameter_list RightParen)?	# IdentiferObeProperty //Name
 	// Logical Operators
 	| not_op obe_property					# NotOpObeProperty
@@ -445,4 +392,56 @@ obe_property:
 	| CTLEX obe_property											# CTLEXObeProperty
 	| CTLEG obe_property											# CTLEGObeProperty
 	| CTLEF obe_property											# CTLEFObeProperty
-	| CTLE LeftBracket obe_property LTLU obe_property RightBracket	# CTLEObeProperty;
+	| CTLE LeftBracket obe_property LTLU obe_property RightBracket	# CTLEObeProperty
+	| bool_val														# BoolValObeProperty;
+
+// Forms of expression
+
+any_type: hdl_or_psl_expression;
+
+bit_val: hdl_or_psl_expression;
+
+bool_val: hdl_or_psl_expression;
+
+bit_vector_val: hdl_or_psl_expression;
+
+number_val: hdl_or_psl_expression;
+
+string_val: hdl_or_psl_expression;
+
+// Flavor Macros
+def_sym: Assign;
+
+range_sym: Colon;
+
+and_op: AndAnd;
+
+or_op: OrOr;
+
+not_op: Not;
+
+min_val: MINVAL;
+
+max_val: MAXVAL;
+
+hdl_expr: equalityExpression; //expression; 
+
+hdl_clock_expr: Identifier; // SystemC_Event_expression
+
+//systemc_event_expression: sc_event | sc_event_finder | sc_event_and_list | sc_event_or_list | sc_signal | sc_port;
+
+//hdl_unit: Identifier; // Not needed since SystemC module already parsed in xml
+
+hdl_decl: declarationseq; //declaration;
+
+hdl_stmt: statement; //statement;
+
+hdl_seq_stmt: statementSeq; // statementSeq;
+
+hdl_variable_type: simpleTypeSpecifier; // simpleTypeSpecifier;
+
+// hdl_range: ; (Only for VHDL)
+
+left_sym: LeftParen;
+
+right_sym: RightParen;

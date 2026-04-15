@@ -1,0 +1,74 @@
+
+class Absasr_read_hr {
+    Main m;
+    
+    boolean absasr_read_hr_timer_set;
+    
+    boolean absasr_read_hr_timer_reset;
+    
+    boolean absasr_read_hr_init;
+    
+    int absasr_read_hr_timer_value;
+    
+    int tmp_2_read_hr;
+    
+    ensures Perm(this.m, write);
+    ensures this.m == m_param;
+    ensures Perm(this.absasr_read_hr_timer_set, write);
+    ensures Perm(this.absasr_read_hr_timer_reset, write);
+    ensures Perm(this.absasr_read_hr_init, write);
+    ensures Perm(this.absasr_read_hr_timer_value, write);
+    ensures Perm(this.tmp_2_read_hr, write);
+    ensures idle(this);
+    constructor(
+        Main m_param
+    ) {
+        this.m = m_param;
+    }
+    
+    requires Perm(this.m, 1 \ 2);
+    requires this.m != null;
+    requires committed(this.m);
+    requires Perm(this.m.ecu_absasr_absasr_read_hr, read);
+    requires this.m.ecu_absasr_absasr_read_hr == this;
+    ensures Perm(this.m, 1 \ 2);
+    ensures this.m != null;
+    ensures committed(this.m);
+    ensures Perm(this.m.ecu_absasr_absasr_read_hr, read);
+    ensures this.m.ecu_absasr_absasr_read_hr == this;
+    run {
+        lock this.m;
+        this.tmp_2_read_hr = 0;
+        loop_invariant Perm(this.m, 1 \ 2);
+        loop_invariant this.m != null;
+        loop_invariant committed(this.m);
+        loop_invariant held(this.m);
+        loop_invariant Perm(this.m.global_invariant(), 1);
+        loop_invariant this.m.ecu_absasr_absasr_read_hr == this;
+        while (true) {
+            loop_invariant Perm(this.m, 1 \ 2);
+            loop_invariant this.m != null;
+            loop_invariant committed(this.m);
+            loop_invariant held(this.m);
+            loop_invariant Perm(this.m.global_invariant(), 1);
+            loop_invariant this.m.ecu_absasr_absasr_read_hr == this;
+            while (|this.m.sc_fifo_int_speed_hr.buffer| <= this.m.sc_fifo_int_speed_hr.num_read) {
+                this.m.process_state = this.m.process_state.update(7, 7);
+                loop_invariant Perm(this.m, 1 \ 2);
+                loop_invariant this.m != null;
+                loop_invariant committed(this.m);
+                loop_invariant held(this.m);
+                loop_invariant Perm(this.m.global_invariant(), 1);
+                loop_invariant this.m.ecu_absasr_absasr_read_hr == this;
+                while (this.m.process_state[7] != -1 || this.m.event_state[7] != -2) {
+                    unlock this.m;
+                    lock this.m;
+                }
+            }
+            this.m.ecu_absasr_absasr.v[2] = this.m.sc_fifo_int_speed_hr.fifo_read();
+            this.m.ecu_absasr_absasr.a[2] = this.m.ecu_absasr_absasr.v[2] - this.tmp_2_read_hr;
+            this.tmp_2_read_hr = this.m.ecu_absasr_absasr.v[2];
+        }
+        unlock this.m;
+    }
+}

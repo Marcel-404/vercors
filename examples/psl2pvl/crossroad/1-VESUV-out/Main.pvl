@@ -1,0 +1,108 @@
+lock_invariant Perm(this.global_invariant(), 1);
+    
+class Main {
+    seq<int> process_state;
+    
+    seq<int> event_state;
+    
+    seq<boolean> primitive_channel_update;
+    
+    inline resource update_permission_invariant() =
+        Perm(this.primitive_channel_update, write) ** |this.primitive_channel_update| == 0;
+    
+    inline resource scheduler_invariant() =
+        Perm(this.update_permission_invariant(), 1) **
+        Perm(this.process_state, write) **
+        |this.process_state| == 0 **
+        Perm(this.event_state, write) **
+        |this.event_state| == 0 **
+        (\forall int i;
+            i >= 0 && i < |this.process_state| ==>
+                {: this.process_state[i] :} == -1 ||
+                0 <= this.process_state[i] && this.process_state[i] < |this.event_state|
+        );
+    
+    inline resource parameter_invariant() = true;
+    
+    inline resource global_invariant() =
+        Perm(this.scheduler_invariant(), 1) ** Perm(this.parameter_invariant(), 1) ** Perm(this.psl_invariant(), 1);
+    
+    inline resource psl_invariant() = true;
+    
+    ensures committed(this);
+    constructor() {
+        this.process_state = seq<int>{};
+        this.event_state = seq<int>{};
+        this.primitive_channel_update = seq<boolean>{};
+        commit this;
+    }
+    
+    requires committed(this);
+    ensures committed(this);
+    void main() {
+        lock this;
+        unlock this;
+        loop_invariant committed(this);
+        while (true) {
+            lock this;
+            this.immediate_wakeup();
+            this.reset_events_no_delta();
+            {
+                this.primitive_channel_update = seq<boolean>{};
+                int min_advance;
+                min_advance = this.find_minimum_advance();
+                if (min_advance <= -1) {
+                    min_advance = 0;
+                }
+                this.update_events(min_advance);
+                this.wakeup_after_wait();
+                this.reset_all_events();
+            }
+            unlock this;
+        }
+    }
+    
+    requires held(this);
+    requires Perm(this.scheduler_invariant(), 1);
+    ensures held(this);
+    ensures Perm(this.scheduler_invariant(), 1);
+    ensures this.event_state == \old(this.event_state);
+    ensures this.primitive_channel_update == \old(this.primitive_channel_update);
+    void immediate_wakeup();
+    
+    requires held(this);
+    requires Perm(this.scheduler_invariant(), 1);
+    ensures held(this);
+    ensures Perm(this.scheduler_invariant(), 1);
+    ensures this.process_state == \old(this.process_state);
+    ensures this.primitive_channel_update == \old(this.primitive_channel_update);
+    void reset_events_no_delta();
+    
+    ensures true ==> \result == 0;
+    ensures false ==> false;
+    pure int find_minimum_advance();
+    
+    requires held(this);
+    requires Perm(this.scheduler_invariant(), 1);
+    ensures held(this);
+    ensures Perm(this.scheduler_invariant(), 1);
+    ensures this.process_state == \old(this.process_state);
+    ensures this.primitive_channel_update == \old(this.primitive_channel_update);
+    void update_events(int advance);
+    
+    requires held(this);
+    requires Perm(this.scheduler_invariant(), 1);
+    ensures held(this);
+    ensures Perm(this.scheduler_invariant(), 1);
+    ensures this.event_state == \old(this.event_state);
+    ensures this.primitive_channel_update == \old(this.primitive_channel_update);
+    void wakeup_after_wait();
+    
+    requires held(this);
+    requires Perm(this.scheduler_invariant(), 1);
+    ensures held(this);
+    ensures Perm(this.scheduler_invariant(), 1);
+    ensures this.process_state == \old(this.process_state);
+    ensures this.primitive_channel_update == \old(this.primitive_channel_update);
+    void reset_all_events();
+}

@@ -16,7 +16,8 @@
 #define ABSASR_H
 #define DEBUG
 
-/* psl
+SC_MODULE(ABSASR) {
+   /* psl
 vunit absasr {
     int wheels = sizeof(v)/sizeof(v[0]);
 
@@ -52,6 +53,7 @@ stable(s))); assert always (active(_ABS()) -> low_speed);
     assert always (active(_ABS()) -> abs_state5);
 
     property abs_state3 = (fv > 22 -> forall z in {0:wheels-1}:
+
       ((a[z] < 2 && s[z] == 6) -> next (p[z] == 1 && s[z]==7)));
     assert always (active(_ABS()) -> abs_state3);
 
@@ -64,6 +66,7 @@ stable(s))); assert always (active(_ABS()) -> low_speed);
     assert always (active(_ABS()) -> abs_state8);
 
     // ASR
+
 
     property asr_values_stable = (stable(v) && stable(a) && stable(fv) &&
 stable(fa) && stable(s)); assert always (active(_ASR()) -> asr_values_stable);
@@ -83,8 +86,7 @@ next p[z] > 0); assert always (active(_ASR()) ->
 slippage_and_wheel_accelerating);
 }
 psl */
-
-SC_MODULE(ABSASR) {
+   
     //-*-*-*-*-*-*-*-*-*-*-*-*  INTERFACE  *-*-*-*-*-*-*-*-*-*-*-*-
 
     sc_fifo_in<int> bus_s;

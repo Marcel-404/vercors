@@ -311,6 +311,10 @@ public class Transformer<T> {
 		}
 	}
 
+	private void transform_psl_annotations(){
+		
+	}
+
 	/**
 	 * Transforms all classes of the SystemC model into COL classes.
 	 */
