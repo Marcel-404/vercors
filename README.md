@@ -107,16 +107,16 @@ Run all experiments:
 ```shell script
 $ ./examples/psl2pvl/run_experiments.sh 
 [INFO] Choose one of the following modes:
-1) Transform SystemC Design
+1) Transform SystemC design
 2) Generate RASI
-3) Verify SystemC Design
+3) Verify SystemC design
 ```
 
-Transform SystemC designs: 
+Transform SystemC design: 
 
 ```shell script
 $ ./examples/psl2pvl/transform.sh 
-[INFO] Transform which SystemC Design?:
+[INFO] Transform which SystemC design?:
 1) ABS/1-wheel
 2) ABS/4-wheels
 3) producer-consumer
@@ -129,7 +129,7 @@ Generate RASI:
 
 ```shell script
 $ ./examples/psl2pvl/generate_rasi.sh 
-[INFO] Generate RASI for which SystemC Design?:
+[INFO] Generate RASI for which SystemC design?:
 1) ABS/1-wheel
 2) ABS/4-wheels
 3) producer-consumer
@@ -138,11 +138,11 @@ $ ./examples/psl2pvl/generate_rasi.sh
 6) Back to previous menu
 ```
 
-Verify SystemC designs: 
+Verify SystemC design: 
 
 ```shell script
 $ ./examples/psl2pvl/verify.sh 
-[INFO] Verify which SystemC Design?:
+[INFO] Verify which SystemC design?:
 1) ABS/1-wheel
 2) ABS/4-wheels
 3) producer-consumer

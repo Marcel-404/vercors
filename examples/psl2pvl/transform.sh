@@ -37,7 +37,7 @@ transform(){
     printf "[INFO] After manual steps are complete, rerun run_experiments.sh in mode Generate RASI or run generate_rasi.sh\n"
 }
 
-printf "[INFO] Transform which SystemC Design?:\n"
+printf "[INFO] Transform which SystemC design?:\n"
 printf "1) ABS/1-wheel\n2) ABS/4-wheels\n3) producer-consumer\n4) crossroad\n5) All SystemC designs\n6) Back to previous menu\n"
 read -r option
 case "$option" in
