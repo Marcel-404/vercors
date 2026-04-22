@@ -15,18 +15,20 @@ verify(){
 }
 
 printf "[INFO] Verify which SystemC design?:\n"
-printf "1) ABS/1-wheel\n2) ABS/4-wheels\n3) producer-consumer\n4) crossroad\n5) All SystemC designs\n6) Back to previous menu\n"
+printf "1) Automated/ABS/1-wheel\n2) Automated/ABS/4-wheels\n3) Manual-Encoding/ABS/1-wheel\n4) All SystemC designs\n5) Back to previous menu\n"
 read -r option
 case "$option" in
-  1) verify "ABS/1-wheel" ;;
-  2) verify "ABS/4-wheels" ;;
-  3) verify "producer-consumer" ;;
-  4) verify "crossroad" ;;
-  5) 
-    verify "ABS/1-wheel"
-    verify "ABS/4-wheels"
-    verify "producer-consumer"
-    verify "crossroad" ;;
-6) $PWD/run_experiments.sh ;;
+  1) verify "Automated/ABS/1-wheel" ;;
+  2) verify "Automated/ABS/1-wheel" ;;
+  3) verify "Manual-Encoding/ABS/1-wheel";;
+  #3) verify "producer-consumer" ;;
+  #4) verify "crossroad" ;;
+  4) 
+    verify "Automated/ABS/1-wheel"
+    verify "Automated/ABS/4-wheels"
+    verify "Manual-Encoding/ABS/1-wheel";;
+    #verify "producer-consumer"
+    #verify "crossroad" ;;
+5) $PWD/run_experiments.sh ;;
   *) printf "[ERROR] Invalid option\n" ;;
 esac

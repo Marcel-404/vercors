@@ -225,7 +225,6 @@ public class MainTransformer<T> {
                         Ref<T, Class<T>> ref_to_class = new DirectRef<>(transformed_class,
                                 ClassTag$.MODULE$.apply(ByReferenceClass.class));
                         Type<T> t = new TByReferenceClass<>(ref_to_class, Seqs.empty(), OriGen.create());
-
                         // Generate instance field
                         InstanceField<T> inst = new InstanceField<>(t, col_system.NO_FLAGS,
                                 OriGen.create(create_instance_name(process_class)));
@@ -252,9 +251,6 @@ public class MainTransformer<T> {
                 }
             }
         }
-        // channels sc_fifo_int
-        // processes s_tickcounter_send, ecu_absasr_read_s, ecu_absasr_not_a_main
-        // State classes ecu_absasr_absasr
     }
 
     /**
@@ -468,33 +464,28 @@ public class MainTransformer<T> {
         col_system.set_global_perms(global_invariant);
     }
 
- /**
+    /**
      * Generates the psl permission invariant.
      */
- private void create_psl_invariant() {
-         java.util.List<Expr<T>> conditions = new java.util.ArrayList<>();
-         java.util.ArrayList<MarkerExpression> psl_expressions = sc_system.getAnnotations();
-         if (!psl_expressions.isEmpty()) {
-                 // Parse PSL expression
-                 try {
-                        // TODO: verify proc -> x -> within_t[(1,SC_MS)]
-                         // Transform PSL expression to PVL
-                        String input = psl_expressions.get(0).toString();
-                        //System.out.println(input);
-                         LangPSLLexer lexer = new LangPSLLexer(CharStreams.fromString(input));
-                         LangPSLParser parser = new LangPSLParser(new CommonTokenStream(lexer));
-                         ParseTree tree = parser.verification_item();
-                         PSLToColVisitor<T> visitor = new PSLToColVisitor(sc_system, col_system);
-                         System.out.println(tree.toStringTree(parser) + "\n\n\n\n\n");
-                         Expr<T> result = visitor.visit(tree);
-                         conditions.add(result);
-                         System.out.println(conditions + "\n\n\n\n\n");
-                 } catch (NullPointerException ignored) {
-                         throw new ExpressionParseException(
-                                         "PSL expression "  + " could not be parsed!");
-                 }
-         }
-        psl_invariant = new InstancePredicate<>(col_system.NO_VARS, Option.apply(col_system.fold_star(conditions)),
+    private void create_psl_invariant() {
+            java.util.List<Expr<T>> conditions = new java.util.ArrayList<>();
+            java.util.ArrayList<MarkerExpression> psl_expressions = sc_system.getAnnotations();
+            if (!psl_expressions.isEmpty()) {
+                    // Parse and transform PSL expression
+                    try {
+                            String input = psl_expressions.get(0).toString();
+                            LangPSLLexer lexer = new LangPSLLexer(CharStreams.fromString(input));
+                            LangPSLParser parser = new LangPSLParser(new CommonTokenStream(lexer));
+                            ParseTree tree = parser.verification_item();
+                            PSLToColVisitor<T> visitor = new PSLToColVisitor(sc_system, col_system);
+                            Expr<T> result = visitor.visit(tree);
+                            conditions.add(result);
+                    } catch (Exception ignored) {
+                            throw new ExpressionParseException(
+                                            "PSL expression " + " could not be parsed!");
+                    }
+            }
+            psl_invariant = new InstancePredicate<>(col_system.NO_VARS, Option.apply(col_system.fold_star(conditions)),
                             false, true, OriGen.create("psl_invariant"));
     }
 
@@ -508,7 +499,6 @@ public class MainTransformer<T> {
      */
     private Expr<T> create_field_permissions(InstanceField<T> field) {
         java.util.List<Expr<T>> conditions = new java.util.ArrayList<>();
-
         // Get reference to the field instance
         Ref<T, InstanceField<T>> field_ref = new DirectRef<>(field, ClassTag$.MODULE$.apply(InstanceField.class));
         Deref<T> field_deref = new Deref<>(col_system.THIS, field_ref, new GeneratedBlame<>(), OriGen.create());
@@ -544,7 +534,6 @@ public class MainTransformer<T> {
                 conditions.add(new Perm<>(f_field_loc, new WritePerm<>(OriGen.create()), OriGen.create()));
             }
         }
-
         // Connect all individual conditions with the star operator
         return col_system.fold_star(conditions);
     }

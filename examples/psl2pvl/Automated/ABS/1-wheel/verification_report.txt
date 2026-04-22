@@ -1,0 +1,212 @@
+[#05] [info] compiling 27 Scala sources to /home/marcel/vercors/out/vercors/col/helpers/generators/compile.dest/classes ...
+[#09] [info] compiling 1 Scala source to /home/marcel/vercors/out/viper/silicon/buildInfo/compile.dest/classes ...
+[#08] [info] compiling 1 Scala source to /home/marcel/vercors/out/vercors/main/buildInfo/compile.dest/classes ...
+From https://github.com/viperproject/carbon
+ * branch            7c5c1df49844ce2cd27d42d4d95859bbc3ad0142 -> FETCH_HEAD
+HEAD is now at 7c5c1df Update silver submodule
+From https://github.com/viperproject/silicon
+ * branch            2af1a000401a30ddc80eb482111df6662c4e49d3 -> FETCH_HEAD
+From https://github.com/viperproject/silver
+ * branch            e7ce7757caff264b17e54f5c4fecedc77862c9ad -> FETCH_HEAD
+HEAD is now at 2af1a00 Marking HasDomain terms as global to fix issue #954 (#955)
+[#10] [info] compiling 9 Scala sources to /home/marcel/vercors/out/vercors/hre/pprofProto/compile.dest/classes ...
+HEAD is now at e7ce775 Adding test for Silicon issue #954
+[#01] [info] compiling 115 Scala sources to /home/marcel/vercors/out/viper/silver/compile.dest/classes ...
+[#01] warning(109): /home/marcel/vercors/src/parsers/antlr4/CPPParser.g4:2:0: options ignored in imported grammar CPPParser
+[#01] warning(125): /home/marcel/vercors/src/parsers/antlr4/LLVMSpecParser.g4:12:14: implicit definition of token Constant in parser
+[#08] [info] done compiling
+[#09] [info] done compiling
+[#01] [warning] No unapply generated for alternative 6 of rule unqualifiedId
+[#01] [warning] No unapply generated for alternative 2 of rule lambdaCapture
+[#01] [warning] No unapply generated for alternative 1 of rule captureList
+[#01] [warning] No unapply generated for alternative 17 of rule postfixExpression
+[#01] [warning] No unapply generated for alternative 1 of rule pseudoDestructorName
+[#01] [warning] No unapply generated for alternative 6 of rule unaryExpression
+[#01] [warning] No unapply generated for alternative 1 of rule deleteExpression
+[#01] [warning] No unapply generated for alternative 1 of rule labeledStatement
+[#01] [warning] No unapply generated for alternative 2 of rule condition
+[#01] [warning] No unapply generated for alternative 1 of rule decltypeSpecifier
+[#01] [warning] No unapply generated for alternative 1 of rule elaboratedTypeSpecifier
+[#01] [warning] No unapply generated for alternative 1 of rule enumSpecifier
+[#01] [warning] No unapply generated for alternative 1 of rule enumHead
+[#01] [warning] No unapply generated for alternative 1 of rule enumeratorList
+[#01] [warning] No unapply generated for alternative 1 of rule enumeratorDefinition
+[#01] [warning] No unapply generated for alternative 1 of rule usingDeclaration
+[#01] [warning] No unapply generated for alternative 1 of rule linkageSpecification
+[#01] [warning] No unapply generated for alternative 1 of rule alignmentspecifier
+[#01] [warning] No unapply generated for alternative 1 of rule attributeList
+[#01] [warning] No unapply generated for alternative 1 of rule attribute
+[#01] [warning] No unapply generated for alternative 1 of rule pointerAbstractDeclarator
+[#01] [warning] No unapply generated for alternative 1 of rule noPointerAbstractDeclarator
+[#01] [warning] No unapply generated for alternative 1 of rule noPointerAbstractPackDeclarator
+[#01] [warning] No unapply generated for alternative 1 of rule parameterDeclarationList
+[#01] [warning] No unapply generated for alternative 2 of rule parameterDeclaration
+[#01] [warning] No unapply generated for alternative 1 of rule classHead
+[#01] [warning] No unapply generated for alternative 2 of rule classHead
+[#01] [warning] No unapply generated for alternative 1 of rule memberSpecification
+[#01] [warning] No unapply generated for alternative 1 of rule memberDeclaratorList
+[#01] [warning] No unapply generated for alternative 1 of rule memberDeclarator
+[#01] [warning] No unapply generated for alternative 1 of rule baseSpecifierList
+[#01] [warning] No unapply generated for alternative 1 of rule baseSpecifier
+[#01] [warning] No unapply generated for alternative 1 of rule memInitializerList
+[#01] [warning] No unapply generated for alternative 1 of rule memInitializer
+[#01] [warning] No unapply generated for alternative 1 of rule literalOperatorId
+[#01] [warning] No unapply generated for alternative 1 of rule templateparameterList
+[#01] [warning] No unapply generated for alternative 1 of rule typeParameter
+[#01] [warning] No unapply generated for alternative 2 of rule templateId
+[#01] [warning] No unapply generated for alternative 1 of rule typeNameSpecifier
+[#01] [warning] No unapply generated for alternative 1 of rule exceptionDeclaration
+[#01] [warning] No unapply generated for alternative 1 of rule typeIdList
+[#01] [warning] No unapply generated for alternative 1 of rule theOperator
+[#01] [warning] No unapply generated for alternative 2 of rule theOperator
+[#01] [warning] No unapply generated for alternative 1 of rule verification_unit
+[#01] [warning] No unapply generated for alternative 1 of rule vunit_instance
+[#01] [warning] No unapply generated for alternative 1 of rule hierarchical_hdl_name
+[#01] [warning] No unapply generated for alternative 1 of rule inherit_spec
+[#01] [warning] No unapply generated for alternative 1 of rule name_list
+[#01] [warning] No unapply generated for alternative 1 of rule formal_parameter_list
+[#01] [warning] No unapply generated for alternative 1 of rule property_declaration
+[#01] [warning] No unapply generated for alternative 1 of rule formal_parameter
+[#01] [warning] No unapply generated for alternative 1 of rule sequence_declaration
+[#01] [warning] No unapply generated for alternative 1 of rule actual_parameter_list
+[#01] [warning] No unapply generated for alternative 1 of rule psl_directive
+[#01] [warning] No unapply generated for alternative 1 of rule assert_directive
+[#01] [warning] No unapply generated for alternative 1 of rule value_set
+[#01] [warning] No unapply generated for alternative 53 of rule fl_property
+[#01] [warning] No unapply generated for alternative 3 of rule fl_property
+[#01] [warning] No unapply generated for alternative 1 of rule braced_sere
+[#01] [warning] No unapply generated for alternative 2 of rule braced_sere
+[#01] [warning] No unapply generated for alternative 1 of rule sequence_instance
+[#01] [warning] No unapply generated for alternative 4 of rule built_in_function_call
+[#01] [warning] No unapply generated for alternative 6 of rule built_in_function_call
+[#01] [warning] No unapply generated for alternative 7 of rule built_in_function_call
+[#01] [warning] No unapply generated for alternative 8 of rule built_in_function_call
+[#01] [warning] No unapply generated for alternative 9 of rule built_in_function_call
+[#01] [warning] No unapply generated for alternative 2 of rule obe_property
+[#01] [warning] No unapply generated for alternative 6 of rule unqualifiedId
+[#01] [warning] No unapply generated for alternative 2 of rule lambdaCapture
+[#01] [warning] No unapply generated for alternative 1 of rule captureList
+[#01] [warning] No unapply generated for alternative 17 of rule postfixExpression
+[#01] [warning] No unapply generated for alternative 1 of rule pseudoDestructorName
+[#01] [warning] No unapply generated for alternative 6 of rule unaryExpression
+[#01] [warning] No unapply generated for alternative 1 of rule deleteExpression
+[#01] [warning] No unapply generated for alternative 1 of rule labeledStatement
+[#01] [warning] No unapply generated for alternative 2 of rule condition
+[#01] [warning] No unapply generated for alternative 1 of rule decltypeSpecifier
+[#01] [warning] No unapply generated for alternative 1 of rule elaboratedTypeSpecifier
+[#01] [warning] No unapply generated for alternative 1 of rule enumSpecifier
+[#01] [warning] No unapply generated for alternative 1 of rule enumHead
+[#01] [warning] No unapply generated for alternative 1 of rule enumeratorList
+[#01] [warning] No unapply generated for alternative 1 of rule enumeratorDefinition
+[#01] [warning] No unapply generated for alternative 1 of rule usingDeclaration
+[#01] [warning] No unapply generated for alternative 1 of rule linkageSpecification
+[#01] [warning] No unapply generated for alternative 1 of rule alignmentspecifier
+[#01] [warning] No unapply generated for alternative 1 of rule attributeList
+[#01] [warning] No unapply generated for alternative 1 of rule attribute
+[#01] [warning] No unapply generated for alternative 1 of rule pointerAbstractDeclarator
+[#01] [warning] No unapply generated for alternative 1 of rule noPointerAbstractDeclarator
+[#01] [warning] No unapply generated for alternative 1 of rule noPointerAbstractPackDeclarator
+[#01] [warning] No unapply generated for alternative 1 of rule parameterDeclarationList
+[#01] [warning] No unapply generated for alternative 2 of rule parameterDeclaration
+[#01] [warning] No unapply generated for alternative 1 of rule classHead
+[#01] [warning] No unapply generated for alternative 2 of rule classHead
+[#01] [warning] No unapply generated for alternative 1 of rule memberSpecification
+[#01] [warning] No unapply generated for alternative 1 of rule memberDeclaratorList
+[#01] [warning] No unapply generated for alternative 1 of rule memberDeclarator
+[#01] [warning] No unapply generated for alternative 1 of rule baseSpecifierList
+[#01] [warning] No unapply generated for alternative 1 of rule baseSpecifier
+[#01] [warning] No unapply generated for alternative 1 of rule memInitializerList
+[#01] [warning] No unapply generated for alternative 1 of rule memInitializer
+[#01] [warning] No unapply generated for alternative 1 of rule literalOperatorId
+[#01] [warning] No unapply generated for alternative 1 of rule templateparameterList
+[#01] [warning] No unapply generated for alternative 1 of rule typeParameter
+[#01] [warning] No unapply generated for alternative 2 of rule templateId
+[#01] [warning] No unapply generated for alternative 1 of rule typeNameSpecifier
+[#01] [warning] No unapply generated for alternative 1 of rule exceptionDeclaration
+[#01] [warning] No unapply generated for alternative 1 of rule typeIdList
+[#01] [warning] No unapply generated for alternative 1 of rule theOperator
+[#01] [warning] No unapply generated for alternative 2 of rule theOperator
+[#10] [info] done compiling
+[#10] [info] compiling 47 Scala sources and 3 Java sources to /home/marcel/vercors/out/vercors/hre/compile.dest/classes ...
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/defn/Naming.scala:115:21: method any2stringadd in object Predef is deprecated (since 2.13.0): Implicit injection of + is deprecated. Convert to String to call +
+[#10] [warn] /home/marcel/vercors/src/hre/hre/progress/TaskRegistry.scala:12:54: method getId in class Thread is deprecated (since 19)
+[#05] [warn]     Term.Name(scopes(name.base) + "SuccProvider")
+[#05] [warn]                     ^
+[#10] [warn]   def isMainThread: Boolean = Thread.currentThread().getId == get.mainThreadId
+[#10] [warn]                                                      ^
+[#10] [warn] /home/marcel/vercors/src/hre/hre/progress/TaskRegistry.scala:29:34: method getId in class Thread is deprecated (since 19)
+[#10] [warn]       if (Thread.currentThread().getId == task.getOwnerThread) {
+[#10] [warn]                                  ^
+[#10] [warn] /home/marcel/vercors/src/hre/hre/progress/TaskRegistry.scala:55:45: method getId in class Thread is deprecated (since 19)
+[#10] [warn]       mainThreadId = Thread.currentThread().getId
+[#10] [warn]                                             ^
+[#10] [warn] /home/marcel/vercors/src/hre/hre/progress/task/AbstractTask.scala:59:34: method getId in class Thread is deprecated (since 19)
+[#10] [warn]       if (Thread.currentThread().getId != ownerThread)
+[#10] [warn]                                  ^
+[#10] [warn] /home/marcel/vercors/src/hre/hre/progress/task/AbstractTask.scala:70:42: method getId in class Thread is deprecated (since 19)
+[#10] [warn]     ownerThread = Thread.currentThread().getId
+[#10] [warn]                                          ^
+[#10] [warn] /home/marcel/vercors/src/hre/hre/util/ThreadWatchdog.scala:23:80: method getId in class Thread is deprecated (since 19)
+[#10] [warn]                 .getOrElse("UnknownThreadGroup")}.${thread.getName} (#${thread.getId}) is still running"
+[#10] [warn]                                                                                ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/AllScopes.scala:24:51: method apply in object Init is deprecated: 4.6.0
+[#05] [warn]       case class AllScopes[Pre, Post]() extends ${Init(t"$SuccessorsProvider[Pre, Post]", Name.Anonymous(), List.empty)} {
+[#05] [warn]                                                   ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/AllScopes.scala:28:18: method apply in object Match is deprecated: 4.4.5
+[#05] [warn]           ${Term.Match(q"`~decl`", declaredFamilies.map(name => Case(p"decl: ${typ(name)}[Post]", None, q"${scopes(name.base)}.declare(decl); `~decl`")).toList)}
+[#05] [warn]                  ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/AllScopes.scala:31:18: method apply in object Match is deprecated: 4.4.5
+[#05] [warn]           ${Term.Match(
+[#05] [warn]                  ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/BaseCoercingRewriter.scala:31:55: method apply in object Init is deprecated: 4.6.0
+[#05] [warn]       trait BaseCoercingRewriter[Pre, Post] extends ${Init(t"$AbstractRewriter[Pre, Post]", Name.Anonymous(), List.empty)} {
+[#05] [warn]                                                       ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/BaseNonLatchingRewriter.scala:29:58: method apply in object Init is deprecated: 4.6.0
+[#05] [warn]       trait BaseNonLatchingRewriter[Pre, Post] extends ${Init(t"$AbstractRewriter[Pre, Post]", Name.Anonymous(), List.empty)} {
+[#05] [warn]                                                          ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/Deserialize.scala:96:17: method apply in object Init is deprecated: 4.6.0
+[#05] [warn]         q"new ${Init(t"$LazyRef[G, ${typ(node.name)}[G]]", Name.Anonymous(), List(List(q"decls($term.id)")))}"
+[#05] [warn]                 ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/Deserialize.scala:98:17: method apply in object Init is deprecated: 4.6.0
+[#05] [warn]         q"new ${Init(t"$LazyRef[G, ${typ(node.name)}[G]]", Name.Anonymous(), List(List(q"decls($term.id)")))}"
+[#05] [warn]                 ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/DeserializeFamily.scala:36:10: method apply in object Match is deprecated: 4.4.5
+[#05] [warn]     Term.Match(
+[#05] [warn]          ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/Ops.scala:18:21: method apply in object Init is deprecated: 4.6.0
+[#05] [warn]           extends ${Init(t"${compareType(node)}[G]", Name.Anonymous(), Nil)}
+[#05] [warn]                     ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/Ops.scala:19:18: method apply in object Init is deprecated: 4.6.0
+[#05] [warn]           with ${Init(t"${rewriteType(node)}[G]", Name.Anonymous(), Nil)}
+[#05] [warn]                  ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/Ops.scala:20:18: method apply in object Init is deprecated: 4.6.0
+[#05] [warn]           with ${Init(t"${subnodesType(node)}[G]", Name.Anonymous(), Nil)}
+[#05] [warn]                  ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/Ops.scala:21:18: method apply in object Init is deprecated: 4.6.0
+[#05] [warn]           with ${Init(t"${serializeType(node)}[G]", Name.Anonymous(), Nil)}
+[#05] [warn]                  ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/OpsFamily.scala:47:14: method apply in object Init is deprecated: 4.6.0
+[#05] [warn]         List(Init(t"${declareType(name)}[G]", Name.Anonymous(), List.empty))
+[#05] [warn]              ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/Rewrite.scala:78:13: method apply in object Init is deprecated: 4.6.0
+[#05] [warn]     q"new ${Init(typ(node.name), Name.Anonymous(), valuess)}"
+[#05] [warn]             ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/SuccessorsProvider.scala:35:18: method apply in object Match is deprecated: 4.4.5
+[#05] [warn]           ${Term.Match(q"`~decl`", declaredFamilies.map(name => Case(p"(decl: ${typ(name)}[Pre])", None, q"succ(decl)")).toList)}
+[#05] [warn]                  ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/SuccessorsProvider.scala:52:79: method apply in object Init is deprecated: 4.6.0
+[#05] [warn]       class SuccessorsProviderNothing[Pre, Post](crash: => Nothing) extends ${Init(t"$SuccessorsProvider[Pre, Post]", Name.Anonymous(), List.empty)} {
+[#05] [warn]                                                                               ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/SuccessorsProvider.scala:64:128: method apply in object Init is deprecated: 4.6.0
+[#05] [warn]       case class SuccessorsProviderChain[A, B, C](left: $SuccessorsProvider[A, B], right: $SuccessorsProvider[B, C]) extends ${Init(t"SuccessorsProvider[A, C]", Name.Anonymous(), List.empty)} {
+[#05] [warn]                                                                                                                                ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/SuccessorsProvider.scala:76:106: method apply in object Init is deprecated: 4.6.0
+[#05] [warn]       abstract class SuccessorsProviderTrafo[Pre, Post](inner: $SuccessorsProvider[Pre, Post]) extends ${Init(t"$SuccessorsProvider[Pre, Post]", Name.Anonymous(), List.empty)} { outer =>
+[#05] [warn]                                                                                                          ^
+[#05] [warn] /home/marcel/vercors/src/helpers/vct/col/ast/helpers/generator/SuccessorsProvider.scala:82:19: method apply in object Init is deprecated: 4.6.0
+[#05] [warn]             new ${Init(t"$SuccessorProviderTrafo[Pre, Post, ${typ(name)}[Pre], ${typ(name)}[Post]]", Name.Anonymous(), List(List(q"inner.${succProviderName(name)}")))} {
+[#05] [warn]                   ^
+[#10] [warn] 6 warnings found
+[#10] [info] done compiling
+[#05] [warn] 20 warnings found
+[#05] [info] done compiling

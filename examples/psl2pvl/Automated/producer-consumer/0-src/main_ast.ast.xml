@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<INTERNAL>
+  <external_declaration idref="2">
+    <declaration idref="4">
+      <declaration_specifiers idref="8">
+        <class_specifier extSCModule="true" idref="10" keyword="class" name="consumer">
+          <base_clause column="19" file="consumer.h" idref="12" line="8">
+            <base_specifier column="19" file="consumer.h" idref="14"
+              length="0" line="8" name="sc_module" sc_dt="true">
+              <base_class_access_specifier column="19" file="consumer.h"
+                idref="16" line="8" name="public"/>
+            </base_specifier>
+          </base_clause>
+          <member_declaration column="19" file="consumer.h" idref="18" line="8">
+            <access_specifier column="19" file="consumer.h" idref="20"
+              line="8" name="public"/>
+          </member_declaration>
+          <member_declaration column="1" file="consumer.h" idref="22" line="9">
+            <member_declarator_list column="1" file="consumer.h"
+              idref="24" line="9">
+              <sc_port_specifier column="1" file="consumer.h" idref="26"
+                line="9" name="sc_fifo_in" numOfChanels="0">
+                <declaration_specifiers column="15" file="consumer.h"
+                  idref="28" line="9">
+                  <builtin_type_specifier column="15" file="consumer.h"
+                    idref="30" length="0" line="9" name="int" sc_dt="false"/>
+                </declaration_specifiers>
+              </sc_port_specifier>
+              <member_declarator column="19" file="consumer.h"
+                idref="32" line="9">
+                <declarator column="19" file="consumer.h" idref="34" line="9">
+                  <qualified_id column="19" file="consumer.h" idref="36"
+                    line="9" name="fifo"/>
+                </declarator>
+              </member_declarator>
+            </member_declarator_list>
+          </member_declaration>
+          <member_declaration column="25" file="consumer.h" idref="38" line="11">
+            <function_definition column="25" file="consumer.h"
+              idref="40" line="11">
+              <declaration_specifiers column="25" file="consumer.h"
+                idref="42" line="11">
+                <builtin_type_specifier column="25" file="consumer.h"
+                  idref="44" length="0" line="11" name="void" sc_dt="false"/>
+              </declaration_specifiers>
+              <function_declarator column="5" file="consumer.h"
+                idref="46" line="11">
+                <qualified_id column="5" file="consumer.h" idref="48"
+                  line="11" name="consume"/>
+                <parameter_list column="17" file="consumer.h" idref="50" line="11">
+                  <parameter_declaration column="17" file="consumer.h"
+                    idref="52" line="11">
+                    <declaration_specifiers column="17"
+                      file="consumer.h" idref="54" line="11">
+                      <builtin_type_specifier column="17"
+                        file="consumer.h" idref="56" length="0"
+                        line="11" name="int" sc_dt="false"/>
+                    </declaration_specifiers>
+                    <declarator column="18" file="consumer.h" idref="58" line="11">
+                      <qualified_id column="18" file="consumer.h"
+                        idref="60" line="11" name="c_param"/>
+                    </declarator>
+                  </parameter_declaration>
+                </parameter_list>
+              </function_declarator>
+              <block column="29" file="consumer.h" idref="62" line="12">
+                <block_statement column="5" file="consumer.h" idref="64" line="13">
+                  <systemCRoutine column="5" file="consumer.h"
+                    idref="68" line="13" name="wait">
+                    <arguments column="7" file="consumer.h" idref="70" line="13">
+                      <arguments_list column="11" file="consumer.h"
+                        idref="72" line="13">
+                        <primary_expression column="11"
+                          file="consumer.h" idref="76" line="13">
+                          <constant column="11" file="consumer.h"
+                            idref="78" line="13" value="200"/>
+                        </primary_expression>
+                        <primary_expression column="15"
+                          file="consumer.h" idref="82" line="13">
+                          <constant column="15" file="consumer.h"
+                            idref="84" line="13" value="SC_US"/>
+                        </primary_expression>
+                      </arguments_list>
+                    </arguments>
+                  </systemCRoutine>
+                </block_statement>
+                <block_statement column="23" file="consumer.h"
+                  idref="86" line="14">
+                  <output_stream column="23" file="consumer.h"
+                    idref="88" line="14" name="cout">
+                    <systemCRoutine column="12" file="consumer.h"
+                      idref="92" line="14" name="sc_time_stamp">
+                      <arguments column="28" file="consumer.h"
+                        idref="94" line="14"/>
+                    </systemCRoutine>
+                    <primary_expression column="31" file="consumer.h"
+                      idref="98" line="14">
+                      <constant column="31" file="consumer.h"
+                        idref="100" line="14" value="&quot; consumer: &quot;"/>
+                    </primary_expression>
+                    <primary_expression column="48" file="consumer.h"
+                      idref="104" line="14">
+                      <id_expression column="51" file="consumer.h"
+                        idref="106" line="14" name="c_param"/>
+                    </primary_expression>
+                    <primary_expression column="59" file="consumer.h"
+                      idref="110" line="14">
+                      <constant column="59" file="consumer.h"
+                        idref="112" line="14" value="&quot; consumed&quot;"/>
+                    </primary_expression>
+                    <primary_expression column="74" file="consumer.h"
+                      idref="116" line="14">
+                      <scope_override column="74" file="consumer.h"
+                        idref="118" line="14" name="std"/>
+                      <id_expression column="82" file="consumer.h"
+                        idref="120" line="14" name="endl"/>
+                    </primary_expression>
+                  </output_stream>
+                </block_statement>
+              </block>
+            </function_definition>
+          </member_declaration>
+          <member_declaration column="5" file="consumer.h" idref="122" line="17">
+            <function_definition column="5" file="consumer.h"
+              idref="124" line="17">
+              <declaration_specifiers column="5" file="consumer.h"
+                idref="126" line="17">
+                <builtin_type_specifier column="5" file="consumer.h"
+                  idref="128" length="0" line="17" name="void" sc_dt="false"/>
+              </declaration_specifiers>
+              <function_declarator column="5" file="consumer.h"
+                idref="130" line="17">
+                <qualified_id column="5" file="consumer.h" idref="132"
+                  line="17" name="main_method"/>
+                <parameter_list column="21" file="consumer.h"
+                  idref="134" line="17">
+                  <parameter_declaration column="21" file="consumer.h"
+                    idref="136" line="17">
+                    <declaration_specifiers column="21"
+                      file="consumer.h" idref="138" line="17">
+                      <builtin_type_specifier column="21"
+                        file="consumer.h" idref="140" length="0"
+                        line="17" name="void" sc_dt="false"/>
+                    </declaration_specifiers>
+                    <abstract_declarator column="22" file="consumer.h"
+                      idref="142" line="17"/>
+                  </parameter_declaration>
+                </parameter_list>
+              </function_declarator>
+              <block column="26" file="consumer.h" idref="144" line="18">
+                <block_statement column="5" file="consumer.h"
+                  idref="146" line="19">
+                  <declaration column="5" file="consumer.h" idref="148" line="19">
+                    <init_declarator_list column="5" file="consumer.h"
+                      idref="150" line="19">
+                      <declaration_specifiers column="5"
+                        file="consumer.h" idref="152" line="19">
+                        <builtin_type_specifier column="5"
+                          file="consumer.h" idref="154" length="0"
+                          line="19" name="int" sc_dt="false"/>
+                      </declaration_specifiers>
+                      <init_declarator column="7" file="consumer.h"
+                        idref="156" line="19">
+                        <declarator column="7" file="consumer.h"
+                          idref="158" line="19">
+                          <qualified_id column="7" file="consumer.h"
+                            idref="160" line="19" name="c"/>
+                        </declarator>
+                        <initializer column="13" file="consumer.h"
+                          idref="162" line="19">
+                          <primary_expression column="13"
+                            file="consumer.h" idref="166" line="19">
+                            <constant column="13" file="consumer.h"
+                              idref="168" line="19" value="0"/>
+                          </primary_expression>
+                        </initializer>
+                      </init_declarator>
+                    </init_declarator_list>
+                  </declaration>
+                </block_statement>
+                <block_statement column="16" file="consumer.h"
+                  idref="170" line="20">
+                  <while_statement column="16" file="consumer.h"
+                    idref="172" line="20">
+                    <primary_expression column="12" file="consumer.h"
+                      idref="176" line="20">
+                      <constant column="12" file="consumer.h"
+                        idref="178" line="20" value="true"/>
+                    </primary_expression>
+                    <block column="17" file="consumer.h" idref="180" line="21">
+                      <block_statement column="7" file="consumer.h"
+                        idref="182" line="22">
+                        <assignment column="11" file="consumer.h"
+                          idref="192" line="22">
+                          <primary_expression column="7"
+                            file="consumer.h" idref="186" line="22">
+                            <id_expression column="9" file="consumer.h"
+                              idref="188" line="22" name="c"/>
+                          </primary_expression>
+                          <assignment_operator column="9"
+                            file="consumer.h" idref="190" line="22"/>
+                          <postfix_expression column="11"
+                            file="consumer.h" idref="194" line="22">
+                            <primary_expression column="11"
+                              file="consumer.h" idref="196" line="22">
+                              <id_expression column="13"
+                                file="consumer.h" idref="198" line="22" name="fifo"/>
+                            </primary_expression>
+                            <dereferencing_operator column="13"
+                              file="consumer.h" idref="200" line="22" name="*"/>
+                            <id_expression column="19" file="consumer.h"
+                              idref="202" line="22" name="read"/>
+                            <arguments column="19" file="consumer.h"
+                              idref="204" line="22"/>
+                          </postfix_expression>
+                        </assignment>
+                      </block_statement>
+                      <block_statement column="25" file="consumer.h"
+                        idref="206" line="23">
+                        <postfix_expression column="25"
+                          file="consumer.h" idref="208" line="23">
+                          <primary_expression column="25"
+                            file="consumer.h" idref="210" line="23">
+                            <id_expression column="6" file="consumer.h"
+                              idref="212" line="23" name="consume"/>
+                          </primary_expression>
+                          <arguments column="6" file="consumer.h"
+                            idref="214" line="23">
+                            <arguments_list column="13"
+                              file="consumer.h" idref="216" line="23">
+                              <primary_expression column="13"
+                                file="consumer.h" idref="220" line="23">
+                                <id_expression column="14"
+                                  file="consumer.h" idref="222"
+                                  line="23" name="c"/>
+                              </primary_expression>
+                            </arguments_list>
+                          </arguments>
+                        </postfix_expression>
+                      </block_statement>
+                    </block>
+                  </while_statement>
+                </block_statement>
+              </block>
+            </function_definition>
+          </member_declaration>
+          <member_declaration column="5" file="consumer.h" idref="224" line="28"/>
+          <member_declaration column="5" file="consumer.h" idref="226" line="28">
+            <ctor_definition column="5" file="consumer.h" idref="228" line="28">
+              <qualified_id column="12" file="consumer.h" idref="230"
+                line="28" name="consumer"/>
+              <parameter_list column="21" file="consumer.h" idref="232" line="29">
+                <parameter_declaration column="21" file="consumer.h"
+                  idref="234" line="29">
+                  <declaration_specifiers column="21" file="consumer.h"
+                    idref="236" line="29">
+                    <builtin_type_specifier column="21"
+                      file="consumer.h" idref="238" length="0" line="29"
+                      name="sc_module_name" sc_dt="true"/>
+                  </declaration_specifiers>
+                  <declarator column="21" file="consumer.h" idref="240" line="29">
+                    <qualified_id column="21" file="consumer.h"
+                      idref="242" line="29" name="name"/>
+                  </declarator>
+                </parameter_declaration>
+              </parameter_list>
+              <ctor_initializer column="21" file="consumer.h"
+                idref="244" line="29">
+                <superclass_init column="21" file="consumer.h"
+                  idref="246" line="29">
+                  <declaration_specifiers column="21" file="consumer.h"
+                    idref="248" line="29">
+                    <builtin_type_specifier column="21"
+                      file="consumer.h" idref="250" length="0" line="29"
+                      name="sc_module" sc_dt="true"/>
+                  </declaration_specifiers>
+                  <arguments_list column="21" file="consumer.h"
+                    idref="252" line="29">
+                    <primary_expression column="21" file="consumer.h"
+                      idref="254" line="29">
+                      <id_expression column="21" file="consumer.h"
+                        idref="256" line="29" name="name"/>
+                    </primary_expression>
+                  </arguments_list>
+                </superclass_init>
+              </ctor_initializer>
+              <block column="21" file="consumer.h" idref="258" line="29">
+                <sc_thread_block column="5" file="consumer.h"
+                  idref="260" line="30">
+                  <sc_thread column="5" file="consumer.h" idref="262"
+                    line="30" name="main_method"/>
+                </sc_thread_block>
+              </block>
+            </ctor_definition>
+          </member_declaration>
+        </class_specifier>
+      </declaration_specifiers>
+    </declaration>
+  </external_declaration>
+  <external_declaration column="2" file="producer.h" idref="264" line="7">
+    <declaration column="2" file="producer.h" idref="266" line="7">
+      <declaration_specifiers column="2" file="producer.h" idref="270" line="7">
+        <class_specifier column="2" extSCModule="true" file="producer.h"
+          idref="272" keyword="class" line="7" name="producer">
+          <base_clause column="19" file="producer.h" idref="274" line="8">
+            <base_specifier column="19" file="producer.h" idref="276"
+              length="0" line="8" name="sc_module" sc_dt="true">
+              <base_class_access_specifier column="19" file="producer.h"
+                idref="278" line="8" name="public"/>
+            </base_specifier>
+          </base_clause>
+          <member_declaration column="19" file="producer.h" idref="280" line="8">
+            <access_specifier column="19" file="producer.h" idref="282"
+              line="8" name="public"/>
+          </member_declaration>
+          <member_declaration column="1" file="producer.h" idref="284" line="10">
+            <member_declarator_list column="1" file="producer.h"
+              idref="286" line="10">
+              <sc_port_specifier column="1" file="producer.h"
+                idref="288" line="10" name="sc_fifo_out" numOfChanels="0">
+                <declaration_specifiers column="16" file="producer.h"
+                  idref="290" line="10">
+                  <builtin_type_specifier column="16" file="producer.h"
+                    idref="292" length="0" line="10" name="int" sc_dt="false"/>
+                </declaration_specifiers>
+              </sc_port_specifier>
+              <member_declarator column="20" file="producer.h"
+                idref="294" line="10">
+                <declarator column="20" file="producer.h" idref="296" line="10">
+                  <qualified_id column="20" file="producer.h"
+                    idref="298" line="10" name="fifo"/>
+                </declarator>
+              </member_declarator>
+            </member_declarator_list>
+          </member_declaration>
+          <member_declaration column="26" file="producer.h" idref="300" line="12">
+            <member_declarator_list column="26" file="producer.h"
+              idref="302" line="12">
+              <declaration_specifiers column="26" file="producer.h"
+                idref="304" line="12">
+                <builtin_type_specifier column="26" file="producer.h"
+                  idref="306" length="0" line="12" name="int" sc_dt="false"/>
+              </declaration_specifiers>
+              <member_declarator column="5" file="producer.h"
+                idref="308" line="12">
+                <declarator column="5" file="producer.h" idref="310" line="12">
+                  <qualified_id column="5" file="producer.h" idref="312"
+                    line="12" name="pid"/>
+                </declarator>
+              </member_declarator>
+            </member_declarator_list>
+          </member_declaration>
+          <member_declaration column="12" file="producer.h" idref="314" line="14">
+            <function_definition column="12" file="producer.h"
+              idref="316" line="14">
+              <declaration_specifiers column="12" file="producer.h"
+                idref="318" line="14">
+                <builtin_type_specifier column="12" file="producer.h"
+                  idref="320" length="0" line="14" name="int" sc_dt="false"/>
+              </declaration_specifiers>
+              <function_declarator column="5" file="producer.h"
+                idref="322" line="14">
+                <qualified_id column="5" file="producer.h" idref="324"
+                  line="14" name="produce"/>
+                <parameter_list column="16" file="producer.h"
+                  idref="326" line="14">
+                  <parameter_declaration column="16" file="producer.h"
+                    idref="328" line="14">
+                    <declaration_specifiers column="16"
+                      file="producer.h" idref="330" line="14">
+                      <builtin_type_specifier column="16"
+                        file="producer.h" idref="332" length="0"
+                        line="14" name="int" sc_dt="false"/>
+                    </declaration_specifiers>
+                    <declarator column="17" file="producer.h"
+                      idref="334" line="14">
+                      <qualified_id column="17" file="producer.h"
+                        idref="336" line="14" name="c_param"/>
+                    </declarator>
+                  </parameter_declaration>
+                </parameter_list>
+              </function_declarator>
+              <block column="28" file="producer.h" idref="338" line="15">
+                <block_statement column="5" file="producer.h"
+                  idref="340" line="16">
+                  <declaration column="5" file="producer.h" idref="342" line="16">
+                    <init_declarator_list column="5" file="producer.h"
+                      idref="344" line="16">
+                      <declaration_specifiers column="5"
+                        file="producer.h" idref="346" line="16">
+                        <builtin_type_specifier column="5"
+                          file="producer.h" idref="348" length="0"
+                          line="16" name="int" sc_dt="false"/>
+                      </declaration_specifiers>
+                      <init_declarator column="7" file="producer.h"
+                        idref="350" line="16">
+                        <declarator column="7" file="producer.h"
+                          idref="352" line="16">
+                          <qualified_id column="7" file="producer.h"
+                            idref="354" line="16" name="wait_time"/>
+                        </declarator>
+                        <initializer column="21" file="producer.h"
+                          idref="356" line="16">
+                          <primary_expression column="21"
+                            file="producer.h" idref="360" line="16">
+                            <constant column="21" file="producer.h"
+                              idref="362" line="16" value="100"/>
+                          </primary_expression>
+                        </initializer>
+                      </init_declarator>
+                    </init_declarator_list>
+                  </declaration>
+                </block_statement>
+                <block_statement column="26" file="producer.h"
+                  idref="364" line="17">
+                  <systemCRoutine column="26" file="producer.h"
+                    idref="368" line="17" name="wait">
+                    <arguments column="7" file="producer.h" idref="370" line="17">
+                      <arguments_list column="11" file="producer.h"
+                        idref="372" line="17">
+                        <primary_expression column="11"
+                          file="producer.h" idref="376" line="17">
+                          <id_expression column="12" file="producer.h"
+                            idref="378" line="17" name="wait_time"/>
+                        </primary_expression>
+                        <primary_expression column="21"
+                          file="producer.h" idref="382" line="17">
+                          <constant column="21" file="producer.h"
+                            idref="384" line="17" value="SC_NS"/>
+                        </primary_expression>
+                      </arguments_list>
+                    </arguments>
+                  </systemCRoutine>
+                </block_statement>
+                <block_statement column="29" file="producer.h"
+                  idref="386" line="18">
+                  <assignment column="15" file="producer.h" idref="396" line="18">
+                    <primary_expression column="29" file="producer.h"
+                      idref="390" line="18">
+                      <id_expression column="7" file="producer.h"
+                        idref="392" line="18" name="c_param"/>
+                    </primary_expression>
+                    <assignment_operator column="7" file="producer.h"
+                      idref="394" line="18"/>
+                    <mod_node column="30" file="producer.h" idref="416" line="18">
+                      <primary_expression column="15" file="producer.h"
+                        idref="400" line="18">
+                        <add_node column="26" file="producer.h"
+                          idref="408" line="18">
+                          <primary_expression column="17"
+                            file="producer.h" idref="404" line="18">
+                            <id_expression column="18" file="producer.h"
+                              idref="406" line="18" name="c_param"/>
+                          </primary_expression>
+                          <primary_expression column="26"
+                            file="producer.h" idref="412" line="18">
+                            <constant column="26" file="producer.h"
+                              idref="414" line="18" value="1"/>
+                          </primary_expression>
+                        </add_node>
+                      </primary_expression>
+                      <primary_expression column="30" file="producer.h"
+                        idref="420" line="18">
+                        <constant column="30" file="producer.h"
+                          idref="422" line="18" value="8"/>
+                      </primary_expression>
+                    </mod_node>
+                  </assignment>
+                </block_statement>
+                <block_statement column="32" file="producer.h"
+                  idref="424" line="19">
+                  <return_statement column="32" file="producer.h"
+                    idref="426" line="19">
+                    <primary_expression column="7" file="producer.h"
+                      idref="430" line="19">
+                      <id_expression column="14" file="producer.h"
+                        idref="432" line="19" name="c_param"/>
+                    </primary_expression>
+                  </return_statement>
+                </block_statement>
+              </block>
+            </function_definition>
+          </member_declaration>
+          <member_declaration column="5" file="producer.h" idref="434" line="22">
+            <function_definition column="5" file="producer.h"
+              idref="436" line="22">
+              <declaration_specifiers column="5" file="producer.h"
+                idref="438" line="22">
+                <builtin_type_specifier column="5" file="producer.h"
+                  idref="440" length="0" line="22" name="void" sc_dt="false"/>
+              </declaration_specifiers>
+              <function_declarator column="5" file="producer.h"
+                idref="442" line="22">
+                <qualified_id column="5" file="producer.h" idref="444"
+                  line="22" name="main_method"/>
+                <parameter_list column="21" file="producer.h"
+                  idref="446" line="22">
+                  <parameter_declaration column="21" file="producer.h"
+                    idref="448" line="22">
+                    <declaration_specifiers column="21"
+                      file="producer.h" idref="450" line="22">
+                      <builtin_type_specifier column="21"
+                        file="producer.h" idref="452" length="0"
+                        line="22" name="void" sc_dt="false"/>
+                    </declaration_specifiers>
+                    <abstract_declarator column="22" file="producer.h"
+                      idref="454" line="22"/>
+                  </parameter_declaration>
+                </parameter_list>
+              </function_declarator>
+              <block column="26" file="producer.h" idref="456" line="23">
+                <block_statement column="5" file="producer.h"
+                  idref="458" line="24">
+                  <declaration column="5" file="producer.h" idref="460" line="24">
+                    <init_declarator_list column="5" file="producer.h"
+                      idref="462" line="24">
+                      <declaration_specifiers column="5"
+                        file="producer.h" idref="464" line="24">
+                        <builtin_type_specifier column="5"
+                          file="producer.h" idref="466" length="0"
+                          line="24" name="int" sc_dt="false"/>
+                      </declaration_specifiers>
+                      <init_declarator column="7" file="producer.h"
+                        idref="468" line="24">
+                        <declarator column="7" file="producer.h"
+                          idref="470" line="24">
+                          <qualified_id column="7" file="producer.h"
+                            idref="472" line="24" name="c"/>
+                        </declarator>
+                        <initializer column="13" file="producer.h"
+                          idref="474" line="24">
+                          <primary_expression column="13"
+                            file="producer.h" idref="478" line="24">
+                            <constant column="13" file="producer.h"
+                              idref="480" line="24" value="0"/>
+                          </primary_expression>
+                        </initializer>
+                      </init_declarator>
+                    </init_declarator_list>
+                  </declaration>
+                </block_statement>
+                <block_statement column="16" file="producer.h"
+                  idref="482" line="25">
+                  <while_statement column="16" file="producer.h"
+                    idref="484" line="25">
+                    <primary_expression column="12" file="producer.h"
+                      idref="488" line="25">
+                      <constant column="12" file="producer.h"
+                        idref="490" line="25" value="true"/>
+                    </primary_expression>
+                    <block column="17" file="producer.h" idref="492" line="26">
+                      <block_statement column="7" file="producer.h"
+                        idref="494" line="27">
+                        <postfix_expression column="7" file="producer.h"
+                          idref="496" line="27">
+                          <primary_expression column="7"
+                            file="producer.h" idref="498" line="27">
+                            <id_expression column="9" file="producer.h"
+                              idref="500" line="27" name="fifo"/>
+                          </primary_expression>
+                          <dereferencing_operator column="9"
+                            file="producer.h" idref="502" line="27" name="*"/>
+                          <id_expression column="15" file="producer.h"
+                            idref="504" line="27" name="write"/>
+                          <arguments column="15" file="producer.h"
+                            idref="506" line="27">
+                            <arguments_list column="20"
+                              file="producer.h" idref="508" line="27">
+                              <primary_expression column="20"
+                                file="producer.h" idref="512" line="27">
+                                <id_expression column="21"
+                                  file="producer.h" idref="514"
+                                  line="27" name="c"/>
+                              </primary_expression>
+                            </arguments_list>
+                          </arguments>
+                        </postfix_expression>
+                      </block_statement>
+                      <block_statement column="23" file="producer.h"
+                        idref="516" line="28">
+                        <assignment column="11" file="producer.h"
+                          idref="526" line="28">
+                          <primary_expression column="23"
+                            file="producer.h" idref="520" line="28">
+                            <id_expression column="9" file="producer.h"
+                              idref="522" line="28" name="c"/>
+                          </primary_expression>
+                          <assignment_operator column="9"
+                            file="producer.h" idref="524" line="28"/>
+                          <postfix_expression column="11"
+                            file="producer.h" idref="528" line="28">
+                            <primary_expression column="11"
+                              file="producer.h" idref="530" line="28">
+                              <id_expression column="13"
+                                file="producer.h" idref="532" line="28" name="produce"/>
+                            </primary_expression>
+                            <arguments column="13" file="producer.h"
+                              idref="534" line="28">
+                              <arguments_list column="20"
+                                file="producer.h" idref="536" line="28">
+                                <primary_expression column="20"
+                                  file="producer.h" idref="540" line="28">
+                                  <id_expression column="21"
+                                    file="producer.h" idref="542"
+                                    line="28" name="c"/>
+                                </primary_expression>
+                              </arguments_list>
+                            </arguments>
+                          </postfix_expression>
+                        </assignment>
+                      </block_statement>
+                    </block>
+                  </while_statement>
+                </block_statement>
+              </block>
+            </function_definition>
+          </member_declaration>
+          <comment column="5" file="producer.h" idref="543" line="32" name="//    SC_HAS_PROCESS(producer);"/>
+          <member_declaration column="5" file="producer.h" idref="545" line="34"/>
+          <member_declaration column="5" file="producer.h" idref="547" line="34">
+            <ctor_definition column="5" file="producer.h" idref="549" line="34">
+              <qualified_id column="12" file="producer.h" idref="551"
+                line="34" name="producer"/>
+              <parameter_list column="21" file="producer.h" idref="553" line="35">
+                <parameter_declaration column="21" file="producer.h"
+                  idref="555" line="35">
+                  <declaration_specifiers column="21" file="producer.h"
+                    idref="557" line="35">
+                    <builtin_type_specifier column="21"
+                      file="producer.h" idref="559" length="0" line="35"
+                      name="sc_module_name" sc_dt="true"/>
+                  </declaration_specifiers>
+                  <declarator column="21" file="producer.h" idref="561" line="35">
+                    <qualified_id column="21" file="producer.h"
+                      idref="563" line="35" name="name"/>
+                  </declarator>
+                </parameter_declaration>
+              </parameter_list>
+              <ctor_initializer column="21" file="producer.h"
+                idref="565" line="35">
+                <superclass_init column="21" file="producer.h"
+                  idref="567" line="35">
+                  <declaration_specifiers column="21" file="producer.h"
+                    idref="569" line="35">
+                    <builtin_type_specifier column="21"
+                      file="producer.h" idref="571" length="0" line="35"
+                      name="sc_module" sc_dt="true"/>
+                  </declaration_specifiers>
+                  <arguments_list column="21" file="producer.h"
+                    idref="573" line="35">
+                    <primary_expression column="21" file="producer.h"
+                      idref="575" line="35">
+                      <id_expression column="21" file="producer.h"
+                        idref="577" line="35" name="name"/>
+                    </primary_expression>
+                  </arguments_list>
+                </superclass_init>
+              </ctor_initializer>
+              <block column="21" file="producer.h" idref="579" line="35">
+                <sc_thread_block column="5" file="producer.h"
+                  idref="581" line="36">
+                  <sc_thread column="5" file="producer.h" idref="583"
+                    line="36" name="main_method"/>
+                </sc_thread_block>
+              </block>
+            </ctor_definition>
+          </member_declaration>
+        </class_specifier>
+      </declaration_specifiers>
+    </declaration>
+  </external_declaration>
+  <external_declaration column="2" file="prod_cons.cpp" idref="585" line="5">
+    <sc_main_declaration column="2" file="prod_cons.cpp" idref="587" line="5">
+      <declaration_specifiers column="1" file="prod_cons.cpp"
+        idref="589" line="5">
+        <builtin_type_specifier column="1" file="prod_cons.cpp"
+          idref="591" length="0" line="5" name="int" sc_dt="false"/>
+      </declaration_specifiers>
+      <function_declarator column="5" file="prod_cons.cpp" idref="593" line="5">
+        <qualified_id column="5" file="prod_cons.cpp" idref="595"
+          line="5" name="sc_main"/>
+        <parameter_list column="12" file="prod_cons.cpp" idref="597" line="5">
+          <parameter_declaration column="12" file="prod_cons.cpp"
+            idref="599" line="5">
+            <declaration_specifiers column="12" file="prod_cons.cpp"
+              idref="601" line="5">
+              <builtin_type_specifier column="12" file="prod_cons.cpp"
+                idref="603" length="0" line="5" name="int" sc_dt="false"/>
+            </declaration_specifiers>
+            <declarator column="13" file="prod_cons.cpp" idref="605" line="5">
+              <qualified_id column="13" file="prod_cons.cpp" idref="607"
+                line="5" name="argc"/>
+            </declarator>
+          </parameter_declaration>
+          <parameter_declaration column="21" file="prod_cons.cpp"
+            idref="609" line="5">
+            <declaration_specifiers column="21" file="prod_cons.cpp"
+              idref="611" line="5">
+              <builtin_type_specifier column="21" file="prod_cons.cpp"
+                idref="613" length="0" line="5" name="char" sc_dt="false"/>
+            </declaration_specifiers>
+            <declarator column="23" file="prod_cons.cpp" idref="615" line="5">
+              <ptr_operator column="23" file="prod_cons.cpp" idref="617"
+                line="5" name="*"/>
+              <declarator column="28" file="prod_cons.cpp" idref="619" line="5">
+                <qualified_id column="28" file="prod_cons.cpp"
+                  idref="621" line="5" name="argv"/>
+                <declarator_suffixes arrayCounter="1" column="29"
+                  file="prod_cons.cpp" idref="623" line="5"/>
+              </declarator>
+            </declarator>
+          </parameter_declaration>
+        </parameter_list>
+      </function_declarator>
+      <block column="35" file="prod_cons.cpp" idref="625" line="5">
+        <block_statement column="37" file="prod_cons.cpp" idref="627" line="7">
+          <declaration column="37" file="prod_cons.cpp" idref="629" line="7">
+            <init_declarator_list column="37" file="prod_cons.cpp"
+              idref="631" line="7">
+              <declaration_specifiers column="37" file="prod_cons.cpp"
+                idref="633" line="7">
+                <builtin_type_specifier column="37" file="prod_cons.cpp"
+                  idref="635" length="0" line="7" name="sc_fifo" sc_dt="true">
+                  <declaration_specifiers column="12"
+                    file="prod_cons.cpp" idref="637" line="7">
+                    <builtin_type_specifier column="12"
+                      file="prod_cons.cpp" idref="639" length="0"
+                      line="7" name="int" sc_dt="false"/>
+                  </declaration_specifiers>
+                </builtin_type_specifier>
+              </declaration_specifiers>
+              <init_declarator column="16" file="prod_cons.cpp"
+                idref="641" line="7">
+                <declarator column="16" file="prod_cons.cpp" idref="643" line="7">
+                  <qualified_id column="16" file="prod_cons.cpp"
+                    idref="645" line="7" name="fifo_inst"/>
+                </declarator>
+              </init_declarator>
+            </init_declarator_list>
+          </declaration>
+        </block_statement>
+        <block_statement column="27" file="prod_cons.cpp" idref="647" line="9">
+          <declaration column="27" file="prod_cons.cpp" idref="649" line="9">
+            <init_declarator_list column="27" file="prod_cons.cpp"
+              idref="651" line="9">
+              <declaration_specifiers column="27" file="prod_cons.cpp"
+                idref="653" line="9">
+                <qualified_type column="27" file="prod_cons.cpp"
+                  idref="655" line="9">
+                  <qualified_id column="27" file="prod_cons.cpp"
+                    idref="657" line="9" name="producer"/>
+                </qualified_type>
+              </declaration_specifiers>
+              <init_declarator column="5" file="prod_cons.cpp"
+                idref="659" line="9">
+                <declarator column="5" file="prod_cons.cpp" idref="661" line="9">
+                  <qualified_id column="5" file="prod_cons.cpp"
+                    idref="663" line="9" name="prod_inst"/>
+                </declarator>
+                <arguments_list column="23" file="prod_cons.cpp"
+                  idref="665" line="9">
+                  <primary_expression column="23" file="prod_cons.cpp"
+                    idref="669" line="9">
+                    <constant column="23" file="prod_cons.cpp"
+                      idref="671" line="9" value="&quot;producer&quot;"/>
+                  </primary_expression>
+                </arguments_list>
+              </init_declarator>
+            </init_declarator_list>
+          </declaration>
+        </block_statement>
+        <block_statement column="35" file="prod_cons.cpp" idref="673" line="10">
+          <postfix_expression column="35" file="prod_cons.cpp"
+            idref="675" line="10">
+            <primary_expression column="35" file="prod_cons.cpp"
+              idref="677" line="10">
+              <id_expression column="5" file="prod_cons.cpp" idref="679"
+                line="10" name="prod_inst"/>
+            </primary_expression>
+            <dereferencing_operator column="5" file="prod_cons.cpp"
+              idref="681" line="10" name="&amp;"/>
+            <id_expression column="15" file="prod_cons.cpp" idref="683"
+              line="10" name="fifo"/>
+            <arguments column="15" file="prod_cons.cpp" idref="685" line="10">
+              <arguments_list column="19" file="prod_cons.cpp"
+                idref="687" line="10">
+                <primary_expression column="19" file="prod_cons.cpp"
+                  idref="691" line="10">
+                  <id_expression column="20" file="prod_cons.cpp"
+                    idref="693" line="10" name="fifo_inst"/>
+                </primary_expression>
+              </arguments_list>
+            </arguments>
+          </postfix_expression>
+        </block_statement>
+        <block_statement column="30" file="prod_cons.cpp" idref="695" line="12">
+          <declaration column="30" file="prod_cons.cpp" idref="697" line="12">
+            <init_declarator_list column="30" file="prod_cons.cpp"
+              idref="699" line="12">
+              <declaration_specifiers column="30" file="prod_cons.cpp"
+                idref="701" line="12">
+                <qualified_type column="30" file="prod_cons.cpp"
+                  idref="703" line="12">
+                  <qualified_id column="30" file="prod_cons.cpp"
+                    idref="705" line="12" name="consumer"/>
+                </qualified_type>
+              </declaration_specifiers>
+              <init_declarator column="5" file="prod_cons.cpp"
+                idref="707" line="12">
+                <declarator column="5" file="prod_cons.cpp" idref="709" line="12">
+                  <qualified_id column="5" file="prod_cons.cpp"
+                    idref="711" line="12" name="cons_inst"/>
+                </declarator>
+                <arguments_list column="23" file="prod_cons.cpp"
+                  idref="713" line="12">
+                  <primary_expression column="23" file="prod_cons.cpp"
+                    idref="717" line="12">
+                    <constant column="23" file="prod_cons.cpp"
+                      idref="719" line="12" value="&quot;consumer&quot;"/>
+                  </primary_expression>
+                </arguments_list>
+              </init_declarator>
+            </init_declarator_list>
+          </declaration>
+        </block_statement>
+        <block_statement column="35" file="prod_cons.cpp" idref="721" line="13">
+          <postfix_expression column="35" file="prod_cons.cpp"
+            idref="723" line="13">
+            <primary_expression column="35" file="prod_cons.cpp"
+              idref="725" line="13">
+              <id_expression column="5" file="prod_cons.cpp" idref="727"
+                line="13" name="cons_inst"/>
+            </primary_expression>
+            <dereferencing_operator column="5" file="prod_cons.cpp"
+              idref="729" line="13" name="&amp;"/>
+            <id_expression column="15" file="prod_cons.cpp" idref="731"
+              line="13" name="fifo"/>
+            <arguments column="15" file="prod_cons.cpp" idref="733" line="13">
+              <arguments_list column="19" file="prod_cons.cpp"
+                idref="735" line="13">
+                <primary_expression column="19" file="prod_cons.cpp"
+                  idref="739" line="13">
+                  <id_expression column="20" file="prod_cons.cpp"
+                    idref="741" line="13" name="fifo_inst"/>
+                </primary_expression>
+              </arguments_list>
+            </arguments>
+          </postfix_expression>
+        </block_statement>
+        <block_statement column="30" file="prod_cons.cpp" idref="743" line="14">
+          <systemCRoutine column="30" file="prod_cons.cpp" idref="745"
+            line="14" name="sc_start">
+            <arguments column="5" file="prod_cons.cpp" idref="747" line="14">
+              <arguments_list column="13" file="prod_cons.cpp"
+                idref="749" line="14">
+                <primary_expression column="13" file="prod_cons.cpp"
+                  idref="753" line="14">
+                  <constant column="13" file="prod_cons.cpp" idref="755"
+                    line="14" value="5000"/>
+                </primary_expression>
+                <primary_expression column="18" file="prod_cons.cpp"
+                  idref="759" line="14">
+                  <constant column="18" file="prod_cons.cpp" idref="761"
+                    line="14" value="SC_NS"/>
+                </primary_expression>
+              </arguments_list>
+            </arguments>
+          </systemCRoutine>
+        </block_statement>
+        <block_statement column="26" file="prod_cons.cpp" idref="763" line="16">
+          <return_statement column="26" file="prod_cons.cpp" idref="765" line="16">
+            <primary_expression column="5" file="prod_cons.cpp"
+              idref="769" line="16">
+              <constant column="5" file="prod_cons.cpp" idref="771"
+                line="16" value="0"/>
+            </primary_expression>
+          </return_statement>
+        </block_statement>
+      </block>
+    </sc_main_declaration>
+  </external_declaration>
+</INTERNAL>

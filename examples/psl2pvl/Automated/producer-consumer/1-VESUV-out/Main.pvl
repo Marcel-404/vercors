@@ -1,0 +1,249 @@
+lock_invariant Perm(this.global_invariant(), 1);
+    
+class Main {
+    seq<int> process_state;
+    
+    seq<int> event_state;
+    
+    seq<boolean> primitive_channel_update;
+    
+    Producer_main_method prod_inst_producer_main_method;
+    
+    Consumer_main_method cons_inst_consumer_main_method;
+    
+    Sc_fifo_int sc_fifo_int;
+    
+    int buffer_size;
+    
+    inline resource update_permission_invariant() =
+        Perm(this.primitive_channel_update, write) ** |this.primitive_channel_update| == 1;
+    
+    inline resource scheduler_invariant() =
+        Perm(this.update_permission_invariant(), 1) **
+        Perm(this.process_state, write) **
+        |this.process_state| == 2 **
+        Perm(this.event_state, write) **
+        |this.event_state| == 4 **
+        (\forall int i;
+            i >= 0 && i < |this.process_state| ==>
+                {: this.process_state[i] :} == -1 ||
+                0 <= this.process_state[i] && this.process_state[i] < |this.event_state|
+        );
+    
+    inline resource parameter_invariant() = Perm(this.buffer_size, read) ** this.buffer_size > 0;
+    
+    inline resource sc_fifo_int_permission_invariant() =
+        Perm(this.sc_fifo_int, read) **
+        this.sc_fifo_int != null **
+        Perm(this.sc_fifo_int.m, read) **
+        this.sc_fifo_int.m == this **
+        Perm(this.sc_fifo_int.buffer, write) **
+        Perm(this.sc_fifo_int.num_read, write) **
+        0 <= this.sc_fifo_int.num_read **
+        this.sc_fifo_int.num_read <= |this.sc_fifo_int.buffer| **
+        Perm(this.sc_fifo_int.written, write) **
+        |this.sc_fifo_int.buffer| + |this.sc_fifo_int.written| <= this.buffer_size;
+    
+    inline resource global_invariant() =
+        Perm(this.scheduler_invariant(), 1) **
+        Perm(this.parameter_invariant(), 1) **
+        Perm(this.sc_fifo_int_permission_invariant(), 1) **
+        Perm(this.prod_inst_producer_main_method, read) **
+        this.prod_inst_producer_main_method != null **
+        Perm(this.prod_inst_producer_main_method.producer_main_method_timer_value, write) **
+        Perm(this.prod_inst_producer_main_method.producer_main_method_timer_set, write) **
+        Perm(this.prod_inst_producer_main_method.c_main_method, write) **
+        Perm(this.prod_inst_producer_main_method.pid, write) **
+        Perm(this.prod_inst_producer_main_method.producer_main_method_init, write) **
+        Perm(this.prod_inst_producer_main_method.producer_main_method_timer_reset, write) **
+        Perm(this.prod_inst_producer_main_method.wait_time_produce, write) **
+        Perm(this.cons_inst_consumer_main_method, read) **
+        this.cons_inst_consumer_main_method != null **
+        Perm(this.cons_inst_consumer_main_method.c_main_method, write) **
+        Perm(this.cons_inst_consumer_main_method.consumer_main_method_timer_reset, write) **
+        Perm(this.cons_inst_consumer_main_method.consumer_main_method_timer_set, write) **
+        Perm(this.cons_inst_consumer_main_method.consumer_main_method_init, write) **
+        Perm(this.cons_inst_consumer_main_method.consumer_main_method_timer_value, write) **
+        Perm(this.psl_invariant(), 1);
+    
+    inline resource psl_invariant() = true;
+    
+    ensures Perm(this.prod_inst_producer_main_method, read);
+    ensures this.prod_inst_producer_main_method != null;
+    ensures Perm(this.prod_inst_producer_main_method.m, 1 \ 2);
+    ensures this.prod_inst_producer_main_method.m == this;
+    ensures idle(this.prod_inst_producer_main_method);
+    ensures Perm(this.cons_inst_consumer_main_method, read);
+    ensures this.cons_inst_consumer_main_method != null;
+    ensures Perm(this.cons_inst_consumer_main_method.m, 1 \ 2);
+    ensures this.cons_inst_consumer_main_method.m == this;
+    ensures idle(this.cons_inst_consumer_main_method);
+    ensures committed(this);
+    constructor() {
+        this.process_state = seq<int>{-1, -1};
+        this.event_state = seq<int>{-3, -3, -3, -3};
+        this.primitive_channel_update = seq<boolean>{false};
+        this.sc_fifo_int = new Sc_fifo_int(this);
+        this.prod_inst_producer_main_method = new Producer_main_method(this);
+        this.cons_inst_consumer_main_method = new Consumer_main_method(this);
+        commit this;
+    }
+    
+    requires Perm(this.prod_inst_producer_main_method, read);
+    requires this.prod_inst_producer_main_method != null;
+    requires Perm(this.prod_inst_producer_main_method.m, 1 \ 2);
+    requires this.prod_inst_producer_main_method.m == this;
+    requires idle(this.prod_inst_producer_main_method);
+    requires Perm(this.cons_inst_consumer_main_method, read);
+    requires this.cons_inst_consumer_main_method != null;
+    requires Perm(this.cons_inst_consumer_main_method.m, 1 \ 2);
+    requires this.cons_inst_consumer_main_method.m == this;
+    requires idle(this.cons_inst_consumer_main_method);
+    requires committed(this);
+    ensures Perm(this.prod_inst_producer_main_method, read);
+    ensures this.prod_inst_producer_main_method != null;
+    ensures Perm(this.prod_inst_producer_main_method.m, 1 \ 2);
+    ensures this.prod_inst_producer_main_method.m == this;
+    ensures idle(this.prod_inst_producer_main_method);
+    ensures Perm(this.cons_inst_consumer_main_method, read);
+    ensures this.cons_inst_consumer_main_method != null;
+    ensures Perm(this.cons_inst_consumer_main_method.m, 1 \ 2);
+    ensures this.cons_inst_consumer_main_method.m == this;
+    ensures idle(this.cons_inst_consumer_main_method);
+    ensures committed(this);
+    void main() {
+        lock this;
+        fork this.prod_inst_producer_main_method;
+        fork this.cons_inst_consumer_main_method;
+        unlock this;
+        loop_invariant committed(this);
+        while (true) {
+            lock this;
+            this.immediate_wakeup();
+            this.reset_events_no_delta();
+            if (this.process_state[0] != -1 && this.process_state[1] != -1) {
+                this.sc_fifo_int.fifo_update();
+                this.primitive_channel_update = seq<boolean>{false};
+                int min_advance;
+                min_advance =
+                    this.find_minimum_advance(
+                        this.event_state[0],
+                        this.event_state[1],
+                        this.event_state[2],
+                        this.event_state[3]
+                    );
+                if (min_advance <= -1) {
+                    min_advance = 0;
+                }
+                this.update_events(min_advance);
+                this.wakeup_after_wait();
+                this.reset_all_events();
+            }
+            unlock this;
+        }
+        join this.prod_inst_producer_main_method;
+        join this.cons_inst_consumer_main_method;
+    }
+    
+    requires held(this);
+    requires Perm(this.scheduler_invariant(), 1);
+    ensures held(this);
+    ensures Perm(this.scheduler_invariant(), 1);
+    ensures this.event_state == \old(this.event_state);
+    ensures this.primitive_channel_update == \old(this.primitive_channel_update);
+    ensures \old(this.process_state[0]) >= 0 && \old(this.event_state[\old(this.process_state[0])]) == 0 ==>
+        this.process_state[0] == -1;
+    ensures \old(this.process_state[1]) >= 0 && \old(this.event_state[\old(this.process_state[1])]) == 0 ==>
+        this.process_state[1] == -1;
+    ensures !(\old(this.process_state[0]) >= 0 && \old(this.event_state[\old(this.process_state[0])]) == 0) ==>
+        this.process_state[0] == \old(this.process_state[0]);
+    ensures !(\old(this.process_state[1]) >= 0 && \old(this.event_state[\old(this.process_state[1])]) == 0) ==>
+        this.process_state[1] == \old(this.process_state[1]);
+    void immediate_wakeup();
+    
+    requires held(this);
+    requires Perm(this.scheduler_invariant(), 1);
+    ensures held(this);
+    ensures Perm(this.scheduler_invariant(), 1);
+    ensures this.process_state == \old(this.process_state);
+    ensures this.primitive_channel_update == \old(this.primitive_channel_update);
+    ensures \old(this.event_state[0]) == 0 ==> this.event_state[0] == -2;
+    ensures \old(this.event_state[1]) == 0 ==> this.event_state[1] == -2;
+    ensures \old(this.event_state[2]) == 0 ==> this.event_state[2] == -2;
+    ensures \old(this.event_state[3]) == 0 ==> this.event_state[3] == -2;
+    ensures \old(this.event_state[0]) != 0 ==> this.event_state[0] == \old(this.event_state[0]);
+    ensures \old(this.event_state[1]) != 0 ==> this.event_state[1] == \old(this.event_state[1]);
+    ensures \old(this.event_state[2]) != 0 ==> this.event_state[2] == \old(this.event_state[2]);
+    ensures \old(this.event_state[3]) != 0 ==> this.event_state[3] == \old(this.event_state[3]);
+    void reset_events_no_delta();
+    
+    ensures val0 < -1 || \result <= val0;
+    ensures val1 < -1 || \result <= val1;
+    ensures val2 < -1 || \result <= val2;
+    ensures val3 < -1 || \result <= val3;
+    ensures val0 < -1 && val1 < -1 && val2 < -1 && val3 < -1 ==> \result == 0;
+    ensures val0 >= -1 || val1 >= -1 || val2 >= -1 || val3 >= -1 ==>
+        val0 >= -1 && \result == val0 ||
+        val1 >= -1 && \result == val1 || val2 >= -1 && \result == val2 || val3 >= -1 && \result == val3;
+    pure int find_minimum_advance(int val0, int val1, int val2, int val3);
+    
+    requires held(this);
+    requires Perm(this.scheduler_invariant(), 1);
+    ensures held(this);
+    ensures Perm(this.scheduler_invariant(), 1);
+    ensures this.process_state == \old(this.process_state);
+    ensures this.primitive_channel_update == \old(this.primitive_channel_update);
+    ensures \old(this.event_state[0]) < -1 ==> this.event_state[0] == -3;
+    ensures \old(this.event_state[0]) >= -1 ==> this.event_state[0] == \old(this.event_state[0]) - advance;
+    ensures \old(this.event_state[1]) < -1 ==> this.event_state[1] == -3;
+    ensures \old(this.event_state[1]) >= -1 ==> this.event_state[1] == \old(this.event_state[1]) - advance;
+    ensures \old(this.event_state[2]) < -1 ==> this.event_state[2] == -3;
+    ensures \old(this.event_state[2]) >= -1 ==> this.event_state[2] == \old(this.event_state[2]) - advance;
+    ensures \old(this.event_state[3]) < -1 ==> this.event_state[3] == -3;
+    ensures \old(this.event_state[3]) >= -1 ==> this.event_state[3] == \old(this.event_state[3]) - advance;
+    void update_events(int advance);
+    
+    requires held(this);
+    requires Perm(this.scheduler_invariant(), 1);
+    ensures held(this);
+    ensures Perm(this.scheduler_invariant(), 1);
+    ensures this.event_state == \old(this.event_state);
+    ensures this.primitive_channel_update == \old(this.primitive_channel_update);
+    ensures \old(this.process_state[0]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[0])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[0])]) == -1) ==>
+        this.process_state[0] == -1;
+    ensures \old(this.process_state[1]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[1])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[1])]) == -1) ==>
+        this.process_state[1] == -1;
+    ensures !(\old(this.process_state[0]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[0])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[0])]) == -1)) ==>
+        this.process_state[0] == \old(this.process_state[0]);
+    ensures !(\old(this.process_state[1]) >= 0 &&
+    (\old(this.event_state[\old(this.process_state[1])]) == 0 ||
+    \old(this.event_state[\old(this.process_state[1])]) == -1)) ==>
+        this.process_state[1] == \old(this.process_state[1]);
+    void wakeup_after_wait();
+    
+    requires held(this);
+    requires Perm(this.scheduler_invariant(), 1);
+    ensures held(this);
+    ensures Perm(this.scheduler_invariant(), 1);
+    ensures this.process_state == \old(this.process_state);
+    ensures this.primitive_channel_update == \old(this.primitive_channel_update);
+    ensures \old(this.event_state[0]) == 0 || \old(this.event_state[0]) == -1 ==> this.event_state[0] == -2;
+    ensures \old(this.event_state[1]) == 0 || \old(this.event_state[1]) == -1 ==> this.event_state[1] == -2;
+    ensures \old(this.event_state[2]) == 0 || \old(this.event_state[2]) == -1 ==> this.event_state[2] == -2;
+    ensures \old(this.event_state[3]) == 0 || \old(this.event_state[3]) == -1 ==> this.event_state[3] == -2;
+    ensures !(\old(this.event_state[0]) == 0 || \old(this.event_state[0]) == -1) ==>
+        this.event_state[0] == \old(this.event_state[0]);
+    ensures !(\old(this.event_state[1]) == 0 || \old(this.event_state[1]) == -1) ==>
+        this.event_state[1] == \old(this.event_state[1]);
+    ensures !(\old(this.event_state[2]) == 0 || \old(this.event_state[2]) == -1) ==>
+        this.event_state[2] == \old(this.event_state[2]);
+    ensures !(\old(this.event_state[3]) == 0 || \old(this.event_state[3]) == -1) ==>
+        this.event_state[3] == \old(this.event_state[3]);
+    void reset_all_events();
+}

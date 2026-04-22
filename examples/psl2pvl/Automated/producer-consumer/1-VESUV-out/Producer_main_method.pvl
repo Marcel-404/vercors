@@ -1,0 +1,109 @@
+
+class Producer_main_method {
+    Main m;
+    
+    int producer_main_method_timer_value;
+    
+    boolean producer_main_method_timer_set;
+    
+    int c_main_method;
+    
+    int pid;
+    
+    boolean producer_main_method_init;
+    
+    boolean producer_main_method_timer_reset;
+    
+    int wait_time_produce;
+    
+    ensures Perm(this.m, write);
+    ensures this.m == m_param;
+    ensures Perm(this.producer_main_method_timer_value, write);
+    ensures Perm(this.producer_main_method_timer_set, write);
+    ensures Perm(this.c_main_method, write);
+    ensures Perm(this.pid, write);
+    ensures Perm(this.producer_main_method_init, write);
+    ensures Perm(this.producer_main_method_timer_reset, write);
+    ensures Perm(this.wait_time_produce, write);
+    ensures idle(this);
+    constructor(
+        Main m_param
+    ) {
+        this.m = m_param;
+    }
+    
+    requires Perm(this.m, 1 \ 2);
+    requires this.m != null;
+    requires committed(this.m);
+    requires Perm(this.m.prod_inst_producer_main_method, read);
+    requires this.m.prod_inst_producer_main_method == this;
+    ensures Perm(this.m, 1 \ 2);
+    ensures this.m != null;
+    ensures committed(this.m);
+    ensures Perm(this.m.prod_inst_producer_main_method, read);
+    ensures this.m.prod_inst_producer_main_method == this;
+    run {
+        lock this.m;
+        this.c_main_method = 0;
+        loop_invariant Perm(this.m, 1 \ 2);
+        loop_invariant this.m != null;
+        loop_invariant committed(this.m);
+        loop_invariant held(this.m);
+        loop_invariant Perm(this.m.global_invariant(), 1);
+        loop_invariant this.m.prod_inst_producer_main_method == this;
+        while (true) {
+            loop_invariant Perm(this.m, 1 \ 2);
+            loop_invariant this.m != null;
+            loop_invariant committed(this.m);
+            loop_invariant held(this.m);
+            loop_invariant Perm(this.m.global_invariant(), 1);
+            loop_invariant this.m.prod_inst_producer_main_method == this;
+            while (|this.m.sc_fifo_int.buffer| + |this.m.sc_fifo_int.written| >= this.m.buffer_size) {
+                this.m.process_state = this.m.process_state.update(0, 0);
+                loop_invariant Perm(this.m, 1 \ 2);
+                loop_invariant this.m != null;
+                loop_invariant committed(this.m);
+                loop_invariant held(this.m);
+                loop_invariant Perm(this.m.global_invariant(), 1);
+                loop_invariant this.m.prod_inst_producer_main_method == this;
+                while (this.m.process_state[0] != -1 || this.m.event_state[0] != -2) {
+                    unlock this.m;
+                    lock this.m;
+                }
+            }
+            this.m.sc_fifo_int.fifo_write(this.c_main_method);
+            this.c_main_method = this.produce(this.c_main_method);
+        }
+        unlock this.m;
+    }
+    
+    requires Perm(this.m, 1 \ 2);
+    requires this.m != null;
+    requires committed(this.m);
+    requires held(this.m);
+    requires Perm(this.m.global_invariant(), 1);
+    requires this.m.prod_inst_producer_main_method == this;
+    ensures Perm(this.m, 1 \ 2);
+    ensures this.m != null;
+    ensures committed(this.m);
+    ensures held(this.m);
+    ensures Perm(this.m.global_invariant(), 1);
+    ensures this.m.prod_inst_producer_main_method == this;
+    int produce(int c_param) {
+        this.wait_time_produce = 100;
+        this.m.process_state = this.m.process_state.update(0, 2);
+        this.m.event_state = this.m.event_state.update(2, this.wait_time_produce == 0 ? -1 : this.wait_time_produce);
+        loop_invariant Perm(this.m, 1 \ 2);
+        loop_invariant this.m != null;
+        loop_invariant committed(this.m);
+        loop_invariant held(this.m);
+        loop_invariant Perm(this.m.global_invariant(), 1);
+        loop_invariant this.m.prod_inst_producer_main_method == this;
+        while (this.m.process_state[0] != -1 || this.m.event_state[2] != -2) {
+            unlock this.m;
+            lock this.m;
+        }
+        c_param = (c_param + 1) % 8;
+        return c_param;
+    }
+}

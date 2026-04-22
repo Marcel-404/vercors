@@ -15,8 +15,9 @@ verification_item:
 	verification_unit # VerificationUnitVerificationItem;
 
 verification_unit:
-	vunit_type Identifier (LeftParen context_spec RightParen)? LeftBrace inherit_spec* override_spec
-		* vunit_item* RightBrace;
+	vunit_type clangppIdentifier (
+		LeftParen context_spec RightParen
+	)? LeftBrace inherit_spec* override_spec* vunit_item* RightBrace;
 
 vunit_type:
 	VUNIT	# VunitVunitType
@@ -25,7 +26,7 @@ vunit_type:
 	| VMODE	# VModeVunitType;
 
 vunit_instance:
-	label Colon vunit_type Identifier (
+	label Colon vunit_type clangppIdentifier (
 		LeftBracket actual_parameter_list RightBracket
 	)? Semi;
 
@@ -37,11 +38,12 @@ binding_spec: hierarchical_hdl_name;
 
 hierarchical_hdl_name: hdl_module_name (path_seperator name)*;
 
-hdl_module_name: name (LeftParen name RightParen)?;
+hdl_module_name: name; //(LeftParen name RightParen)?;
 
-path_seperator: Dot # DotPathSeperator | Div # DivPathSeperator;
+path_seperator:
+	Dot # DotPathSeperator; //| Div # DivPathSeperator;
 
-name: hdl_or_psl_identifier;
+name: hdl_or_psl_identifier # HdlOrPslIdentifierName;
 
 inherit_spec: NONTRANSITIVE? INHERIT name (Comma name)* Semi;
 
@@ -49,12 +51,11 @@ vunit_item:
 	psl_declaration		# PslDeclarationVunitItem
 	| psl_directive		# PslDirectiveVunitItem
 	| vunit_instance	# VunitInstanceVunitItem;
-//	| hdl_decl			# HdlDeclVunitItem
-//	| hdl_stmt			# HdlStmtVunitItem;
+// | hdl_decl # HdlDeclVunitItem | hdl_stmt # HdlStmtVunitItem;
 
 override_spec: Override name_list;
 
-name_list: Identifier (Comma Identifier)*;
+name_list: clangppIdentifier (Comma clangppIdentifier)*;
 
 formal_parameter_list:
 	formal_parameter (Semi formal_parameter)*;
@@ -67,11 +68,12 @@ psl_declaration:
 	| clock_declaration		# ClockDeclaration;
 
 property_declaration:
-	PROPERTY Identifier (
+	PROPERTY clangppIdentifier (
 		LeftParen formal_parameter_list RightParen
 	)? def_sym property Semi;
 
-formal_parameter: param_spec Identifier (Comma Identifier)*;
+formal_parameter:
+	param_spec clangppIdentifier (Comma clangppIdentifier)*;
 
 param_spec:
 	Const									# ConstParamSpec
@@ -93,7 +95,7 @@ psl_type_class:
 	| VAL_STRING	# ValStringPslTypeClass;
 
 sequence_declaration:
-	SEQUENCE Identifier (
+	SEQUENCE clangppIdentifier (
 		LeftParen formal_parameter_list RightParen
 	)? def_sym sequences Semi;
 
@@ -118,9 +120,9 @@ actual_parameter:
 // PSL directives
 psl_directive: (label Colon)? verification_directive;
 
-label: Identifier;
+label: clangppIdentifier;
 
-hdl_or_psl_identifier: Identifier;
+hdl_or_psl_identifier: clangppIdentifier;
 
 verification_directive:
 	assert_directive			# AssertDirectiveVerificationDirective
@@ -251,8 +253,8 @@ fl_property:
 	| sequences OVERLAPSUFFIXIMPLY fl_property		# OverlapSuffixImplyFlProperty
 	| sequences NONOVERLAPSUFFIXIMPLY fl_property	# NonOverlapSuffixImplyFlProperty
 	// VPSL Operators
-	| WITHIN_T LeftBracket LeftParen number_val Comma TIME_UNIT RightParen RightBracket fl_property #
-		WithinTFlProperty
+	| WITHIN_T LeftBracket LeftParen IntegerLiteral Comma TIME_UNIT RightParen RightBracket
+		fl_property # WithinTFlProperty
 	// HDL 
 	| LeftParen (
 		LeftBracket LeftBracket hdl_decl (Comma hdl_decl)* RightBracket RightBracket
@@ -286,7 +288,8 @@ parameterized_sere:
 parameters_definition:
 	parameter_definition parameter_definition*;
 
-parameter_definition: Identifier index_range? IN value_set;
+parameter_definition:
+	clangppIdentifier index_range? IN value_set;
 
 and_or_property_op:
 	and_op	# AndOpAndOrProperty
@@ -355,8 +358,11 @@ hdl_or_psl_expression:
 hdl_expression: hdl_expr;
 
 built_in_function_call:
-	ACTIVE LeftParen any_type RightParen	# ActiveBuiltInFunctionCall
-	| WAITING LeftParen any_type RightParen	# WaitingBuiltInFunctionCall
+	// VPSL function calls
+	ACTIVE LeftParen referenceExpr RightParen and_op referenceExpr	# ActiveBuiltInFunctionCall
+	| READY LeftParen referenceExpr RightParen						# ReadyBuiltInFunctionCall
+	| WAITING LeftParen referenceExpr RightParen					# WaitingBuiltInFunctionCall
+	//
 	| PREV LeftParen any_type (
 		Comma number_val (Comma clock_expression)?
 	)? RightParen														# PrevBuiltInFunctionCall
@@ -371,12 +377,13 @@ built_in_function_call:
 	| ONEHOT0 LeftParen bit_vector_val RightParen						# OneHot0BuiltInFunctionCall
 	| NONDET LeftParen value_set RightParen								# NonDetBuiltInFunctionCall
 	| NONDETVECTOR LeftParen number_val Comma value_set LeftParen		# NonDetVectorBuiltInFunctionCall;
-// VPSL function calls
 
 // Optional Branching Extension 
 obe_property:
-	LeftParen obe_property RightParen							# ParenObeProperty
-	| Identifier (LeftParen actual_parameter_list RightParen)?	# IdentiferObeProperty //Name
+	LeftParen obe_property RightParen # ParenObeProperty
+	| clangppIdentifier (
+		LeftParen actual_parameter_list RightParen
+	)? # IdentiferObeProperty //Name
 	// Logical Operators
 	| not_op obe_property					# NotOpObeProperty
 	| obe_property and_op obe_property		# AndOpObeProperty
@@ -424,14 +431,11 @@ min_val: MINVAL;
 
 max_val: MAXVAL;
 
-hdl_expr: equalityExpression; //expression; 
+hdl_expr: hdl_expressions; //equalityExpression; 
 
-hdl_clock_expr: Identifier; // SystemC_Event_expression
+hdl_clock_expr: clangppIdentifier; // SystemC_Event_expression
 
-//systemc_event_expression: sc_event | sc_event_finder | sc_event_and_list | sc_event_or_list | sc_signal | sc_port;
-
-//hdl_unit: Identifier; // Not needed since SystemC module already parsed in xml
-
+//hdl_unit: clangppIdentifier; // Not needed since SystemC module already parsed in xml
 hdl_decl: declarationseq; //declaration;
 
 hdl_stmt: statement; //statement;
@@ -445,3 +449,38 @@ hdl_variable_type: simpleTypeSpecifier; // simpleTypeSpecifier;
 left_sym: LeftParen;
 
 right_sym: RightParen;
+
+// Alternative manual HDL_Expression subset
+hdl_expressions:
+	referenceExpr hdl_operator referenceExpr
+	| referenceExpr;
+
+hdl_operator:
+	Equal
+	| NotEqual
+	| Less
+	| LessEqual
+	| Greater
+	| GreaterEqual;
+
+referenceExpr: referenceprimary referencePostfixExpr*;
+
+referenceprimary: clangppIdentifier;
+
+referencePostfixExpr:
+	Dot clangppIdentifier	# refIdentifier
+	| referenceIndex		# refIndex
+	| referenceMethod		# refMethod;
+
+referenceMethod:
+	Dot clangppIdentifier LeftParen RightParen (Dot (
+		NOTIFIED_TIMED
+		| NOT_NOTIFIED
+		| NOTIFIED_UNTIMED
+		| NOTIFIED_DELTA
+		| NOTIFIED_PREV_DELTA
+	) LeftParen RightParen)?;
+
+
+referenceIndex:
+	Dot clangppIdentifier LeftBracket (MINVAL | IntegerLiteral) RightBracket;

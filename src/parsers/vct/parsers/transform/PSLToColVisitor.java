@@ -1,9 +1,14 @@
 package vct.parsers.transform;
-
-import de.tub.pes.syscir.sc_model.SCSystem;
-import de.tub.pes.syscir.sc_model.expressions.ConstantExpression;
 import de.tub.pes.syscir.sc_model.SCClass;
 import de.tub.pes.syscir.sc_model.SCProcess;
+import de.tub.pes.syscir.sc_model.SCSystem;
+import de.tub.pes.syscir.sc_model.SCFunction;
+import de.tub.pes.syscir.sc_model.SCVariable;
+import de.tub.pes.syscir.sc_model.expressions.ConstantExpression;
+import de.tub.pes.syscir.sc_model.expressions.SCVariableExpression;
+import de.tub.pes.syscir.sc_model.variables.SCKnownType;
+import de.tub.pes.syscir.sc_model.variables.SCClassInstance;
+import de.tub.pes.syscir.sc_model.variables.SCSimpleType;
 import scala.math.BigInt;
 import scala.reflect.ClassTag$;
 import vct.col.ast.*;
@@ -18,17 +23,12 @@ import vct.parsers.transform.systemctocol.colmodel.ProcessClass;
 import vct.parsers.transform.systemctocol.colmodel.StateClass;
 import vct.parsers.transform.systemctocol.util.GeneratedBlame;
 import vct.parsers.transform.systemctocol.util.OriGen;
+import vct.parsers.transform.systemctocol.util.Timing;
 import vct.parsers.transform.systemctocol.util.Seqs;
-import vct.parsers.transform.CPPToCol;
-import vct.parsers.parser.ColCPPParser;
-
 import java.util.HashMap;
 import java.util.LinkedList;
-
 import javax.lang.model.util.Elements.Origin;
-
 import org.antlr.v4.runtime.*;
-
 import vct.antlr4.generated.LangPSLParser;
 import vct.antlr4.generated.LangPSLParserBaseVisitor;
 
@@ -42,6 +42,8 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         java.util.Map<String, ProcessClass> processes = new HashMap<>();
 
+        java.util.Map<String, Expr<T>> properties = new HashMap<>();
+
         int newest_event_index;
 
         int event_value = 0;
@@ -51,12 +53,10 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         Ref<T, InstanceField<T>> proc_state_ref;
         Deref<T> proc_state_deref;
 
-        ColCPPParser cppparser;
-
         public PSLToColVisitor(SCSystem sc_system, COLSystem<T> col_system) {
                 this.sc_system = sc_system;
                 this.col_system = col_system;
-                this.newest_event_index = col_system.get_total_nr_events()-1;
+                this.newest_event_index = col_system.get_total_nr_events() - 1;
                 this.event_value = 0;
                 this.current_module = "";
                 this.event_state_ref = new DirectRef<>(col_system.get_event_state(),
@@ -68,36 +68,18 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
                                 ClassTag$.MODULE$.apply(InstanceField.class));
                 this.proc_state_deref = new Deref<>(col_system.THIS, proc_state_ref, new GeneratedBlame<>(),
                                 OriGen.create());
-                for (ProcessClass proc : col_system.get_all_processes()) {
-                        processes.put(proc.get_generating_instance().getName() + "."
-                                        + proc.get_generating_function().getName(), proc);
-                }
         }
 
         @Override
-        public Expr<T> visitHdl_expr0(LangPSLParser.Hdl_expr0Context ctx) {
-                String expression = ctx.getText();
-                if (expression.contains("data_written_event()")) {
-                        String x = expression.split("\\.")[0];
-                        // Check if x contained in Main
-                        return new Eq<>(getEventState(2), col_system.MINUS_TWO, OriGen.create());// TODO: Replace with actual event
-                } else if (expression.contains("data_read_event()")) {
-                        String x = expression.split("\\.")[0];
-                        // Check if x contained in Main
-                        return new Eq<>(getEventState(1), col_system.MINUS_TWO, OriGen.create());// Todo: Replace with actual event
-
+        public Expr<T> visitPsl_specification0(LangPSLParser.Psl_specification0Context ctx) {
+                java.util.List<Expr<T>> verification_items = new java.util.ArrayList<>();
+                for (LangPSLParser.Verification_itemContext verification_item : ctx.verification_item()) {
+                        if (this.current_module == "Main") {
+                                // Add to main
+                        }
+                        verification_items.add(visit(verification_item));
                 }
-                java.io.Reader reader = new java.io.StringReader(expression);
-                // Statement<T> stmt = CPPToCol$.MODULE$.convert(ctx.expression()); // TODO:
-                // call CPPPtransform to transform this expression, statement expression
-                // mismatch
-                return new StringValue<>(expression, OriGen.create());
-        }
-
-        @Override
-        public Expr<T> visitHdl_decl0(LangPSLParser.Hdl_decl0Context ctx) {
-                return new StringValue<>(ctx.getText(), OriGen.create());
-
+                return col_system.fold_star(verification_items);
         }
 
         @Override
@@ -118,34 +100,18 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         }
 
         @Override
-        public Expr<T> visitBindingSpecContextSpec(LangPSLParser.BindingSpecContextSpecContext ctx) {
-                return visit(ctx.binding_spec());
-        }
-
-        @Override
-        public Expr<T> visitBinding_spec0(LangPSLParser.Binding_spec0Context ctx) {
-                return visit(ctx.hierarchical_hdl_name());
+        public Expr<T> visitVunit_instance0(LangPSLParser.Vunit_instance0Context ctx) {
+                return visitChildren(ctx); // TODO
         }
 
         @Override
         public Expr<T> visitHierarchical_hdl_name0(LangPSLParser.Hierarchical_hdl_name0Context ctx) {
                 String bound_module = ctx.getText();
-                this.current_module = bound_module;
-                System.out.println(bound_module);
-                if (false) {
-                        throw new IllegalArgumentException("Module not recognised: " + current_module);
+                if (bound_module != "Main") {
+                        throw new IllegalArgumentException("Vunit has to be bound to Main Class!");
                 }
+                this.current_module = bound_module;
                 return new StringValue<>(bound_module, OriGen.create());
-        }
-
-        @Override
-        public Expr<T> visitPslDirectiveVunitItem(LangPSLParser.PslDirectiveVunitItemContext ctx) {
-                return visit(ctx.psl_directive());
-        }
-
-        @Override
-        public Expr<T> visitPslDeclarationVunitItem(LangPSLParser.PslDeclarationVunitItemContext ctx) {
-                return visit(ctx.psl_declaration());
         }
 
         @Override
@@ -156,12 +122,6 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         // ==============================================================================================================
         // verification_directive:
         // ==============================================================================================================
-
-        @Override
-        public Expr<T> visitAssertDirectiveVerificationDirective(
-                        LangPSLParser.AssertDirectiveVerificationDirectiveContext ctx) {
-                return visit(ctx.assert_directive());
-        }
 
         @Override
         public Expr<T> visitAssumeDirectiveVerificationDirective(
@@ -210,11 +170,6 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         }
 
         @Override
-        public Expr<T> visitFlPropertyProperty(LangPSLParser.FlPropertyPropertyContext ctx) {
-                return visit(ctx.fl_property());
-        }
-
-        @Override
         public Expr<T> visitObePropertyProperty(LangPSLParser.ObePropertyPropertyContext ctx) {
                 throw new IllegalArgumentException("Property not supported: OBE Property");
         }
@@ -222,23 +177,7 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         // ==============================================================================================================
         // ==============================================================================================================
 
-        @Override
-        public Expr<T> visitHdl_expression0(LangPSLParser.Hdl_expression0Context ctx) {
-                return visit(ctx.hdl_expr());
-        }
-
         // hdl_or_psl_expression
-
-        @Override
-        public Expr<T> visitBuiltInFunctionCallHdlOrPslExpression(
-                        LangPSLParser.BuiltInFunctionCallHdlOrPslExpressionContext ctx) {
-                return visit(ctx.built_in_function_call());
-        }
-
-        @Override
-        public Expr<T> visitHdlExpressionHdlOrPslExpression(LangPSLParser.HdlExpressionHdlOrPslExpressionContext ctx) {
-                return visit(ctx.hdl_expression());
-        }
 
         @Override
         public Expr<T> visitArrowHdlOrPslExpression(LangPSLParser.ArrowHdlOrPslExpressionContext ctx) {
@@ -258,33 +197,34 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         // Forms of expression
 
         @Override
-        public Expr<T> visitAny_type0(LangPSLParser.Any_type0Context ctx) {
-                return visit(ctx.hdl_or_psl_expression());
-        }
-
-        @Override
-        public Expr<T> visitBit_val0(LangPSLParser.Bit_val0Context ctx) {
-                return visit(ctx.hdl_or_psl_expression());
-        }
-
-        @Override
         public Expr<T> visitBool_val0(LangPSLParser.Bool_val0Context ctx) {
-                return visit(ctx.hdl_or_psl_expression());
-        }
-
-        @Override
-        public Expr<T> visitBit_vector_val0(LangPSLParser.Bit_vector_val0Context ctx) {
-                return visit(ctx.hdl_or_psl_expression());
+                Expr<T> bool_expr = visit(ctx.hdl_or_psl_expression());
+                if (true) {
+                        // Check if expression actually bool expression
+                }
+                return bool_expr;
         }
 
         @Override
         public Expr<T> visitNumber_val0(LangPSLParser.Number_val0Context ctx) {
-                return visit(ctx.hdl_or_psl_expression());
+                Expr<T> number_expr = visit(ctx.hdl_or_psl_expression());
+                if (number_expr instanceof IntegerValue) {
+                        // Check if expression actually String expression
+                } else
+                        throw new IllegalArgumentException(
+                                        "Expression not an Integer expression: " + number_expr.toString());
+                return number_expr;
         }
 
         @Override
         public Expr<T> visitString_val0(LangPSLParser.String_val0Context ctx) {
-                return visit(ctx.hdl_or_psl_expression());
+                Expr<T> string_expr = visit(ctx.hdl_or_psl_expression());
+                if (string_expr instanceof StringValue) {
+                        // Check if expression actually String expression
+                } else
+                        throw new IllegalArgumentException(
+                                        "Expression not a String expression: " + string_expr.toString());
+                return string_expr;
         }
 
         // FL property
@@ -295,8 +235,8 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         }
 
         @Override
-        public Expr<T> visitBoolValFlProperty(LangPSLParser.BoolValFlPropertyContext ctx) {
-                return visit(ctx.bool_val());
+        public Expr<T> visitNeverFlProperty(LangPSLParser.NeverFlPropertyContext ctx) {
+                return new Not<>(visit(ctx.fl_property()), OriGen.create());
         }
 
         @Override
@@ -318,10 +258,8 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         public Expr<T> visitArrowFlProperty(LangPSLParser.ArrowFlPropertyContext ctx) {
                 if (ctx.fl_property(1).getText().startsWith("within_t")) {
                         java.util.List<Expr<T>> expression = new java.util.ArrayList<>();
-
                         // Right side of equation
                         Expr<T> right = visit(ctx.fl_property(1));
-
                         // Left Side of equation
                         IntegerValue<T> event_index = new IntegerValue<>(BigInt.apply(event_value), OriGen.create());
                         Eq<T> equals = new Eq<>(getEventState(newest_event_index), event_index, OriGen.create());
@@ -343,11 +281,28 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         @Override
         public Expr<T> visitWithinTFlProperty(LangPSLParser.WithinTFlPropertyContext ctx) {
-                col_system.add_wait_event();
+                col_system.add_wait_event(); // Add variable to each Class
                 this.newest_event_index = this.newest_event_index + 1;
-                this.event_value = Integer.parseInt(ctx.number_val().getText()); // TODO: IDENTIFY WHAT HAPPENS IF THIS
-                                                                                 // IS A STRING I.E. int x =1;
-                Greater<T> equation = new Greater<>(getEventState(newest_event_index), col_system.ZERO, OriGen.create());
+                for (ProcessClass proc : this.col_system.get_all_processes()) {
+                        SCClassInstance sci = proc.get_generating_instance();
+                        String class_name = sci.getName()+"_"+proc.get_generating_function().getName();
+                        SCSimpleType psl_timer_value = new SCSimpleType(
+                                        class_name + "_timer_value" + newest_event_index, "int");
+                        proc.add_attributes(java.util.Collections.singleton(psl_timer_value));
+                        //result.put(psl_timer_value,variable_transformer.transform_variable_to_instance_field(psl_timer_value));
+
+                        SCSimpleType psl_timer_set = new SCSimpleType(class_name + "_timer_set" + newest_event_index,
+                                        "bool");
+                        //result.put(psl_timer_set,variable_transformer.transform_variable_to_instance_field(psl_timer_set));
+
+                        SCSimpleType psl_timer_reset = new SCSimpleType(class_name + "_timer_reset" + newest_event_index, "bool");
+                        //result.put(psl_timer_reset,variable_transformer.transform_variable_to_instance_field(psl_timer_reset)); */
+                }
+                int within_value = Integer.parseInt(ctx.IntegerLiteral().getText());
+                double relative_value = Timing.getTimeFactor(ctx.TIME_UNIT().getText());
+                this.event_value = (int) (within_value * relative_value);
+                Greater<T> equation = new Greater<>(getEventState(newest_event_index), col_system.ZERO,
+                                OriGen.create());
                 return new Implies<>(visit(ctx.fl_property()), equation, OriGen.create());
         }
 
@@ -355,36 +310,205 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         @Override
         public Expr<T> visitActiveBuiltInFunctionCall(LangPSLParser.ActiveBuiltInFunctionCallContext ctx) {
-                String process_name = ctx.any_type().getText();
-                ProcessClass actual_process = processes.get(process_name);
-                if (actual_process == null) {
-                        throw new IllegalArgumentException("Process not recognised:" + process_name);
-                }
-                IntegerValue<T> index = new IntegerValue<>(BigInt.apply(actual_process.get_process_id()),
+                Expr<T> proc_id = visit(ctx.referenceExpr(0));
+                Expr<T> event = visit(ctx.referenceExpr(1));
+                SeqSubscript<T> proc_index = new SeqSubscript<>(proc_state_deref, proc_id, new GeneratedBlame<>(),
                                 OriGen.create());
-                SeqSubscript<T> proc_index = new SeqSubscript<>(proc_state_deref, index, new GeneratedBlame<>(),
+                Eq<T> process_state = new Eq<>(proc_index, col_system.MINUS_ONE, OriGen.create());
+                return new And<>(process_state, event, OriGen.create());
+        }
+
+        @Override
+        public Expr<T> visitReadyBuiltInFunctionCall(LangPSLParser.ReadyBuiltInFunctionCallContext ctx) {
+                Expr<T> proc_id = visit(ctx.referenceExpr());
+                SeqSubscript<T> proc_index = new SeqSubscript<>(proc_state_deref, proc_id, new GeneratedBlame<>(),
                                 OriGen.create());
 
-                return new Eq<>(proc_index, col_system.MINUS_ONE, OriGen.create());// Maybe rename active() -> ready()?
+                return new Eq<>(proc_index, col_system.MINUS_ONE, OriGen.create());
         }
 
         @Override
         public Expr<T> visitWaitingBuiltInFunctionCall(LangPSLParser.WaitingBuiltInFunctionCallContext ctx) {
-                String process_name = ctx.any_type().getText();
-                ProcessClass actual_process = processes.get(process_name);
-                if (actual_process == null) {
-                        throw new IllegalArgumentException("Process not recognised:" + process_name);
-                }
-                IntegerValue<T> index = new IntegerValue<>(BigInt.apply(actual_process.get_process_id()),
-                                OriGen.create());
-                SeqSubscript<T> proc_index = new SeqSubscript<>(proc_state_deref, index, new GeneratedBlame<>(),
+                Expr<T> proc_id = visit(ctx.referenceExpr());
+                SeqSubscript<T> proc_index = new SeqSubscript<>(proc_state_deref, proc_id, new GeneratedBlame<>(),
                                 OriGen.create());
 
                 return new GreaterEq<>(proc_index, col_system.ZERO, OriGen.create());
         }
 
+        @Override
+        public Expr<T> visitReferenceExpr0(LangPSLParser.ReferenceExpr0Context ctx) {
+                SCClassInstance class_instance = this.sc_system.getInstanceByName(ctx.referenceprimary().getText());
+                if (class_instance == null) {
+                        throw new IllegalArgumentException("Class instance not recognised:" + class_instance);
+                }
+                Object current = class_instance;
+                Expr<T> result = null;
+                for (LangPSLParser.ReferencePostfixExprContext rest : ctx.referencePostfixExpr()) {
+                        if (rest instanceof LangPSLParser.RefIdentifierContext new_ctx) {
+                                String field = new_ctx.clangppIdentifier().getText();
+                                if (current instanceof SCClassInstance sci) {
+                                        ProcessClass found_process = findProcess(field, col_system.get_processes(sci));
+                                        SCVariable var = sci.getSCClass().getMemberByName(field);
+                                        if (found_process != null) {
+                                                current = found_process;
+                                                result = new IntegerValue<>(
+                                                                BigInt.apply(found_process.get_process_id()),
+                                                                OriGen.create());
+                                        } else if (var != null) {
+                                                current = var;
+                                                result = getFieldReference(sci, var);
+                                        } else
+                                                throw new IllegalArgumentException(
+                                                                "Unknown Process or Variable: " + field);
+                                } else if (current instanceof ProcessClass pc) {
+                                        result = getProcessReference(pc);
+                                        SCVariable var = pc.get_generating_function().getLocalVariable(field);
+                                        if (var != null) {
+                                                current = var;
+                                                result = getFieldReference(pc.get_generating_instance(), var);
+                                        }
+                                } else
+                                        throw new IllegalArgumentException("Unknown Process or Variable: " + field);
+
+                        } else if (rest instanceof LangPSLParser.RefIndexContext new_ctx) {
+                                String field = new_ctx.referenceIndex().getChild(1).getText();
+                                String index = new_ctx.referenceIndex().getChild(3).getText();
+                                Expr<T> index_expr = null;
+                                if (current instanceof SCClassInstance sci) {
+                                        SCVariable var = sci.getSCClass().getMemberByName(field);
+                                        if (var != null) {
+                                                index_expr = getFieldReference(sci, var);
+                                        }
+                                } else if (current instanceof ProcessClass pc) {
+                                        SCVariable var = pc.get_generating_function().getLocalVariable(field);
+                                        if (var != null) {
+                                                index_expr = getFieldReference(pc.get_generating_instance(), var);
+                                        }
+                                } else
+                                        throw new IllegalArgumentException("Unknown Process or Variable: " + field);
+                                if (index_expr != null) {
+                                        IntegerValue<T> var_index = new IntegerValue<>(
+                                                        BigInt.apply(Integer.parseInt(index)),
+                                                        OriGen.create());
+                                        result = new SeqSubscript<>(index_expr, var_index,
+                                                        new GeneratedBlame<>(),
+                                                        OriGen.create());
+                                }
+                        } else if (rest instanceof LangPSLParser.RefMethodContext new_ctx) {
+                                String event_type = new_ctx.referenceMethod().getChild(1).getText();
+                                String notification_type = "";
+                                if (new_ctx.referenceMethod().getChildCount() > 4) {
+                                        notification_type = new_ctx.referenceMethod().getChild(5).getText();
+                                }
+                                if (current instanceof SCClassInstance sci) {
+                                        java.util.List<Integer> events = this.col_system
+                                                        .get_channel_events((SCKnownType) sci);
+                                        switch (event_type) {
+                                                case "data_read_event":
+                                                        result = getEventState(events.get(0));
+                                                        break;
+                                                case "data_written_event":
+                                                        result = getEventState(events.get(1));
+                                                        break;
+                                                case "written":
+                                                        InstanceField<T> wri_if = col_system
+                                                                        .get_primitive_instance_field((SCKnownType) sci,
+                                                                                        2);
+                                                        Expr<T> write_ref = getChannelFieldReference((SCKnownType) sci,
+                                                                        wri_if);
+                                                        Size<T> size = new Size<>(write_ref, OriGen.create());
+                                                        result = new Eq<>(size,
+                                                                        new IntegerValue<>(BigInt.apply(1),
+                                                                                        OriGen.create()),
+                                                                        OriGen.create());
+                                                        break;
+                                                case "read":
+                                                        InstanceField<T> read_if = col_system
+                                                                        .get_primitive_instance_field((SCKnownType) sci,
+                                                                                        1);
+                                                        Expr<T> read_ref = getChannelFieldReference((SCKnownType) sci,
+                                                                        read_if);
+                                                        result = new Eq<>(read_ref,
+                                                                        new IntegerValue<>(BigInt.apply(1),
+                                                                                        OriGen.create()),
+                                                                        OriGen.create());
+
+                                                        break;
+                                                default:
+                                                        throw new IllegalArgumentException(
+                                                                        "Unknown event:" + event_type);
+                                        }
+                                } else if (current instanceof ProcessClass pc) {
+                                        switch (event_type) {
+                                                case "wait_event":
+                                                        result = getEventState(
+                                                                        this.col_system.get_nr_primitive_channels() * 2
+                                                                                        + pc.get_process_id());
+                                                        break;
+                                                default:
+                                                        throw new IllegalArgumentException(
+                                                                        "Unknown event:" + event_type);
+                                        }
+                                }
+
+                                switch (notification_type) {
+                                        case "notified_prev_delta":
+                                                result = new Eq<>(result, col_system.MINUS_TWO,
+                                                                OriGen.create());
+                                                break;
+                                        case "notified_delta":
+                                                result = new Eq<>(result, col_system.MINUS_ONE,
+                                                                OriGen.create());
+                                                break;
+                                        case "notified_timed":
+                                                result = new GreaterEq<>(result, col_system.ONE,
+                                                                OriGen.create());
+                                                break;
+                                        case "not_notified":
+                                                result = new Eq<>(result, col_system.MINUS_THREE,
+                                                                OriGen.create());
+                                                break;
+                                        default:
+                                                break;
+                                }
+                        }
+                }
+                return result;
+        }
+
+        @Override
+        public Expr<T> visitHdl_expressions0(LangPSLParser.Hdl_expressions0Context ctx) {
+                Expr<T> op = null;
+                Expr<T> left = visit(ctx.referenceExpr(0));
+                Expr<T> right = visit(ctx.referenceExpr(1));
+                switch (ctx.hdl_operator().getText()) {
+                        case "==":
+                                op = new Eq<>(left, right, OriGen.create());
+                                break;
+                        case ">=":
+                                op = new GreaterEq<>(left, right, OriGen.create());
+                                break;
+                        case "<=":
+                                op = new LessEq<>(left, right, OriGen.create());
+                                break;
+                        case ">":
+                                op = new Greater<>(left, right, OriGen.create());
+                                break;
+                        case "<":
+                                op = new Less<>(left, right, OriGen.create());
+                                break;
+                        default:
+                                break;
+                }
+                return op;
+        }
+
         // Helper methods
 
+        /**
+         * Returns event_state reference while referencing the given index
+         */
         private Expr<T> getEventState(int index) {
                 IntegerValue<T> event_id = new IntegerValue<>(BigInt.apply(index),
                                 OriGen.create());
@@ -393,4 +517,96 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
                 return proc_i;
         }
 
+        private ProcessClass findProcess(String proc_name, java.util.List<ProcessClass> processes) {
+                for (ProcessClass proc : processes) {
+                        if (proc.get_generating_function().getName().equals(proc_name)) {
+                                return proc;
+                        }
+                }
+                throw new IllegalArgumentException("Unknown process: " + proc_name);
+        }
+
+        /**
+         * Returns the field reference to the corresponding SCVariable and
+         * SCClassinstance
+         * 
+         * @param class_instance
+         * @param var
+         * @return field reference to SCClassinstance.SCVariable
+         */
+        private Expr<T> getFieldReference(SCClassInstance class_instance, SCVariable var) {
+                // Get field and COLClass
+                InstanceField<T> f_field = this.col_system.get_instance_field(class_instance, var);
+                COLClass col_class = this.col_system.get_containing_class(f_field);
+                // Get reference to the field instance
+                InstanceField<T> sci_field = this.col_system.get_instance_by_class(col_class);
+                Ref<T, InstanceField<T>> field_ref = new DirectRef<>(sci_field,
+                                ClassTag$.MODULE$.apply(InstanceField.class));
+                Deref<T> field_deref = new Deref<>(col_system.THIS, field_ref, new GeneratedBlame<>(), OriGen.create());
+
+                // Get references to the field
+                Ref<T, InstanceField<T>> f_field_ref = new DirectRef<>(f_field,
+                                ClassTag$.MODULE$.apply(InstanceField.class));
+                Deref<T> f_field_deref = new Deref<>(field_deref, f_field_ref, new GeneratedBlame<>(), OriGen.create());
+
+                return f_field_deref;
+        }
+
+        /**
+         * Returns the field reference to the corresponding ProcessClass and
+         * SCClassinstance
+         * 
+         * @param class_instance
+         * @param proc
+         * @return field reference to SCClassinstance.SCVariable
+         */
+        private Expr<T> getProcessReference(ProcessClass proc) {
+                InstanceField<T> sci_field = this.col_system.get_instance_by_class(proc);
+                Ref<T, InstanceField<T>> field_ref = new DirectRef<>(sci_field,
+                                ClassTag$.MODULE$.apply(InstanceField.class));
+                Deref<T> field_deref = new Deref<>(col_system.THIS, field_ref, new GeneratedBlame<>(), OriGen.create());
+                return field_deref;
+        }
+
+        /**
+         * Returns the field reference to the corresponding ProcessClass and
+         * SCClassinstance
+         * 
+         * @param class_instance
+         * @param proc
+         * @return field reference to SCClassinstance.SCVariable
+         */
+        private Expr<T> getProcessFieldReference(ProcessClass proc) {
+                InstanceField<T> sci_field = this.col_system.get_instance_by_class(proc);
+                Ref<T, InstanceField<T>> field_ref = new DirectRef<>(sci_field,
+                                ClassTag$.MODULE$.apply(InstanceField.class));
+                Deref<T> field_deref = new Deref<>(col_system.THIS, field_ref, new GeneratedBlame<>(), OriGen.create());
+                return field_deref;
+        }
+
+        /**
+         * Returns the field reference to the corresponding SCVariable and
+         * SCClassinstance
+         * 
+         * @param class_instance
+         * @param var
+         * @return field reference to SCClassinstance.SCVariable
+         */
+        private Expr<T> getChannelFieldReference(SCKnownType sc_inst, InstanceField<T> f_field) {
+                // Get field and COLClass
+                COLClass col_class = this.col_system.get_containing_class(f_field);
+
+                // Get reference to the field instance
+                InstanceField<T> sci_field = this.col_system.get_primitive_channel(sc_inst);
+                Ref<T, InstanceField<T>> field_ref = new DirectRef<>(sci_field,
+                                ClassTag$.MODULE$.apply(InstanceField.class));
+                Deref<T> field_deref = new Deref<>(col_system.THIS, field_ref, new GeneratedBlame<>(), OriGen.create());
+
+                // Get references to the field
+                Ref<T, InstanceField<T>> f_field_ref = new DirectRef<>(f_field,
+                                ClassTag$.MODULE$.apply(InstanceField.class));
+                Deref<T> f_field_deref = new Deref<>(field_deref, f_field_ref, new GeneratedBlame<>(), OriGen.create());
+
+                return f_field_deref;
+        }
 }

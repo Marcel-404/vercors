@@ -340,6 +340,11 @@ public class COLSystem<T> {
     private InstancePredicate<T> parameter_perms;
 
     /**
+     * Global permission invariant.
+     */
+    private InstancePredicate<T> psl_perms;
+
+    /**
      * Map from SystemC primitive channel instances to the predicates generated for them in the Main class.
      */
     private final java.util.Map<SCKnownType, InstancePredicate<T>> prim_channel_perms;
@@ -695,6 +700,24 @@ public class COLSystem<T> {
      */
     public InstancePredicate<T> get_parameter_perms() {
         return parameter_perms;
+    }
+
+    /**
+     * Returns the global permission invariant.
+     *
+     */
+    public InstancePredicate<T> get_psl_perms() {
+        return this.psl_perms;
+    }
+
+
+    /**
+     * Registers the global permission invariant.
+     *
+     * @param inv Global permission invariant
+     */
+    public void set_psl_perms(InstancePredicate<T> inv) {
+        this.psl_perms = inv;
     }
 
     /**

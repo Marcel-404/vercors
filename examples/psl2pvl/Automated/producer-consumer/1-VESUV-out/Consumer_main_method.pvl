@@ -1,0 +1,100 @@
+
+class Consumer_main_method {
+    Main m;
+    
+    int c_main_method;
+    
+    boolean consumer_main_method_timer_reset;
+    
+    boolean consumer_main_method_timer_set;
+    
+    boolean consumer_main_method_init;
+    
+    int consumer_main_method_timer_value;
+    
+    ensures Perm(this.m, write);
+    ensures this.m == m_param;
+    ensures Perm(this.c_main_method, write);
+    ensures Perm(this.consumer_main_method_timer_reset, write);
+    ensures Perm(this.consumer_main_method_timer_set, write);
+    ensures Perm(this.consumer_main_method_init, write);
+    ensures Perm(this.consumer_main_method_timer_value, write);
+    ensures idle(this);
+    constructor(
+        Main m_param
+    ) {
+        this.m = m_param;
+    }
+    
+    requires Perm(this.m, 1 \ 2);
+    requires this.m != null;
+    requires committed(this.m);
+    requires Perm(this.m.cons_inst_consumer_main_method, read);
+    requires this.m.cons_inst_consumer_main_method == this;
+    ensures Perm(this.m, 1 \ 2);
+    ensures this.m != null;
+    ensures committed(this.m);
+    ensures Perm(this.m.cons_inst_consumer_main_method, read);
+    ensures this.m.cons_inst_consumer_main_method == this;
+    run {
+        lock this.m;
+        this.c_main_method = 0;
+        loop_invariant Perm(this.m, 1 \ 2);
+        loop_invariant this.m != null;
+        loop_invariant committed(this.m);
+        loop_invariant held(this.m);
+        loop_invariant Perm(this.m.global_invariant(), 1);
+        loop_invariant this.m.cons_inst_consumer_main_method == this;
+        while (true) {
+            loop_invariant Perm(this.m, 1 \ 2);
+            loop_invariant this.m != null;
+            loop_invariant committed(this.m);
+            loop_invariant held(this.m);
+            loop_invariant Perm(this.m.global_invariant(), 1);
+            loop_invariant this.m.cons_inst_consumer_main_method == this;
+            while (|this.m.sc_fifo_int.buffer| <= this.m.sc_fifo_int.num_read) {
+                this.m.process_state = this.m.process_state.update(1, 1);
+                loop_invariant Perm(this.m, 1 \ 2);
+                loop_invariant this.m != null;
+                loop_invariant committed(this.m);
+                loop_invariant held(this.m);
+                loop_invariant Perm(this.m.global_invariant(), 1);
+                loop_invariant this.m.cons_inst_consumer_main_method == this;
+                while (this.m.process_state[1] != -1 || this.m.event_state[1] != -2) {
+                    unlock this.m;
+                    lock this.m;
+                }
+            }
+            this.c_main_method = this.m.sc_fifo_int.fifo_read();
+            this.consume(this.c_main_method);
+        }
+        unlock this.m;
+    }
+    
+    requires Perm(this.m, 1 \ 2);
+    requires this.m != null;
+    requires committed(this.m);
+    requires held(this.m);
+    requires Perm(this.m.global_invariant(), 1);
+    requires this.m.cons_inst_consumer_main_method == this;
+    ensures Perm(this.m, 1 \ 2);
+    ensures this.m != null;
+    ensures committed(this.m);
+    ensures held(this.m);
+    ensures Perm(this.m.global_invariant(), 1);
+    ensures this.m.cons_inst_consumer_main_method == this;
+    void consume(int c_param) {
+        this.m.process_state = this.m.process_state.update(1, 3);
+        this.m.event_state = this.m.event_state.update(3, 200000);
+        loop_invariant Perm(this.m, 1 \ 2);
+        loop_invariant this.m != null;
+        loop_invariant committed(this.m);
+        loop_invariant held(this.m);
+        loop_invariant Perm(this.m.global_invariant(), 1);
+        loop_invariant this.m.cons_inst_consumer_main_method == this;
+        while (this.m.process_state[1] != -1 || this.m.event_state[3] != -2) {
+            unlock this.m;
+            lock this.m;
+        }
+    }
+}

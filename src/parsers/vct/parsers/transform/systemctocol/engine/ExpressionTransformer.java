@@ -1581,7 +1581,6 @@ public class ExpressionTransformer<T> {
      */
     private Expr<T> transform_sc_variable_expression(SCVariableExpression expr, SCClassInstance sc_inst, Expr<T> obj) {
         SCVariable sc_var = expr.getVar();
-
         // If the variable is local, return the local COL equivalent
         if (local_variables.containsKey(sc_var)) {
             Variable<T> var = local_variables.get(sc_var);

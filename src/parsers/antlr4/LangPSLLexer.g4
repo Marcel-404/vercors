@@ -201,6 +201,19 @@ WITHIN_T: 'within_t';
 
 WAITING: 'waiting';
 
+READY:'ready';
+
+NOTIFIED_TIMED:'notified_timed';
+
+NOT_NOTIFIED:'not_notified';
+
+NOTIFIED_DELTA:'notified_delta';
+
+NOTIFIED_PREV_DELTA:'notified_prev_delta';
+
+NOTIFIED_UNTIMED:'notified_untimed';
+
+
 ACTIVE: 'active';
 
 TIME_UNIT: 'SC_SEC' | 'SC_MS' | 'SC_US' | 'SC_NS' | 'SC_PS' | 'SC_FS';
