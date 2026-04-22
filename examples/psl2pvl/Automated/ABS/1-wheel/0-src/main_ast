@@ -456,23 +456,31 @@ SC_MODULE ( TickCounter ) {
 
 vunit main(Main){
 
-  assert always active(s.send) && speed_s.written() -> within_t[(1,SC_MS)] active(ecu_absasr.read_s) && speed_s.read() && ecu_absasr.v[0] == s.send.speed;
+  assert always (active(s.send) && speed_s.written() -> 
 
-  assert never waiting(s.send) && 
+    within_t[(1,SC_MS)] active(ecu_absasr.read_s) && speed_s.read() && ecu_absasr.v[0] == s.send.speed);
 
-  waiting(ecu_absasr.read_s) && 
+
+
+  assert never (
+
+  waiting(s.send) && 
 
   waiting(ecu_absasr.not_a_main) && 
 
-  speed_s.data_written_event().not_notified() 
+  waiting(ecu_absasr.read_s) && 
 
-  && speed_s.data_read_event().not_notified() 
 
-  && ecu_absasr.read_s.wait_event().not_notified()  // Does not exist but is wrongly assessed
 
-  && s.send.wait_event().not_notified() 
+  speed_s.data_read_event().not_notified() && 
 
-  && ecu_absasr.not_a_main.wait_event().not_notified();
+  speed_s.data_written_event().not_notified() && 
+
+  s.send.wait_event().not_notified() && 
+
+  ecu_absasr.not_a_main.wait_event().not_notified() &&
+
+  ecu_absasr.read_s.wait_event().not_notified());// Does not exist but can be wrongly specified
 
   } psl */
 int sc_main (int argc, char* argv[])

@@ -4,8 +4,6 @@ import de.tub.pes.syscir.sc_model.SCProcess;
 import de.tub.pes.syscir.sc_model.SCSystem;
 import de.tub.pes.syscir.sc_model.SCFunction;
 import de.tub.pes.syscir.sc_model.SCVariable;
-import de.tub.pes.syscir.sc_model.expressions.ConstantExpression;
-import de.tub.pes.syscir.sc_model.expressions.SCVariableExpression;
 import de.tub.pes.syscir.sc_model.variables.SCKnownType;
 import de.tub.pes.syscir.sc_model.variables.SCClassInstance;
 import de.tub.pes.syscir.sc_model.variables.SCSimpleType;
@@ -15,8 +13,7 @@ import vct.col.ast.*;
 import vct.col.ast.Class;
 import vct.col.ref.DirectRef;
 import vct.col.ref.Ref;
-import vct.parsers.transform.systemctocol.engine.ExpressionTransformer;
-import vct.parsers.transform.systemctocol.engine.MainTransformer;
+import vct.parsers.transform.systemctocol.exceptions.ExpressionParseException;
 import vct.parsers.transform.systemctocol.colmodel.COLClass;
 import vct.parsers.transform.systemctocol.colmodel.COLSystem;
 import vct.parsers.transform.systemctocol.colmodel.ProcessClass;
@@ -26,7 +23,6 @@ import vct.parsers.transform.systemctocol.util.OriGen;
 import vct.parsers.transform.systemctocol.util.Timing;
 import vct.parsers.transform.systemctocol.util.Seqs;
 import java.util.HashMap;
-import java.util.LinkedList;
 import javax.lang.model.util.Elements.Origin;
 import org.antlr.v4.runtime.*;
 import vct.antlr4.generated.LangPSLParser;
@@ -85,7 +81,13 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         @Override
         public Expr<T> visitVerificationUnitVerificationItem(
                         LangPSLParser.VerificationUnitVerificationItemContext ctx) {
-                return visit(ctx.verification_unit());
+                        Expr<T> result = null;
+                try{
+                        result = visit(ctx.verification_unit());
+                }catch(Exception ignored){
+                        throw new ExpressionParseException("PSL annoations could not be parsed!");
+                }
+                return result;
         }
 
         @Override
@@ -101,7 +103,7 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         @Override
         public Expr<T> visitVunit_instance0(LangPSLParser.Vunit_instance0Context ctx) {
-                return visitChildren(ctx); // TODO
+                return visitChildren(ctx); 
         }
 
         @Override
@@ -129,7 +131,7 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
                 throw new IllegalArgumentException("Verification Directive not supported: assume");
         }
 
-        @Override
+       /*  @Override
         public Expr<T> visitRestrictDirectiveVerificationDirective(
                         LangPSLParser.RestrictDirectiveVerificationDirectiveContext ctx) {
                 throw new IllegalArgumentException("Verification Directive not supported: restrict");
@@ -152,7 +154,7 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
                         LangPSLParser.FairnessStatementVerificationDirectiveContext ctx) {
                 throw new IllegalArgumentException("Verification Directive not supported: fairness");
         }
-
+*/
         // ==============================================================================================================
         // ==============================================================================================================
 
@@ -164,7 +166,7 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         // ==============================================================================================================
         // property:
         // ==============================================================================================================
-        @Override
+        /*@Override
         public Expr<T> visitReplicatorPropertyProperty(LangPSLParser.ReplicatorPropertyPropertyContext ctx) {
                 throw new IllegalArgumentException("Property not supported: Replicator Property");
         }
@@ -173,7 +175,7 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         public Expr<T> visitObePropertyProperty(LangPSLParser.ObePropertyPropertyContext ctx) {
                 throw new IllegalArgumentException("Property not supported: OBE Property");
         }
-
+        */
         // ==============================================================================================================
         // ==============================================================================================================
 
@@ -228,6 +230,11 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         }
 
         // FL property
+
+        @Override
+        public Expr<T> visitParenFlProperty(LangPSLParser.ParenFlPropertyContext ctx) {
+                return visit(ctx.fl_property());
+        }
 
         @Override
         public Expr<T> visitAlwaysFlProperty(LangPSLParser.AlwaysFlPropertyContext ctx) {
@@ -285,18 +292,15 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
                 this.newest_event_index = this.newest_event_index + 1;
                 for (ProcessClass proc : this.col_system.get_all_processes()) {
                         SCClassInstance sci = proc.get_generating_instance();
-                        String class_name = sci.getName()+"_"+proc.get_generating_function().getName();
+                        String class_name = sci.getName() + "_" + proc.get_generating_function().getName();
                         SCSimpleType psl_timer_value = new SCSimpleType(
                                         class_name + "_timer_value" + newest_event_index, "int");
                         proc.add_attributes(java.util.Collections.singleton(psl_timer_value));
-                        //result.put(psl_timer_value,variable_transformer.transform_variable_to_instance_field(psl_timer_value));
-
                         SCSimpleType psl_timer_set = new SCSimpleType(class_name + "_timer_set" + newest_event_index,
                                         "bool");
-                        //result.put(psl_timer_set,variable_transformer.transform_variable_to_instance_field(psl_timer_set));
 
-                        SCSimpleType psl_timer_reset = new SCSimpleType(class_name + "_timer_reset" + newest_event_index, "bool");
-                        //result.put(psl_timer_reset,variable_transformer.transform_variable_to_instance_field(psl_timer_reset)); */
+                        SCSimpleType psl_timer_reset = new SCSimpleType(
+                                        class_name + "_timer_reset" + newest_event_index, "bool");
                 }
                 int within_value = Integer.parseInt(ctx.IntegerLiteral().getText());
                 double relative_value = Timing.getTimeFactor(ctx.TIME_UNIT().getText());
@@ -433,7 +437,6 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
                                                                         new IntegerValue<>(BigInt.apply(1),
                                                                                         OriGen.create()),
                                                                         OriGen.create());
-
                                                         break;
                                                 default:
                                                         throw new IllegalArgumentException(
@@ -451,7 +454,6 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
                                                                         "Unknown event:" + event_type);
                                         }
                                 }
-
                                 switch (notification_type) {
                                         case "notified_prev_delta":
                                                 result = new Eq<>(result, col_system.MINUS_TWO,
@@ -463,6 +465,10 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
                                                 break;
                                         case "notified_timed":
                                                 result = new GreaterEq<>(result, col_system.ONE,
+                                                                OriGen.create());
+                                                break;
+                                        case "notified_untimed":
+                                                result = new Eq<>(result, col_system.ZERO,
                                                                 OriGen.create());
                                                 break;
                                         case "not_notified":
@@ -507,7 +513,9 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         // Helper methods
 
         /**
-         * Returns event_state reference while referencing the given index
+         * Returns reference to event_state[index]
+         * @param index
+         * @return reference to event_state[index]
          */
         private Expr<T> getEventState(int index) {
                 IntegerValue<T> event_id = new IntegerValue<>(BigInt.apply(index),
@@ -517,7 +525,14 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
                 return proc_i;
         }
 
-        private ProcessClass findProcess(String proc_name, java.util.List<ProcessClass> processes) {
+        /**
+         * Returns the process, if its name is recognised, otherwise an exception is thrown
+         * @param proc_name
+         * @param processes
+         * @return process, which conforms to the given name, otherwise throws Exception
+         * @throws IllegalArgumentException
+         */
+        private ProcessClass findProcess(String proc_name, java.util.List<ProcessClass> processes) throws IllegalArgumentException{
                 for (ProcessClass proc : processes) {
                         if (proc.get_generating_function().getName().equals(proc_name)) {
                                 return proc;
@@ -569,12 +584,9 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         }
 
         /**
-         * Returns the field reference to the corresponding ProcessClass and
-         * SCClassinstance
-         * 
-         * @param class_instance
-         * @param proc
-         * @return field reference to SCClassinstance.SCVariable
+         * Gets the reference to the corresponding Class instance
+         * @param proc 
+         * @return field reference to SCClassinstance
          */
         private Expr<T> getProcessFieldReference(ProcessClass proc) {
                 InstanceField<T> sci_field = this.col_system.get_instance_by_class(proc);
@@ -585,12 +597,10 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         }
 
         /**
-         * Returns the field reference to the corresponding SCVariable and
-         * SCClassinstance
-         * 
-         * @param class_instance
-         * @param var
-         * @return field reference to SCClassinstance.SCVariable
+         * Gets the reference to the corresponding channel
+         * @param sc_inst Channel SCClassinstance
+         * @param f_field Variable referencing the channel
+         * @return field reference to channel.f_field
          */
         private Expr<T> getChannelFieldReference(SCKnownType sc_inst, InstanceField<T> f_field) {
                 // Get field and COLClass

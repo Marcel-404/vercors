@@ -1,5 +1,5 @@
 vesuv_entry {
-    Main Design_261052089;
-    Design_261052089 = new Main();
-    Design_261052089.main();
+    Main Design_780843029;
+    Design_780843029 = new Main();
+    Design_780843029.main();
 }

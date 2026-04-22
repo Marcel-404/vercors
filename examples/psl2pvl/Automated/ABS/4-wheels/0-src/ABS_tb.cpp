@@ -4,32 +4,48 @@
 #include "ABSASR.h"
 /* psl
 vunit main(Main){
-assert always active(vr.send) && speed_vr.written() -> within_t[(1,SC_MS)] active(ecu_absasr.read_vr) && speed_vr.read() && ecu_absasr.v[0] == vr.send.speed;
+assert always (active(vr.send) && speed_vr.written() -> 
+  within_t[(1,SC_MS)] active(ecu_absasr.read_vr) && speed_vr.read() && ecu_absasr.v[0] == vr.send.speed);
 
-assert always active(vl.send) && speed_vl.written() -> within_t[(1,SC_MS)] active(ecu_absasr.read_vl) && speed_vl.read() && ecu_absasr.v[1] == vl.send.speed;
-  
-assert always active(hr.send) && speed_hr.written() -> within_t[(1,SC_MS)] active(ecu_absasr.read_hr) && speed_hr.read() && ecu_absasr.v[2] == hr.send.speed;
-  
-assert always active(hl.send) && speed_hl.written() -> within_t[(1,SC_MS)] active(ecu_absasr.read_hl) && speed_hl.read() && ecu_absasr.v[3] == hl.send.speed;
+assert always (active(vl.send) && speed_vl.written() -> 
+  within_t[(1,SC_MS)] active(ecu_absasr.read_vl) && speed_vl.read() && ecu_absasr.v[1] == vl.send.speed);
+
+assert always (active(hr.send) && speed_hr.written() -> 
+  within_t[(1,SC_MS)] active(ecu_absasr.read_hr) && speed_hr.read() && ecu_absasr.v[2] == hr.send.speed);
+    
+assert always (active(hl.send) && speed_hl.written() -> 
+  within_t[(1,SC_MS)] active(ecu_absasr.read_hl) && speed_hl.read() && ecu_absasr.v[3] == hl.send.speed);
   
 
-  assert never waiting(vr.send) && 
+
+  assert never (
   waiting(vl.send) && 
-  waiting(hl.send) && 
+  waiting(vr.send) && 
   waiting(hr.send) && 
+  waiting(hl.send) && 
+
   waiting(ecu_absasr.read_vr) && 
   waiting(ecu_absasr.read_vl) && 
   waiting(ecu_absasr.read_hl) && 
   waiting(ecu_absasr.read_hr) && 
+
   waiting(ecu_absasr.not_a_main) && 
-  speed_vl.data_written_event().not_notified() && speed_vl.data_read_event().not_notified() && 
-  speed_vr.data_written_event().not_notified() && speed_vr.data_read_event().not_notified() &&
-  speed_hl.data_written_event().not_notified() && speed_hl.data_read_event().not_notified() &&
-  speed_hr.data_written_event().not_notified() && speed_hr.data_read_event().not_notified() &&
-  ecu_absasr.read_vr.wait_event().not_notified() && ecu_absasr.read_vl.wait_event().not_notified() && 
-  ecu_absasr.read_hl.wait_event().not_notified() && ecu_absasr.read_hr.wait_event().not_notified() &&
-  vl.send.wait_event().not_notified() && vr.send.wait_event().not_notified() &&
-  hl.send.wait_event().not_notified() && hr.send.wait_event().not_notified();
+
+  speed_vr.data_read_event().not_notified() &&
+  speed_vl.data_read_event().not_notified() && 
+  speed_hl.data_read_event().not_notified() &&
+  speed_hr.data_read_event().not_notified() &&
+
+  speed_vr.data_written_event().not_notified() && 
+  speed_vl.data_written_event().not_notified() && 
+  speed_hr.data_written_event().not_notified() && 
+  speed_hl.data_written_event().not_notified() && 
+
+  vr.send.wait_event().not_notified() &&
+  vl.send.wait_event().not_notified() && 
+  hr.send.wait_event().not_notified() &&
+  hl.send.wait_event().not_notified() &&
+  ecu_absasr.not_a_main.wait_event().not_notified());
 }
 psl */
 int sc_main (int argc, char* argv[]) 
