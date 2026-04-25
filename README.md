@@ -102,7 +102,7 @@ The license to VerCors is a mozilla open source license as described in LICENSE.
 
 # PSL2PVL Transformation 
 
-Run all experiments: 
+## Run all experiments: 
 
 ```shell script
 $ ./examples/psl2pvl/run_experiments.sh 
@@ -112,46 +112,47 @@ $ ./examples/psl2pvl/run_experiments.sh
 3) Verify SystemC design
 ```
 
-Transform SystemC design: 
+## Transform SystemC design: 
 
 ```shell script
 $ ./examples/psl2pvl/transform.sh 
 [INFO] Transform which SystemC design?:
-1) ABS/1-wheel
-2) ABS/4-wheels
-3) producer-consumer
-4) crossroad
+1) Automated/ABS/1-wheel
+2) Automated/ABS/4-wheels
+3) Manual-Encoding/ABS/1-wheel
+4) Manual-Encoding/ABS/4-wheels
 5) All SystemC designs
 6) Back to previous menu
 ```
 
-Generate RASI: 
+## Generate RASI: 
+- Note: Since the RASI generator does not work on this version, the VerCors version from the [paper](https://research.utwente.nl/files/479531770/978-3-031-77382-2_23.pdf) must be used. Since the file was too large to add to this GitHub fork, the vercors.jar from the artifact must be added to lib/RASI-Generator/ .
 
 ```shell script
 $ ./examples/psl2pvl/generate_rasi.sh 
 [INFO] Generate RASI for which SystemC design?:
-1) ABS/1-wheel
-2) ABS/4-wheels
-3) producer-consumer
-4) crossroad
+1) Automated/ABS/1-wheel
+2) Automated/ABS/4-wheels
+3) Manual-Encoding/ABS/1-wheel
+4) Manual-Encoding/ABS/4-wheels
 5) All SystemC designs
 6) Back to previous menu
 ```
 
-Verify SystemC design: 
+## Verify SystemC design: 
 
 ```shell script
 $ ./examples/psl2pvl/verify.sh 
 [INFO] Verify which SystemC design?:
-1) ABS/1-wheel
-2) ABS/4-wheels
-3) producer-consumer
-4) crossroad
-5) All SystemC designs
+1) Automated/ABS/1-wheel
+2) Automated/ABS/4-wheels
+3) Manual-Encoding/ABS/1-wheel
+4) Manual-Encoding/ABS/4-wheels
+5) All Systemc designs
 6) Back to previous menu
 ```
 
-Run transformation tests: 
+## Run transformation tests: 
 
 ```shell script
 $ ./test/psl2pvl/run_tests.sh
