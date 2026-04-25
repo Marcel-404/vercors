@@ -4,18 +4,6 @@ class Absasr {
     
     int temp_fv;
     
-    boolean absasr_timer_reset;
-    
-    int[] lambda;
-    
-    int[] s;
-    
-    int fv;
-    
-    boolean absasr_init;
-    
-    boolean absasr_timer_set;
-    
     int[] a;
     
     int j__asr;
@@ -24,7 +12,11 @@ class Absasr {
     
     int fa;
     
-    int absasr_timer_value;
+    int[] lambda;
+    
+    int[] s;
+    
+    int fv;
     
     int[] p;
     
@@ -33,7 +25,12 @@ class Absasr {
     ensures Perm(this.m, write);
     ensures this.m == m_param;
     ensures Perm(this.temp_fv, write);
-    ensures Perm(this.absasr_timer_reset, write);
+    ensures Perm(this.a, read);
+    ensures \array(this.a, 4);
+    ensures Perm(this.a[*], write);
+    ensures Perm(this.j__asr, write);
+    ensures Perm(this.i__abs, write);
+    ensures Perm(this.fa, write);
     ensures Perm(this.lambda, read);
     ensures \array(this.lambda, 4);
     ensures Perm(this.lambda[*], write);
@@ -41,15 +38,6 @@ class Absasr {
     ensures \array(this.s, 4);
     ensures Perm(this.s[*], write);
     ensures Perm(this.fv, write);
-    ensures Perm(this.absasr_init, write);
-    ensures Perm(this.absasr_timer_set, write);
-    ensures Perm(this.a, read);
-    ensures \array(this.a, 4);
-    ensures Perm(this.a[*], write);
-    ensures Perm(this.j__asr, write);
-    ensures Perm(this.i__abs, write);
-    ensures Perm(this.fa, write);
-    ensures Perm(this.absasr_timer_value, write);
     ensures Perm(this.p, read);
     ensures \array(this.p, 4);
     ensures Perm(this.p[*], write);

@@ -2,23 +2,29 @@
 class Absasr_read_hr {
     Main m;
     
-    boolean absasr_read_hr_timer_set;
+    boolean[] ecu_absasr_timer_set;
     
-    boolean absasr_read_hr_timer_reset;
+    boolean ecu_absasr_init;
     
-    boolean absasr_read_hr_init;
-    
-    int absasr_read_hr_timer_value;
+    boolean[] ecu_absasr_timer_reset;
     
     int tmp_2_read_hr;
     
+    int[] ecu_absasr_timer_value;
+    
     ensures Perm(this.m, write);
     ensures this.m == m_param;
-    ensures Perm(this.absasr_read_hr_timer_set, write);
-    ensures Perm(this.absasr_read_hr_timer_reset, write);
-    ensures Perm(this.absasr_read_hr_init, write);
-    ensures Perm(this.absasr_read_hr_timer_value, write);
+    ensures Perm(this.ecu_absasr_timer_set, read);
+    ensures \array(this.ecu_absasr_timer_set, 4);
+    ensures Perm(this.ecu_absasr_timer_set[*], write);
+    ensures Perm(this.ecu_absasr_init, write);
+    ensures Perm(this.ecu_absasr_timer_reset, read);
+    ensures \array(this.ecu_absasr_timer_reset, 4);
+    ensures Perm(this.ecu_absasr_timer_reset[*], write);
     ensures Perm(this.tmp_2_read_hr, write);
+    ensures Perm(this.ecu_absasr_timer_value, read);
+    ensures \array(this.ecu_absasr_timer_value, 4);
+    ensures Perm(this.ecu_absasr_timer_value[*], write);
     ensures idle(this);
     constructor(
         Main m_param

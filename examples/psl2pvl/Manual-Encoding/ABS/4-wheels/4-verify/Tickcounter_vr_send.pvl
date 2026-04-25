@@ -1,45 +1,30 @@
-
 class Tickcounter_vr_send {
     Main m;
-    
-    boolean vr_init;
-    
-    int[] vr_timer_value;
-    
     int ticks;
-    
-    boolean[] vr_timer_set;
-    
-    boolean[] vr_timer_reset;
-    
     int speed_send;
+    boolean at_send;
+    
     
     ensures Perm(this.m, write);
     ensures this.m == m_param;
-    ensures Perm(this.vr_init, write);
-    ensures Perm(this.vr_timer_value, read);
-    ensures \array(this.vr_timer_value, 4);
-    ensures Perm(this.vr_timer_value[*], write);
     ensures Perm(this.ticks, write);
-    ensures Perm(this.vr_timer_set, read);
-    ensures \array(this.vr_timer_set, 4);
-    ensures Perm(this.vr_timer_set[*], write);
-    ensures Perm(this.vr_timer_reset, read);
-    ensures \array(this.vr_timer_reset, 4);
-    ensures Perm(this.vr_timer_reset[*], write);
     ensures Perm(this.speed_send, write);
+    ensures Perm(this.at_send, write) ** !at_send;
     ensures idle(this);
     constructor(
         Main m_param
     ) {
         this.m = m_param;
+        at_send = false;
     }
+    
     
     requires Perm(this.m, 1 \ 2);
     requires this.m != null;
     requires committed(this.m);
     requires Perm(this.m.vr_tickcounter_vr_send, read);
     requires this.m.vr_tickcounter_vr_send == this;
+    requires Perm(at_send, 1\2) ** !at_send;
     ensures Perm(this.m, 1 \ 2);
     ensures this.m != null;
     ensures committed(this.m);
@@ -51,45 +36,61 @@ class Tickcounter_vr_send {
         loop_invariant this.m != null;
         loop_invariant committed(this.m);
         loop_invariant held(this.m);
-        loop_invariant Perm(this.m.global_invariant(), 1);
+        loop_invariant this.m.global_invariant();
         loop_invariant this.m.vr_tickcounter_vr_send == this;
+        loop_invariant Perm(at_send, 1\2) ** !at_send;
         while (true) {
             this.m.process_state = this.m.process_state.update(1, 9);
             this.m.event_state = this.m.event_state.update(9, 1);
+
+            at_send = true;
+
             loop_invariant Perm(this.m, 1 \ 2);
             loop_invariant this.m != null;
             loop_invariant committed(this.m);
             loop_invariant held(this.m);
-            loop_invariant Perm(this.m.global_invariant(), 1);
+            loop_invariant this.m.global_invariant();
             loop_invariant this.m.vr_tickcounter_vr_send == this;
+            loop_invariant Perm(at_send, 1\2) ** at_send;
             while (this.m.process_state[1] != -1 || this.m.event_state[9] != -2) {
                 unlock this.m;
                 lock this.m;
             }
             this.speed_send = this.generate__random__0();
+
+            at_send = false;
+
             loop_invariant Perm(this.m, 1 \ 2);
             loop_invariant this.m != null;
             loop_invariant committed(this.m);
             loop_invariant held(this.m);
-            loop_invariant Perm(this.m.global_invariant(), 1);
+            loop_invariant this.m.global_invariant();
             loop_invariant this.m.vr_tickcounter_vr_send == this;
+            loop_invariant Perm(at_send, 1\2) ** !at_send;
+            loop_invariant |this.m.sc_fifo_int_speed_vr.buffer| + |this.m.sc_fifo_int_speed_vr.written| == 0
+                        ** this.m.event_state[9] == -2;
             while (|this.m.sc_fifo_int_speed_vr.buffer| + |this.m.sc_fifo_int_speed_vr.written| >= this.m.buffer_size) {
                 this.m.process_state = this.m.process_state.update(1, 2);
                 loop_invariant Perm(this.m, 1 \ 2);
                 loop_invariant this.m != null;
                 loop_invariant committed(this.m);
                 loop_invariant held(this.m);
-                loop_invariant Perm(this.m.global_invariant(), 1);
+                loop_invariant this.m.global_invariant();
                 loop_invariant this.m.vr_tickcounter_vr_send == this;
+                loop_invariant Perm(at_send, 1\2) ** !at_send;
                 while (this.m.process_state[1] != -1 || this.m.event_state[2] != -2) {
                     unlock this.m;
                     lock this.m;
                 }
             }
             this.m.sc_fifo_int_speed_vr.fifo_write(this.speed_send);
+            if (this.m.event_state[13] == -3) {
+                this.m.event_state = this.m.event_state.update(13, 1);
+            }
         }
         unlock this.m;
     }
+    
     
     pure int generate__random__0();
 }

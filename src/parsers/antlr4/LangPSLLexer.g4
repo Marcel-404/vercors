@@ -218,6 +218,8 @@ ACTIVE: 'active';
 
 TIME_UNIT: 'SC_SEC' | 'SC_MS' | 'SC_US' | 'SC_NS' | 'SC_PS' | 'SC_FS';
 
+SC_ZERO_TIME: 'SC_ZERO_TIME';
+
 //IDENTIFIER: [a-zA-Z]('_'?[a-zA-Z0-9])*;
 
 //WS: [ \t\r\n]+ -> skip;

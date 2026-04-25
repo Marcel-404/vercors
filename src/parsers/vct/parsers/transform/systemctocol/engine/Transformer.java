@@ -1,11 +1,14 @@
 package vct.parsers.transform.systemctocol.engine;
 
 import de.tub.pes.syscir.sc_model.*;
+import de.tub.pes.syscir.sc_model.expressions.ConstantExpression;
 import de.tub.pes.syscir.sc_model.expressions.Expression;
 import de.tub.pes.syscir.sc_model.expressions.FunctionCallExpression;
 import de.tub.pes.syscir.sc_model.expressions.TimeUnitExpression;
 import de.tub.pes.syscir.sc_model.variables.SCClassInstance;
 import de.tub.pes.syscir.sc_model.variables.SCEvent;
+import de.tub.pes.syscir.sc_model.variables.SCArray;
+import de.tub.pes.syscir.sc_model.variables.SCSimpleType;
 import de.tub.pes.syscir.sc_model.variables.SCKnownType;
 import de.tub.pes.syscir.sc_model.variables.SCTIMEUNIT;
 import vct.col.ast.ByReferenceClass;
@@ -130,6 +133,22 @@ public class Transformer<T> {
 				SCFunction constructor = inst.getSCClass().getConstructor();
 				java.util.List<SCVariable> members = inst.getSCClass().getMembers();
 
+				// Count occurences of within_t PSL operator, to specify, how many local timing variables need to be created:
+				String annotations = this.sc_system.getAnnotations().toString();
+				java.util.List<SCVariable> psl_members=new java.util.ArrayList<>();
+				if(annotations!=null){
+					int count = (annotations.length() - annotations.replace("within_t", "").length())/8;
+					ConstantExpression count_var = new ConstantExpression(null,""+count);
+					// Add PSL Helper Variables for each timer object
+					if(count!=0){
+						String class_name =inst.getName();
+						SCArray psl_timer_value = new SCArray(class_name+"_timer_value","int",count_var);
+            			SCArray psl_timer_set = new SCArray(class_name+"_timer_set","bool",count_var);
+            			SCArray psl_timer_reset = new SCArray(class_name+"_timer_reset","bool",count_var);
+						SCSimpleType psl_init = new SCSimpleType(class_name+"_init","bool");
+						psl_members.addAll(java.util.Arrays.asList(psl_timer_value,psl_timer_set,psl_timer_reset,psl_init));
+					}
+				}
 				// Separate constructor and processes from regular member functions
 				member_functions.remove(constructor);
 				java.util.List<SCFunction> sc_processes = new java.util.ArrayList<>();
@@ -156,6 +175,7 @@ public class Transformer<T> {
 						ProcessClass proc = new ProcessClass(inst, sc_processes.get(0));
 						proc.set_constructor(constructor);
 						proc.add_attributes(members);
+						proc.add_attributes(psl_members);
 						proc.add_methods(member_functions);
 						col_system.add_process(inst, proc);
 					}
@@ -172,6 +192,7 @@ public class Transformer<T> {
 						// For each thread, create its own thread function
 						for (SCFunction sc_process : sc_processes) {
 							ProcessClass proc = new ProcessClass(inst, sc_process);
+							proc.add_attributes(psl_members);
 							col_system.add_process(inst, proc);
 						}
 					}
@@ -309,10 +330,6 @@ public class Transformer<T> {
 				}
 			}
 		}
-	}
-
-	private void transform_psl_annotations(){
-		
 	}
 
 	/**

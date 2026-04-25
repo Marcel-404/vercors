@@ -1,4 +1,5 @@
 package vct.parsers.transform;
+
 import de.tub.pes.syscir.sc_model.SCClass;
 import de.tub.pes.syscir.sc_model.SCProcess;
 import de.tub.pes.syscir.sc_model.SCSystem;
@@ -40,9 +41,7 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         java.util.Map<String, Expr<T>> properties = new HashMap<>();
 
-        int newest_event_index;
-
-        int event_value = 0;
+        java.util.List<Integer> event_indices;
 
         Ref<T, InstanceField<T>> event_state_ref;
         Deref<T> event_state_deref;
@@ -52,8 +51,7 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         public PSLToColVisitor(SCSystem sc_system, COLSystem<T> col_system) {
                 this.sc_system = sc_system;
                 this.col_system = col_system;
-                this.newest_event_index = col_system.get_total_nr_events() - 1;
-                this.event_value = 0;
+                this.event_indices = new java.util.ArrayList<>();
                 this.current_module = "";
                 this.event_state_ref = new DirectRef<>(col_system.get_event_state(),
                                 ClassTag$.MODULE$.apply(InstanceField.class));
@@ -81,11 +79,11 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         @Override
         public Expr<T> visitVerificationUnitVerificationItem(
                         LangPSLParser.VerificationUnitVerificationItemContext ctx) {
-                        Expr<T> result = null;
-                try{
+                Expr<T> result = null;
+                try {
                         result = visit(ctx.verification_unit());
-                }catch(Exception ignored){
-                        throw new ExpressionParseException("PSL annoations could not be parsed!");
+                } catch (Exception ignored) {
+                        throw new ExpressionParseException("PSL annoations could not be transformed!");
                 }
                 return result;
         }
@@ -103,7 +101,7 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         @Override
         public Expr<T> visitVunit_instance0(LangPSLParser.Vunit_instance0Context ctx) {
-                return visitChildren(ctx); 
+                return visitChildren(ctx);
         }
 
         @Override
@@ -131,30 +129,35 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
                 throw new IllegalArgumentException("Verification Directive not supported: assume");
         }
 
-       /*  @Override
-        public Expr<T> visitRestrictDirectiveVerificationDirective(
-                        LangPSLParser.RestrictDirectiveVerificationDirectiveContext ctx) {
-                throw new IllegalArgumentException("Verification Directive not supported: restrict");
-        }
-
-        @Override
-        public Expr<T> visitRestrictStrongDirectiveVerificationDirective(
-                        LangPSLParser.RestrictStrongDirectiveVerificationDirectiveContext ctx) {
-                throw new IllegalArgumentException("Verification Directive not supported: restrict!");
-        }
-
-        @Override
-        public Expr<T> visitCoverDirectiveVerificationDirective(
-                        LangPSLParser.CoverDirectiveVerificationDirectiveContext ctx) {
-                throw new IllegalArgumentException("Verification Directive not supported: cover");
-        }
-
-        @Override
-        public Expr<T> visitFairnessStatementVerificationDirective(
-                        LangPSLParser.FairnessStatementVerificationDirectiveContext ctx) {
-                throw new IllegalArgumentException("Verification Directive not supported: fairness");
-        }
-*/
+        /*
+         * @Override
+         * public Expr<T> visitRestrictDirectiveVerificationDirective(
+         * LangPSLParser.RestrictDirectiveVerificationDirectiveContext ctx) {
+         * throw new
+         * IllegalArgumentException("Verification Directive not supported: restrict");
+         * }
+         * 
+         * @Override
+         * public Expr<T> visitRestrictStrongDirectiveVerificationDirective(
+         * LangPSLParser.RestrictStrongDirectiveVerificationDirectiveContext ctx) {
+         * throw new
+         * IllegalArgumentException("Verification Directive not supported: restrict!");
+         * }
+         * 
+         * @Override
+         * public Expr<T> visitCoverDirectiveVerificationDirective(
+         * LangPSLParser.CoverDirectiveVerificationDirectiveContext ctx) {
+         * throw new
+         * IllegalArgumentException("Verification Directive not supported: cover");
+         * }
+         * 
+         * @Override
+         * public Expr<T> visitFairnessStatementVerificationDirective(
+         * LangPSLParser.FairnessStatementVerificationDirectiveContext ctx) {
+         * throw new
+         * IllegalArgumentException("Verification Directive not supported: fairness");
+         * }
+         */
         // ==============================================================================================================
         // ==============================================================================================================
 
@@ -166,16 +169,20 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         // ==============================================================================================================
         // property:
         // ==============================================================================================================
-        /*@Override
-        public Expr<T> visitReplicatorPropertyProperty(LangPSLParser.ReplicatorPropertyPropertyContext ctx) {
-                throw new IllegalArgumentException("Property not supported: Replicator Property");
-        }
-
-        @Override
-        public Expr<T> visitObePropertyProperty(LangPSLParser.ObePropertyPropertyContext ctx) {
-                throw new IllegalArgumentException("Property not supported: OBE Property");
-        }
-        */
+        /*
+         * @Override
+         * public Expr<T> visitReplicatorPropertyProperty(LangPSLParser.
+         * ReplicatorPropertyPropertyContext ctx) {
+         * throw new
+         * IllegalArgumentException("Property not supported: Replicator Property");
+         * }
+         * 
+         * @Override
+         * public Expr<T>
+         * visitObePropertyProperty(LangPSLParser.ObePropertyPropertyContext ctx) {
+         * throw new IllegalArgumentException("Property not supported: OBE Property");
+         * }
+         */
         // ==============================================================================================================
         // ==============================================================================================================
 
@@ -263,13 +270,15 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         @Override
         public Expr<T> visitArrowFlProperty(LangPSLParser.ArrowFlPropertyContext ctx) {
-                if (ctx.fl_property(1).getText().startsWith("within_t")) {
+                String right_property = ctx.fl_property(1).getText().replaceFirst("^\\(+", "");
+                if (right_property.startsWith("within_t")) {
+                        int val_idx = event_indices.size();
+                        int e_idx = this.col_system.get_total_nr_events();
                         java.util.List<Expr<T>> expression = new java.util.ArrayList<>();
-                        // Right side of equation
                         Expr<T> right = visit(ctx.fl_property(1));
-                        // Left Side of equation
-                        IntegerValue<T> event_index = new IntegerValue<>(BigInt.apply(event_value), OriGen.create());
-                        Eq<T> equals = new Eq<>(getEventState(newest_event_index), event_index, OriGen.create());
+                        IntegerValue<T> event_index = new IntegerValue<>(BigInt.apply(this.event_indices.get(val_idx)),
+                                        OriGen.create());
+                        Eq<T> equals = new Eq<>(getEventState(e_idx), event_index, OriGen.create());
                         Implies<T> left = new Implies<>(visit(ctx.fl_property(0)), equals, OriGen.create());
 
                         expression.add(left);
@@ -288,26 +297,26 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         @Override
         public Expr<T> visitWithinTFlProperty(LangPSLParser.WithinTFlPropertyContext ctx) {
+                int newest_event_index = this.col_system.get_total_nr_events();
                 col_system.add_wait_event(); // Add variable to each Class
-                this.newest_event_index = this.newest_event_index + 1;
-                for (ProcessClass proc : this.col_system.get_all_processes()) {
-                        SCClassInstance sci = proc.get_generating_instance();
-                        String class_name = sci.getName() + "_" + proc.get_generating_function().getName();
-                        SCSimpleType psl_timer_value = new SCSimpleType(
-                                        class_name + "_timer_value" + newest_event_index, "int");
-                        proc.add_attributes(java.util.Collections.singleton(psl_timer_value));
-                        SCSimpleType psl_timer_set = new SCSimpleType(class_name + "_timer_set" + newest_event_index,
-                                        "bool");
-
-                        SCSimpleType psl_timer_reset = new SCSimpleType(
-                                        class_name + "_timer_reset" + newest_event_index, "bool");
+                int event_value = 0;
+                Expr<T> result = null;
+                if (ctx.SC_ZERO_TIME() != null) {
+                        event_value = -1;
+                        result = new Eq<>(getEventState(newest_event_index), col_system.MINUS_TWO,
+                                        OriGen.create());
+                } else {
+                        int within_value = Integer.parseInt(ctx.IntegerLiteral().getText());
+                        if (within_value < 0) {
+                                throw new IllegalArgumentException("Value for within_t operator may not be < 0!");
+                        }
+                        double relative_value = Timing.getTimeFactor(ctx.TIME_UNIT().getText());
+                        event_value = (int) (within_value * relative_value);
+                        result = new Greater<>(getEventState(newest_event_index), col_system.ZERO,
+                                        OriGen.create());
                 }
-                int within_value = Integer.parseInt(ctx.IntegerLiteral().getText());
-                double relative_value = Timing.getTimeFactor(ctx.TIME_UNIT().getText());
-                this.event_value = (int) (within_value * relative_value);
-                Greater<T> equation = new Greater<>(getEventState(newest_event_index), col_system.ZERO,
-                                OriGen.create());
-                return new Implies<>(visit(ctx.fl_property()), equation, OriGen.create());
+                this.event_indices.add(event_value);
+                return new Implies<>(visit(ctx.fl_property()), result, OriGen.create());
         }
 
         // built_in_function_call
@@ -514,6 +523,7 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         /**
          * Returns reference to event_state[index]
+         * 
          * @param index
          * @return reference to event_state[index]
          */
@@ -526,13 +536,16 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         }
 
         /**
-         * Returns the process, if its name is recognised, otherwise an exception is thrown
+         * Returns the process, if its name is recognised, otherwise an exception is
+         * thrown
+         * 
          * @param proc_name
          * @param processes
          * @return process, which conforms to the given name, otherwise throws Exception
          * @throws IllegalArgumentException
          */
-        private ProcessClass findProcess(String proc_name, java.util.List<ProcessClass> processes) throws IllegalArgumentException{
+        private ProcessClass findProcess(String proc_name, java.util.List<ProcessClass> processes)
+                        throws IllegalArgumentException {
                 for (ProcessClass proc : processes) {
                         if (proc.get_generating_function().getName().equals(proc_name)) {
                                 return proc;
@@ -585,7 +598,8 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         /**
          * Gets the reference to the corresponding Class instance
-         * @param proc 
+         * 
+         * @param proc
          * @return field reference to SCClassinstance
          */
         private Expr<T> getProcessFieldReference(ProcessClass proc) {
@@ -598,6 +612,7 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
 
         /**
          * Gets the reference to the corresponding channel
+         * 
          * @param sc_inst Channel SCClassinstance
          * @param f_field Variable referencing the channel
          * @return field reference to channel.f_field

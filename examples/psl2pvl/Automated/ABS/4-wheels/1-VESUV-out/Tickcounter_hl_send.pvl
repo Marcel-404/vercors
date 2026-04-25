@@ -2,25 +2,31 @@
 class Tickcounter_hl_send {
     Main m;
     
-    int tickcounter_hl_send_timer_value;
-    
-    boolean tickcounter_hl_send_timer_set;
+    int[] hl_timer_value;
     
     int ticks;
     
-    boolean tickcounter_hl_send_init;
+    boolean hl_init;
     
-    boolean tickcounter_hl_send_timer_reset;
+    boolean[] hl_timer_reset;
+    
+    boolean[] hl_timer_set;
     
     int speed_send;
     
     ensures Perm(this.m, write);
     ensures this.m == m_param;
-    ensures Perm(this.tickcounter_hl_send_timer_value, write);
-    ensures Perm(this.tickcounter_hl_send_timer_set, write);
+    ensures Perm(this.hl_timer_value, read);
+    ensures \array(this.hl_timer_value, 4);
+    ensures Perm(this.hl_timer_value[*], write);
     ensures Perm(this.ticks, write);
-    ensures Perm(this.tickcounter_hl_send_init, write);
-    ensures Perm(this.tickcounter_hl_send_timer_reset, write);
+    ensures Perm(this.hl_init, write);
+    ensures Perm(this.hl_timer_reset, read);
+    ensures \array(this.hl_timer_reset, 4);
+    ensures Perm(this.hl_timer_reset[*], write);
+    ensures Perm(this.hl_timer_set, read);
+    ensures \array(this.hl_timer_set, 4);
+    ensures Perm(this.hl_timer_set[*], write);
     ensures Perm(this.speed_send, write);
     ensures idle(this);
     constructor(

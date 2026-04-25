@@ -54,50 +54,64 @@ class Main {
         Perm(this.sc_fifo_int_permission_invariant(), 1) **
         Perm(this.s_tickcounter_send, read) **
         this.s_tickcounter_send != null **
-        Perm(this.s_tickcounter_send.tickcounter_send_timer_reset, write) **
+        Perm(this.s_tickcounter_send.s_timer_set, read) **
+        \array(this.s_tickcounter_send.s_timer_set, 1) **
+        Perm(this.s_tickcounter_send.s_timer_set[*], write) **
+        Perm(this.s_tickcounter_send.s_init, write) **
         Perm(this.s_tickcounter_send.ticks, write) **
-        Perm(this.s_tickcounter_send.tickcounter_send_timer_set, write) **
-        Perm(this.s_tickcounter_send.tickcounter_send_timer_value, write) **
-        Perm(this.s_tickcounter_send.tickcounter_send_init, write) ** Perm(this.s_tickcounter_send.speed_send, write) **
+        Perm(this.s_tickcounter_send.s_timer_value, read) **
+        \array(this.s_tickcounter_send.s_timer_value, 1) **
+        Perm(this.s_tickcounter_send.s_timer_value[*], write) **
+        Perm(this.s_tickcounter_send.s_timer_reset, read) **
+        \array(this.s_tickcounter_send.s_timer_reset, 1) **
+        Perm(this.s_tickcounter_send.s_timer_reset[*], write) ** Perm(this.s_tickcounter_send.speed_send, write) **
         Perm(this.ecu_absasr_absasr_not_a_main, read) **
         this.ecu_absasr_absasr_not_a_main != null **
-        Perm(this.ecu_absasr_absasr_not_a_main.absasr_not_a_main_timer_value, write) **
+        Perm(this.ecu_absasr_absasr_not_a_main.ecu_absasr_timer_set, read) **
+        \array(this.ecu_absasr_absasr_not_a_main.ecu_absasr_timer_set, 1) **
+        Perm(this.ecu_absasr_absasr_not_a_main.ecu_absasr_timer_set[*], write) **
+        Perm(this.ecu_absasr_absasr_not_a_main.ecu_absasr_init, write) **
         Perm(this.ecu_absasr_absasr_not_a_main.i__abs, write) **
-        Perm(this.ecu_absasr_absasr_not_a_main.absasr_not_a_main_timer_reset, write) **
-        Perm(this.ecu_absasr_absasr_not_a_main.absasr_not_a_main_init, write) **
-        Perm(this.ecu_absasr_absasr_not_a_main.absasr_not_a_main_timer_set, write) **
+        Perm(this.ecu_absasr_absasr_not_a_main.ecu_absasr_timer_value, read) **
+        \array(this.ecu_absasr_absasr_not_a_main.ecu_absasr_timer_value, 1) **
+        Perm(this.ecu_absasr_absasr_not_a_main.ecu_absasr_timer_value[*], write) **
+        Perm(this.ecu_absasr_absasr_not_a_main.ecu_absasr_timer_reset, read) **
+        \array(this.ecu_absasr_absasr_not_a_main.ecu_absasr_timer_reset, 1) **
+        Perm(this.ecu_absasr_absasr_not_a_main.ecu_absasr_timer_reset[*], write) **
         Perm(this.ecu_absasr_absasr_read_s, read) **
         this.ecu_absasr_absasr_read_s != null **
-        Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_timer_value, write) **
-        Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_timer_set, write) **
-        Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_init, write) **
-        Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_timer_reset, write) **
+        Perm(this.ecu_absasr_absasr_read_s.ecu_absasr_timer_set, read) **
+        \array(this.ecu_absasr_absasr_read_s.ecu_absasr_timer_set, 1) **
+        Perm(this.ecu_absasr_absasr_read_s.ecu_absasr_timer_set[*], write) **
+        Perm(this.ecu_absasr_absasr_read_s.ecu_absasr_init, write) **
+        Perm(this.ecu_absasr_absasr_read_s.ecu_absasr_timer_value, read) **
+        \array(this.ecu_absasr_absasr_read_s.ecu_absasr_timer_value, 1) **
+        Perm(this.ecu_absasr_absasr_read_s.ecu_absasr_timer_value[*], write) **
         Perm(this.ecu_absasr_absasr_read_s.tmp_0_read_s, write) **
+        Perm(this.ecu_absasr_absasr_read_s.ecu_absasr_timer_reset, read) **
+        \array(this.ecu_absasr_absasr_read_s.ecu_absasr_timer_reset, 1) **
+        Perm(this.ecu_absasr_absasr_read_s.ecu_absasr_timer_reset[*], write) **
         Perm(this.ecu_absasr_absasr, read) **
         this.ecu_absasr_absasr != null **
-        Perm(this.ecu_absasr_absasr.temp_fv, write) **
-        Perm(this.ecu_absasr_absasr.s, read) **
-        \array(this.ecu_absasr_absasr.s, 1) **
-        Perm(this.ecu_absasr_absasr.s[*], write) **
-        Perm(this.ecu_absasr_absasr.v, read) **
-        \array(this.ecu_absasr_absasr.v, 1) **
-        Perm(this.ecu_absasr_absasr.v[*], write) **
-        Perm(this.ecu_absasr_absasr.lambda, read) **
-        \array(this.ecu_absasr_absasr.lambda, 1) **
-        Perm(this.ecu_absasr_absasr.lambda[*], write) **
-        Perm(this.ecu_absasr_absasr.absasr_timer_reset, write) **
-        Perm(this.ecu_absasr_absasr.fv, write) **
-        Perm(this.ecu_absasr_absasr.absasr_init, write) **
         Perm(this.ecu_absasr_absasr.p, read) **
         \array(this.ecu_absasr_absasr.p, 1) **
         Perm(this.ecu_absasr_absasr.p[*], write) **
-        Perm(this.ecu_absasr_absasr.absasr_timer_set, write) **
+        Perm(this.ecu_absasr_absasr.temp_fv, write) **
+        Perm(this.ecu_absasr_absasr.j__asr, write) **
+        Perm(this.ecu_absasr_absasr.i__abs, write) **
+        Perm(this.ecu_absasr_absasr.fa, write) **
+        Perm(this.ecu_absasr_absasr.v, read) **
+        \array(this.ecu_absasr_absasr.v, 1) **
+        Perm(this.ecu_absasr_absasr.v[*], write) **
         Perm(this.ecu_absasr_absasr.a, read) **
         \array(this.ecu_absasr_absasr.a, 1) **
         Perm(this.ecu_absasr_absasr.a[*], write) **
-        Perm(this.ecu_absasr_absasr.j__asr, write) **
-        Perm(this.ecu_absasr_absasr.i__abs, write) **
-        Perm(this.ecu_absasr_absasr.fa, write) ** Perm(this.ecu_absasr_absasr.absasr_timer_value, write) **
+        Perm(this.ecu_absasr_absasr.fv, write) **
+        Perm(this.ecu_absasr_absasr.lambda, read) **
+        \array(this.ecu_absasr_absasr.lambda, 1) **
+        Perm(this.ecu_absasr_absasr.lambda[*], write) **
+        Perm(this.ecu_absasr_absasr.s, read) **
+        \array(this.ecu_absasr_absasr.s, 1) ** Perm(this.ecu_absasr_absasr.s[*], write) **
         Perm(this.ecu_absasr_absasr.m, read) ** this.ecu_absasr_absasr.m == this ** Perm(this.psl_invariant(), 1);
     
     inline resource psl_invariant() =
@@ -109,8 +123,7 @@ class Main {
         this.event_state[0] == -3 &&
         this.event_state[1] == -3 &&
         this.event_state[2] == -3 &&
-        this.event_state[3] == -3 &&
-        this.event_state[4] == -3);
+        this.event_state[3] == -3);
     
     ensures Perm(this.s_tickcounter_send, read);
     ensures this.s_tickcounter_send != null;

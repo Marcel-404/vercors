@@ -472,7 +472,7 @@ public class MainTransformer<T> {
             java.util.ArrayList<MarkerExpression> psl_expressions = sc_system.getAnnotations();
             if (!psl_expressions.isEmpty()) {
                     // Parse and transform PSL expression
-                    try {
+                 
                             String input = psl_expressions.get(0).toString();
                             LangPSLLexer lexer = new LangPSLLexer(CharStreams.fromString(input));
                             LangPSLParser parser = new LangPSLParser(new CommonTokenStream(lexer));
@@ -480,10 +480,7 @@ public class MainTransformer<T> {
                             PSLToColVisitor<T> visitor = new PSLToColVisitor(sc_system, col_system);
                             Expr<T> result = visitor.visit(tree);
                             conditions.add(result);
-                    } catch (Exception ignored) {
-                            throw new ExpressionParseException(
-                                            "PSL expression " + " could not be parsed!");
-                    }
+                    
             }
             psl_invariant = new InstancePredicate<>(col_system.NO_VARS, Option.apply(col_system.fold_star(conditions)),
                             false, true, OriGen.create("psl_invariant"));

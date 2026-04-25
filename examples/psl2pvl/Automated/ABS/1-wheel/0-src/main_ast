@@ -44,14 +44,9 @@
 
 
 
-SC_MODULE(ABSASR) {
-   /* psl
+/*psl
 
-vunit absasr {
-
-    int wheels = sizeof(v)/sizeof(v[0]);
-
-
+vunit absasr(ABSASR) {
 
     // _ABS
 
@@ -147,9 +142,9 @@ stable(s))); assert always (active(_ABS()) -> low_speed);
 
 
 
-    property asr_values_stable = (stable(v) && stable(a) && stable(fv) &&
+    assert always running(ABSASR._ASR()) -> (stable(v) && stable(a) && stable(fv) && stable(fa) && stable(s)); 
 
-stable(fa) && stable(s)); assert always (active(_ASR()) -> asr_values_stable);
+
 
 
 
@@ -181,7 +176,9 @@ slippage_and_wheel_accelerating);
 
 }
 
-psl */
+psl*/
+SC_MODULE(ABSASR) {
+
     //-*-*-*-*-*-*-*-*-*-*-*-*  INTERFACE  *-*-*-*-*-*-*-*-*-*-*-*-
 
     sc_fifo_in<int> bus_s;
@@ -198,12 +195,9 @@ psl */
 
     // ABS Routine
     void _ABS() {
-        // psl assert always true;
         if (fv > 22) { // ABS is only active above a threshold velocity
-
             for (int i = 0; i < 1; i = i + 1) {
                 lambda[i] = ((fv - v[i]) * 100) / fv;
-
                 switch (s[i]) {
                 case 1:
                     if (a[i] < -14) {
@@ -260,12 +254,9 @@ psl */
 
     // ASR Routine
     void _ASR() {
-
         int j = 0; // the first comparison is vl (0) with hr (7)
                    // ASR assumes front wheel drive
-
         for (int i = 0; i < 1; i = i + 1) {
-
             if (v[i] > 0) {
                 lambda[i] = ((v[i] - v[j]) * 100) / v[i];
 
@@ -298,14 +289,12 @@ psl */
             v[i] = 0;
             a[i] = 0;
         }
-
         while (true) {
             wait(1, SC_MS);
 
             // Take the velocity of the wheel with the lowest acceleration as a
             // reference for the vehicle velocity
             i = 0;
-
             temp_fv = v[i];
             fa = temp_fv - fv;
 
@@ -322,13 +311,10 @@ psl */
             }
         }
     }
-
     void read_s() {
-        // psl assert always true;
         int tmp_0 = 0;
         while (true) {
             v[0] = bus_s.read();
-
             //  v[0] = VELOFACTOR * ticks_vr;
             a[0] = (v[0] - tmp_0); //*VELOFACTOR;
             tmp_0 = v[0];
@@ -363,42 +349,12 @@ psl */
 
 
 
-//#define DEBUG
 
-/*psl
-
-vunit TickCounter{
-
-  assert always out.data_read_event().triggered() -> ...;
-
-}
-
-psl*/
 SC_MODULE ( TickCounter ) {
 
-//-*-*-*-*-*-*-*-*-*-*-*-*  INTERFACE  *-*-*-*-*-*-*-*-*-*-*-*-
-
   sc_fifo_out<int> out;
+  int ticks;
 
-//-*-*-*-*-*-*-*-*-*-*-*-* LOCAL VARIABLES *-*-*-*-*-*-*-*-*-*-*-*-
-  int ticks; // Counter
-
-//-*-*-*-*-*-*-*-*-*-*-*-*-* COUNTER *-*-*-*-*-*-*-*-*-*-*-*-*-
-
-  /* void count(){
-
-    if (reset.read())
-
-      ticks = 0;
-
-    else
-
-      ticks = ticks + 1;
-
-      }*/
-//-*-*-*-*-*-*-*-*-*-*-*-*-* SENDER *-*-*-*-*-*-*-*-*-*-*-*-*-
-
-  // read ticks in a given time interval and send to ECU
   void send(){
     int speed;
 
@@ -406,16 +362,10 @@ SC_MODULE ( TickCounter ) {
     while(true){
       wait(1, SC_MS);
       speed = rand();
-      out.write(speed); // zur ECU schicken  
-//	ticks = 0; 
+      out.write(speed);
     }
   }
-
-//-*-*-*-*-*-*-*-*-*-*-*-*-*-* CONSTRUCTOR *-*-*-*-*-*-*-*-*-*-*-*-*-*-
-
   SC_CTOR(TickCounter) {
-    //    SC_METHOD(count);
-    //sensitive << inTicks;
     SC_THREAD(send);
   }
 };
@@ -485,21 +435,13 @@ vunit main(Main){
   } psl */
 int sc_main (int argc, char* argv[])
 {
-
-  //  sc_signal<bool>         resetWheels;   
-
   sc_fifo< int > speed_s;
 
-
-  //  inp.resetAll(resetWheels);
-
   TickCounter s("s");
-
     s.out( speed_s );
+
   ABSASR ecu_absasr("absasr");
     ecu_absasr.bus_s( speed_s );
-  sc_start(20,SC_MS); // Run the simulation till sc_stop is encountered
-  //sc_close_vcd_trace_file(wf);
-  return 0; // Terminate simulation
-
+  sc_start(20,SC_MS);
+  return 0;
 }

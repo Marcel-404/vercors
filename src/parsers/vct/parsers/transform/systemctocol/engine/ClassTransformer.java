@@ -155,21 +155,6 @@ public class ClassTransformer<T> {
             result.put(attribute, variable_transformer.transform_variable_to_instance_field(attribute));
         }
 
-        // Add psl helper variables
-        if (true){
-            String class_name =create_name(sc_inst,run_method).toLowerCase();
-            SCSimpleType psl_init = new SCSimpleType(class_name+"_init","bool");
-            result.put(psl_init,variable_transformer.transform_variable_to_instance_field(psl_init));
-
-            SCSimpleType psl_timer_value = new SCSimpleType(class_name+"_timer_value","int");
-            result.put(psl_timer_value,variable_transformer.transform_variable_to_instance_field(psl_timer_value));
-
-            SCSimpleType psl_timer_set = new SCSimpleType(class_name+"_timer_set","bool");
-            result.put(psl_timer_set,variable_transformer.transform_variable_to_instance_field(psl_timer_set));
-
-            SCSimpleType psl_timer_reset = new SCSimpleType(class_name+"_timer_reset","bool");
-            result.put(psl_timer_reset,variable_transformer.transform_variable_to_instance_field(psl_timer_reset));
-        }
 
         // Transform run method local variables
         if (run_method != null) {

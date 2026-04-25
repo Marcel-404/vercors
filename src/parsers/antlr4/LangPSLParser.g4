@@ -395,7 +395,7 @@ fl_property:
 	//| sequences OVERLAPSUFFIXIMPLY fl_property		# OverlapSuffixImplyFlProperty
 	//| sequences NONOVERLAPSUFFIXIMPLY fl_property	# NonOverlapSuffixImplyFlProperty
 	// VPSL Operators
-	| WITHIN_T LeftBracket LeftParen IntegerLiteral Comma TIME_UNIT RightParen RightBracket
+	| WITHIN_T LeftBracket LeftParen (IntegerLiteral Comma TIME_UNIT | SC_ZERO_TIME) RightParen RightBracket
 		fl_property # WithinTFlProperty
 	| LeftParen fl_property RightParen # ParenFlProperty;
 	// HDL 

@@ -18,26 +18,17 @@ vunit main(Main){
   speed_s.data_read_event().not_notified() && 
   speed_s.data_written_event().not_notified() && 
   s.send.wait_event().not_notified() && 
-  ecu_absasr.not_a_main.wait_event().not_notified() &&
-  ecu_absasr.read_s.wait_event().not_notified());// Does not exist but can be wrongly specified
+  ecu_absasr.not_a_main.wait_event().not_notified());
   } psl */
 int sc_main (int argc, char* argv[]) 
 {
-
-  //  sc_signal<bool>         resetWheels;   
-  
   sc_fifo< int >  speed_s;
-  
-
-  //  inp.resetAll(resetWheels);
 
   TickCounter s("s");
-
     s.out( speed_s );
+
   ABSASR ecu_absasr("absasr");
     ecu_absasr.bus_s( speed_s );
-  sc_start(20,SC_MS); // Run the simulation till sc_stop is encountered
-  //sc_close_vcd_trace_file(wf);
-  return 0; // Terminate simulation
-
+  sc_start(20,SC_MS); 
+  return 0; 
 }

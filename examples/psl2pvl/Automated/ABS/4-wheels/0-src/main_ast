@@ -397,9 +397,9 @@ assert always (active(hl.send) && speed_hl.written() ->
 
   assert never (
 
-  waiting(vr.send) && 
-
   waiting(vl.send) && 
+
+  waiting(vr.send) && 
 
   waiting(hr.send) && 
 
