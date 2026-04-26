@@ -2,48 +2,48 @@
 class Absasr {
     Main m;
     
-    int[] p;
+    int[] s;
     
     int temp_fv;
     
+    int[] a;
+    
+    int[] lambda;
+    
     int j__asr;
+    
+    int[] v;
+    
+    int[] p;
     
     int i__abs;
     
     int fa;
     
-    int[] v;
-    
-    int[] a;
-    
     int fv;
-    
-    int[] lambda;
-    
-    int[] s;
     
     ensures Perm(this.m, write);
     ensures this.m == m_param;
-    ensures Perm(this.p, read);
-    ensures \array(this.p, 1);
-    ensures Perm(this.p[*], write);
-    ensures Perm(this.temp_fv, write);
-    ensures Perm(this.j__asr, write);
-    ensures Perm(this.i__abs, write);
-    ensures Perm(this.fa, write);
-    ensures Perm(this.v, read);
-    ensures \array(this.v, 1);
-    ensures Perm(this.v[*], write);
-    ensures Perm(this.a, read);
-    ensures \array(this.a, 1);
-    ensures Perm(this.a[*], write);
-    ensures Perm(this.fv, write);
-    ensures Perm(this.lambda, read);
-    ensures \array(this.lambda, 1);
-    ensures Perm(this.lambda[*], write);
     ensures Perm(this.s, read);
     ensures \array(this.s, 1);
     ensures Perm(this.s[*], write);
+    ensures Perm(this.temp_fv, write);
+    ensures Perm(this.a, read);
+    ensures \array(this.a, 1);
+    ensures Perm(this.a[*], write);
+    ensures Perm(this.lambda, read);
+    ensures \array(this.lambda, 1);
+    ensures Perm(this.lambda[*], write);
+    ensures Perm(this.j__asr, write);
+    ensures Perm(this.v, read);
+    ensures \array(this.v, 1);
+    ensures Perm(this.v[*], write);
+    ensures Perm(this.p, read);
+    ensures \array(this.p, 1);
+    ensures Perm(this.p[*], write);
+    ensures Perm(this.i__abs, write);
+    ensures Perm(this.fa, write);
+    ensures Perm(this.fv, write);
     constructor(
         Main m_param
     ) {
@@ -73,17 +73,7 @@ class Absasr {
             loop_invariant this.fv > 22;
             for (this.i__abs = 0; this.i__abs < 1; this.i__abs = this.i__abs + 1) {
                 this.lambda[this.i__abs] = (this.fv - this.v[this.i__abs]) * 100 / this.fv;
-                if (this.s[this.i__abs] == 2) {
-                    if (this.lambda[this.i__abs] > 13) {
-                        this.p[this.i__abs] = -1;
-                        this.s[this.i__abs] = 3;
-                    }
-                } else if (this.s[this.i__abs] == 6) {
-                    if (this.a[this.i__abs] < 2) {
-                        this.p[this.i__abs] = 1;
-                        this.s[this.i__abs] = 7;
-                    }
-                } else if (this.s[this.i__abs] == 1) {
+                if (this.s[this.i__abs] == 1) {
                     if (this.a[this.i__abs] < -14) {
                         this.p[this.i__abs] = 0;
                         this.s[this.i__abs] = 2;
@@ -92,16 +82,6 @@ class Absasr {
                     if (this.a[this.i__abs] < -14) {
                         this.p[this.i__abs] = -1;
                         this.s[this.i__abs] = 8;
-                    }
-                } else if (this.s[this.i__abs] == 4) {
-                    if (this.a[this.i__abs] > 98) {
-                        this.p[this.i__abs] = 2;
-                        this.s[this.i__abs] = 5;
-                    }
-                } else if (this.s[this.i__abs] == 8) {
-                    if (this.a[this.i__abs] > -14) {
-                        this.p[this.i__abs] = 0;
-                        this.s[this.i__abs] = 4;
                     }
                 } else if (this.s[this.i__abs] == 3) {
                     if (this.a[this.i__abs] > -14) {
@@ -112,6 +92,26 @@ class Absasr {
                     if (this.a[this.i__abs] < 98) {
                         this.p[this.i__abs] = 0;
                         this.s[this.i__abs] = 6;
+                    }
+                } else if (this.s[this.i__abs] == 2) {
+                    if (this.lambda[this.i__abs] > 13) {
+                        this.p[this.i__abs] = -1;
+                        this.s[this.i__abs] = 3;
+                    }
+                } else if (this.s[this.i__abs] == 6) {
+                    if (this.a[this.i__abs] < 2) {
+                        this.p[this.i__abs] = 1;
+                        this.s[this.i__abs] = 7;
+                    }
+                } else if (this.s[this.i__abs] == 4) {
+                    if (this.a[this.i__abs] > 98) {
+                        this.p[this.i__abs] = 2;
+                        this.s[this.i__abs] = 5;
+                    }
+                } else if (this.s[this.i__abs] == 8) {
+                    if (this.a[this.i__abs] > -14) {
+                        this.p[this.i__abs] = 0;
+                        this.s[this.i__abs] = 4;
                     }
                 }
             }

@@ -63,9 +63,9 @@ formal_parameter_list:
 // PSL DECLARATIONS
 
 psl_declaration:
-	property_declaration	# PropertyDeclarationPslDeclaration
+	property_declaration # PropertyDeclarationPslDeclaration
 	//| sequence_declaration	# SequenceDeclaration
-	| clock_declaration		# ClockDeclaration;
+	| clock_declaration # ClockDeclaration;
 
 property_declaration:
 	PROPERTY clangppIdentifier (
@@ -95,9 +95,8 @@ psl_type_class:
 	| VAL_STRING	# ValStringPslTypeClass;
 
 /*sequence_declaration:
-	SEQUENCE clangppIdentifier (
-		LeftParen formal_parameter_list RightParen
-	)? def_sym sequences Semi;*/
+ SEQUENCE clangppIdentifier ( LeftParen formal_parameter_list RightParen )? def_sym sequences Semi;
+ */
 
 clock_declaration: Default CLOCK def_sym clock_expression Semi;
 
@@ -114,8 +113,10 @@ actual_parameter:
 	any_type		# AnyTypeActualParameter
 	| number_val	# NumberValActualParameter
 	| bool_val		# BoolValActualParameter
-	| property		# PropertyActualParameter;/* 
-	| sequences		# SequencesActualParameter;*/
+	| property		# PropertyActualParameter;
+/*
+ | sequences # SequencesActualParameter;
+ */
 
 // PSL directives
 psl_directive: (label Colon)? verification_directive;
@@ -125,12 +126,13 @@ label: clangppIdentifier;
 hdl_or_psl_identifier: clangppIdentifier;
 
 verification_directive:
-	assert_directive			# AssertDirectiveVerificationDirective
-	| assume_directive			# AssumeDirectiveVerificationDirective
-	/*| restrict_directive		# RestrictDirectiveVerificationDirective
-	| restrict_strong_directive	# RestrictStrongDirectiveVerificationDirective
-	| cover_directive			# CoverDirectiveVerificationDirective */
-	| fairness_statement		# FairnessStatementVerificationDirective;
+	assert_directive	# AssertDirectiveVerificationDirective
+	| assume_directive	# AssumeDirectiveVerificationDirective
+	/*| restrict_directive # RestrictDirectiveVerificationDirective | restrict_strong_directive #
+	 RestrictStrongDirectiveVerificationDirective | cover_directive #
+	 CoverDirectiveVerificationDirective
+	 */
+	| fairness_statement # FairnessStatementVerificationDirective;
 
 assert_directive:
 	VAL_ASSERT property (REPORT StringLiteral)? Semi;
@@ -138,11 +140,11 @@ assert_directive:
 assume_directive: VAL_ASSUME property Semi;
 
 /*restrict_directive: RESTRICT sequences Semi;
-
-restrict_strong_directive: RESTRICTSTRONG sequences Semi;
-
-cover_directive:
-	COVER sequences LeftBracket REPORT StringLiteral RightBracket Semi;*/
+ 
+ restrict_strong_directive: RESTRICTSTRONG sequences Semi;
+ 
+ cover_directive: COVER sequences LeftBracket REPORT StringLiteral RightBracket Semi;
+ */
 
 fairness_statement:
 	FAIRNESS bool_val Semi							# FairnessFairnessStatement
@@ -150,10 +152,10 @@ fairness_statement:
 
 // PSL properties 
 
-property:
-	fl_property # FlPropertyProperty; /* 
-	|replicator property	# ReplicatorPropertyProperty
-	| obe_property		# ObePropertyProperty;*/
+property: fl_property # FlPropertyProperty;
+/*
+ |replicator property # ReplicatorPropertyProperty | obe_property # ObePropertyProperty;
+ */
 
 replicator: FORALL parameter_definition Colon;
 
@@ -176,23 +178,18 @@ proc_block_Item:
 	| hdl_seq_stmt	# HdlSeqStmtProcBlockItem;
 
 /*sere:
-	bool_val				# BoolValSere
-	| bool_val proc_block	# ProcBlockSere
-	| sequences				# SequencesSere
-	| sere Semi sere		# SemiSere
-	| sere Colon sere		# ColonSere
-	| compound_sere			# CompundSereSere;*/
+ bool_val # BoolValSere | bool_val proc_block # ProcBlockSere | sequences # SequencesSere | sere
+ Semi sere # SemiSere | sere Colon sere # ColonSere | compound_sere # CompundSereSere;
+ */
 
 /*compound_sere:
-	repeated_sere										# RepeatedSereCompoundSere
-	| sequences LeftBracket Star count? RightBracket	# StarCompoundSere
-	| sequences LeftBracket Plus RightBracket			# PlusCompoundSere
-	| sequences proc_block								# ProcBlockCompoundSere
-	| braced_sere										# BracedSereCompoundSere
-	| clocked_sere										# ClockedSereCompoundSere
-	| compound_sere and_or_sere_op compound_sere		# AndOrCompoundSere
-	| compound_sere WITHIN compound_sere				# WithinCompoundSere
-	| parameterized_sere								# ParameterizedSereCompoundSere; */
+ repeated_sere # RepeatedSereCompoundSere | sequences LeftBracket Star count? RightBracket #
+ StarCompoundSere | sequences LeftBracket Plus RightBracket # PlusCompoundSere | sequences
+ proc_block # ProcBlockCompoundSere | braced_sere # BracedSereCompoundSere | clocked_sere #
+ ClockedSereCompoundSere | compound_sere and_or_sere_op compound_sere # AndOrCompoundSere |
+ compound_sere WITHIN compound_sere # WithinCompoundSere | parameterized_sere #
+ ParameterizedSereCompoundSere;
+ */
 
 parameterized_property:
 	For parameters_definition Colon and_or_property_op LeftParen fl_property RightParen;
@@ -217,35 +214,25 @@ and_or_sere_op:
 
 // sequences
 /*sequences:
-	sequence_instance									# SequenceInstanteSequences
-	| repeated_sere										# RepeatedSereSequences
-	| sequences LeftBracket Star count? RightBracket	# StarSequences
-	| sequences LeftBracket Plus RightBracket			# PlusSequences
-	| sequences proc_block								# ProcBlockSequences
-	| braced_sere										# BracedSereSequences
-	| clocked_sere										# ClockedSereSequences;
-
-repeated_sere:
-	bool_val LeftBracket Star count? RightBracket				# BoolValStarRepeatedSere
-	| LeftBracket Star count? RightBracket						# StarRepeatedSere
-	| bool_val LeftBracket Plus RightBracket					# BoolValPlusRepeatedSere
-	| LeftBracket Plus RightBracket								# PlusRepeatedSere
-	| bool_val LeftBracket Assign count RightBracket			# AssignRepeatedSere
-	| bool_val LeftBracket Arrow positive_count? RightBracket	# ArrowRepeatedSere
-	| bool_val proc_block										# ProcBlockRepeatedSere;
-
-braced_sere:
-	LeftBrace (
-		LeftBracket LeftBracket hdl_decl hdl_decl* RightBracket RightBracket
-	)? sere RightBrace # HdlDeclBracedSere
-	| LeftBrace (
-		FREE hdl_or_psl_identifier (hdl_or_psl_identifier)*
-	)? sere RightBrace # FreeBracedSere;
-
-sequence_instance:
-	name (LeftParen actual_parameter_list RightParen)?;
-
-clocked_sere: braced_sere CLOCKOP clock_expression; */
+ sequence_instance # SequenceInstanteSequences | repeated_sere # RepeatedSereSequences | sequences
+ LeftBracket Star count? RightBracket # StarSequences | sequences LeftBracket Plus RightBracket #
+ PlusSequences | sequences proc_block # ProcBlockSequences | braced_sere # BracedSereSequences |
+ clocked_sere # ClockedSereSequences;
+ 
+ repeated_sere: bool_val LeftBracket Star count? RightBracket # BoolValStarRepeatedSere |
+ LeftBracket Star count? RightBracket # StarRepeatedSere | bool_val LeftBracket Plus RightBracket #
+ BoolValPlusRepeatedSere | LeftBracket Plus RightBracket # PlusRepeatedSere | bool_val LeftBracket
+ Assign count RightBracket # AssignRepeatedSere | bool_val LeftBracket Arrow positive_count?
+ RightBracket # ArrowRepeatedSere | bool_val proc_block # ProcBlockRepeatedSere;
+ 
+ braced_sere: LeftBrace ( LeftBracket LeftBracket hdl_decl hdl_decl* RightBracket RightBracket )?
+ sere RightBrace # HdlDeclBracedSere | LeftBrace ( FREE hdl_or_psl_identifier
+ (hdl_or_psl_identifier)* )? sere RightBrace # FreeBracedSere;
+ 
+ sequence_instance: name (LeftParen actual_parameter_list RightParen)?;
+ 
+ clocked_sere: braced_sere CLOCKOP clock_expression;
+ */
 
 count: number_val # NumberValCount | range # RangeCount;
 
@@ -277,6 +264,7 @@ built_in_function_call:
 	ACTIVE LeftParen referenceExpr RightParen and_op referenceExpr	# ActiveBuiltInFunctionCall
 	| READY LeftParen referenceExpr RightParen						# ReadyBuiltInFunctionCall
 	| WAITING LeftParen referenceExpr RightParen					# WaitingBuiltInFunctionCall
+	| event_operator LeftParen referenceExpr RightParen 			# EventBuiltInFunctionCall
 	//
 	| PREV LeftParen any_type (
 		Comma number_val (Comma clock_expression)?
@@ -286,46 +274,36 @@ built_in_function_call:
 	| ROSE LeftParen bit_val (Comma clock_expression)? RightParen		# RoseBuiltInFunctionCall
 	| FELL LeftParen bit_val (Comma clock_expression)? RightParen		# FellBuiltInFunctionCall
 	//| ENDED LeftParen sequences (Comma clock_expression)? RightParen	# EndedBuiltInFunctionCall
-	| ISUNKNOWN LeftParen bit_vector_val RightParen						# IsUnknownBuiltInFunctionCall
-	| COUNTONES LeftParen bit_vector_val RightParen						# CountOnesBuiltInFunctionCall
-	| ONEHOT LeftParen bit_vector_val RightParen						# OneHotBuiltInFunctionCall
-	| ONEHOT0 LeftParen bit_vector_val RightParen						# OneHot0BuiltInFunctionCall
-	| NONDET LeftParen value_set RightParen								# NonDetBuiltInFunctionCall
-	| NONDETVECTOR LeftParen number_val Comma value_set LeftParen		# NonDetVectorBuiltInFunctionCall;
+	| ISUNKNOWN LeftParen bit_vector_val RightParen					# IsUnknownBuiltInFunctionCall
+	| COUNTONES LeftParen bit_vector_val RightParen					# CountOnesBuiltInFunctionCall
+	| ONEHOT LeftParen bit_vector_val RightParen					# OneHotBuiltInFunctionCall
+	| ONEHOT0 LeftParen bit_vector_val RightParen					# OneHot0BuiltInFunctionCall
+	| NONDET LeftParen value_set RightParen							# NonDetBuiltInFunctionCall
+	| NONDETVECTOR LeftParen number_val Comma value_set LeftParen	# NonDetVectorBuiltInFunctionCall;
 
 // Optional Branching Extension 
 /*obe_property:
-	LeftParen obe_property RightParen # ParenObeProperty
-	| clangppIdentifier (
-		LeftParen actual_parameter_list RightParen
-	)? # IdentiferObeProperty //Name
-	// Logical Operators
-	| not_op obe_property					# NotOpObeProperty
-	| obe_property and_op obe_property		# AndOpObeProperty
-	| obe_property or_op obe_property		# OrOpObeProperty
-	| obe_property Arrow obe_property		# ArrowObeProperty
-	| obe_property EQUIVALENCE obe_property	# EquivalenceObeProperty
-	// Universal Operators
-	| CTLAX obe_property											# CTLAXObeProperty
-	| CTLAG obe_property											# CTLAGObeProperty
-	| CTLAF obe_property											# CTLAFObeProperty
-	| CTLA LeftBracket obe_property LTLU obe_property RightBracket	# CTLAObeProperty
-	// Existential Operators:
-	| CTLEX obe_property											# CTLEXObeProperty
-	| CTLEG obe_property											# CTLEGObeProperty
-	| CTLEF obe_property											# CTLEFObeProperty
-	| CTLE LeftBracket obe_property LTLU obe_property RightBracket	# CTLEObeProperty
-	| bool_val														# BoolValObeProperty;*/
+ LeftParen obe_property RightParen # ParenObeProperty | clangppIdentifier ( LeftParen
+ actual_parameter_list RightParen )? # IdentiferObeProperty //Name // Logical Operators | not_op
+ obe_property # NotOpObeProperty | obe_property and_op obe_property # AndOpObeProperty |
+ obe_property or_op obe_property # OrOpObeProperty | obe_property Arrow obe_property #
+ ArrowObeProperty | obe_property EQUIVALENCE obe_property # EquivalenceObeProperty // Universal
+ Operators | CTLAX obe_property # CTLAXObeProperty | CTLAG obe_property # CTLAGObeProperty | CTLAF
+ obe_property # CTLAFObeProperty | CTLA LeftBracket obe_property LTLU obe_property RightBracket #
+ CTLAObeProperty // Existential Operators: | CTLEX obe_property # CTLEXObeProperty | CTLEG
+ obe_property # CTLEGObeProperty | CTLEF obe_property # CTLEFObeProperty | CTLE LeftBracket
+ obe_property LTLU obe_property RightBracket # CTLEObeProperty | bool_val # BoolValObeProperty;
+ */
 
 fl_property:
-	bool_val												# BoolValFlProperty
-	//| sequences Not?										# StrongSequenceFlProperty
-	//| name (LeftParen actual_parameter_list RightParen)?	# NameFlProperty
-	| fl_property CLOCKOP clock_expression					# ClockOpFlProperty
-	| fl_property ABORT bool_val							# AbortFlProperty
-	| fl_property ASYNC_ABORT bool_val						# AsyncAbortFlProperty
-	| fl_property SYNC_ABORT bool_val						# SyncAbortFlProperty
-	| parameterized_property								# ParameterizedPropertyFlProperty
+	bool_val # BoolValFlProperty
+	//| sequences Not? # StrongSequenceFlProperty | name (LeftParen actual_parameter_list
+	// RightParen)? # NameFlProperty
+	| fl_property CLOCKOP clock_expression	# ClockOpFlProperty
+	| fl_property ABORT bool_val			# AbortFlProperty
+	| fl_property ASYNC_ABORT bool_val		# AsyncAbortFlProperty
+	| fl_property SYNC_ABORT bool_val		# SyncAbortFlProperty
+	| parameterized_property				# ParameterizedPropertyFlProperty
 	// Logical_Operators
 	| not_op fl_property					# NotOpFlProperty
 	| fl_property and_op fl_property		# AndFlProperty
@@ -390,19 +368,18 @@ fl_property:
 		fl_property RightParen # NextEventExistsStrongFlProperty
 	| NEXTEVENTEXISTS LeftParen bool_val RightParen LeftBracket range RightBracket LeftParen
 		fl_property RightParen # NextEventExistsFlProperty
-	// Operators_on_seres
-	//| sere* LeftParen fl_property RightParen		# SereFlProperty
-	//| sequences OVERLAPSUFFIXIMPLY fl_property		# OverlapSuffixImplyFlProperty
-	//| sequences NONOVERLAPSUFFIXIMPLY fl_property	# NonOverlapSuffixImplyFlProperty
-	// VPSL Operators
-	| WITHIN_T LeftBracket LeftParen (IntegerLiteral Comma TIME_UNIT | SC_ZERO_TIME) RightParen RightBracket
-		fl_property # WithinTFlProperty
-	| LeftParen fl_property RightParen # ParenFlProperty;
-	// HDL 
-	/*| LeftParen (
-		LeftBracket LeftBracket hdl_decl (Comma hdl_decl)* RightBracket RightBracket
-	)? fl_property RightParen # HDLParenFlProperty; */
-
+	// Operators_on_seres | sere* LeftParen fl_property RightParen # SereFlProperty | sequences
+	// OVERLAPSUFFIXIMPLY fl_property # OverlapSuffixImplyFlProperty | sequences
+	// NONOVERLAPSUFFIXIMPLY fl_property # NonOverlapSuffixImplyFlProperty VPSL Operators
+	| WITHIN_T LeftParen (
+		IntegerLiteral Comma TIME_UNIT
+		| SC_ZERO_TIME
+	) RightParen fl_property			# WithinTFlProperty
+	| LeftParen fl_property RightParen	# ParenFlProperty;
+// HDL 
+/*| LeftParen ( LeftBracket LeftBracket hdl_decl (Comma hdl_decl)* RightBracket RightBracket )?
+ fl_property RightParen # HDLParenFlProperty;
+ */
 
 // Forms of expression
 
@@ -475,14 +452,14 @@ referencePostfixExpr:
 	| referenceMethod		# refMethod;
 
 referenceMethod:
-	Dot clangppIdentifier LeftParen RightParen (Dot (
-		NOTIFIED_TIMED
-		| NOT_NOTIFIED
-		| NOTIFIED_UNTIMED
-		| NOTIFIED_DELTA
-		| NOTIFIED_PREV_DELTA
-	) LeftParen RightParen)?;
+	Dot clangppIdentifier LeftParen RightParen;
 
+event_operator:
+	NOTIFIED_TIMED
+	| NOT_NOTIFIED
+	| NOTIFIED_UNTIMED
+	| NOTIFIED_DELTA
+	| NOTIFIED_PREV_DELTA;
 
 referenceIndex:
 	Dot clangppIdentifier LeftBracket (MINVAL | IntegerLiteral) RightBracket;

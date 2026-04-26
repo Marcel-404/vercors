@@ -8,17 +8,17 @@
 /* psl 
 vunit main(Main){
   assert always (active(s.send) && speed_s.written() -> 
-    within_t[(1,SC_MS)] active(ecu_absasr.read_s) && speed_s.read() && ecu_absasr.v[0] == s.send.speed);
-
+    within_t(1,SC_MS) active(ecu_absasr.read_s) && speed_s.read() && ecu_absasr.v[0] == s.send.speed);
+    
   assert never (
   waiting(s.send) && 
   waiting(ecu_absasr.not_a_main) && 
   waiting(ecu_absasr.read_s) && 
 
-  speed_s.data_read_event().not_notified() && 
-  speed_s.data_written_event().not_notified() && 
-  s.send.wait_event().not_notified() && 
-  ecu_absasr.not_a_main.wait_event().not_notified());
+  not_notified(speed_s.data_read_event()) && 
+  not_notified(speed_s.data_written_event()) && 
+  not_notified(s.send.wait_event()) && 
+  not_notified(ecu_absasr.not_a_main.wait_event()));
   } psl */
 int sc_main (int argc, char* argv[]) 
 {
