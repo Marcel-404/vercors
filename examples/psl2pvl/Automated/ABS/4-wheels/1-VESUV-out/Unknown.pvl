@@ -1,5 +1,0 @@
-vesuv_entry {
-    Main Design_1790387225;
-    Design_1790387225 = new Main();
-    Design_1790387225.main();
-}

@@ -261,10 +261,10 @@ hdl_expression: hdl_expr;
 
 built_in_function_call:
 	// VPSL function calls
-	ACTIVE LeftParen referenceExpr RightParen and_op referenceExpr	# ActiveBuiltInFunctionCall
+	ACTIVE LeftParen referenceExpr RightParen and_op hdl_expr	# ActiveBuiltInFunctionCall
 	| READY LeftParen referenceExpr RightParen						# ReadyBuiltInFunctionCall
 	| WAITING LeftParen referenceExpr RightParen					# WaitingBuiltInFunctionCall
-	| event_operator LeftParen referenceExpr RightParen 			# EventBuiltInFunctionCall
+	| event_operator LeftParen referenceExpr RightParen				# EventBuiltInFunctionCall
 	//
 	| PREV LeftParen any_type (
 		Comma number_val (Comma clock_expression)?
@@ -435,7 +435,9 @@ hdl_expressions:
 	| referenceExpr;
 
 hdl_operator:
-	Equal
+	| OrOr
+	| AndAnd
+	| Equal
 	| NotEqual
 	| Less
 	| LessEqual
@@ -444,20 +446,19 @@ hdl_operator:
 
 referenceExpr: referenceprimary referencePostfixExpr*;
 
-referenceprimary: clangppIdentifier;
+referenceprimary: clangppIdentifier | IntegerLiteral;
 
 referencePostfixExpr:
 	Dot clangppIdentifier	# refIdentifier
 	| referenceIndex		# refIndex
 	| referenceMethod		# refMethod;
 
-referenceMethod:
-	Dot clangppIdentifier LeftParen RightParen;
+referenceMethod: Dot clangppIdentifier LeftParen RightParen;
 
 event_operator:
 	NOTIFIED_TIMED
 	| NOT_NOTIFIED
-	| NOTIFIED_UNTIMED
+	| NOTIFIED_IMMEDIATE
 	| NOTIFIED_DELTA
 	| NOTIFIED_PREV_DELTA;
 

@@ -3425,7 +3425,7 @@
       </declaration_specifiers>
     </declaration>
   </external_declaration>
-  <comment column="1" file="ABS_tb.cpp" idref="2607" line="8" name="/* psl &#xa;&#xa;vunit main(Main){&#xa;&#xa;  assert always (active(s.send) &amp;&amp; speed_s.written() -> &#xa;&#xa;    within_t(1,SC_MS) active(ecu_absasr.read_s) &amp;&amp; speed_s.read() &amp;&amp; ecu_absasr.v[0] == s.send.speed);&#xa;&#xa;    &#xa;&#xa;  assert never (&#xa;&#xa;  waiting(s.send) &amp;&amp; &#xa;&#xa;  waiting(ecu_absasr.not_a_main) &amp;&amp; &#xa;&#xa;  waiting(ecu_absasr.read_s) &amp;&amp; &#xa;&#xa;&#xa;&#xa;  not_notified(speed_s.data_read_event()) &amp;&amp; &#xa;&#xa;  not_notified(speed_s.data_written_event()) &amp;&amp; &#xa;&#xa;  not_notified(s.send.wait_event()) &amp;&amp; &#xa;&#xa;  not_notified(ecu_absasr.not_a_main.wait_event()));&#xa;&#xa;  } psl */"/>
+  <comment column="1" file="ABS_tb.cpp" idref="2607" line="8" name="/* psl &#xa;&#xa;vunit main(Main){&#xa;&#xa;  assert always (active(s.send) &amp;&amp; speed_s.num_written == 1 -> &#xa;&#xa;    within_t(1,SC_MS) active(ecu_absasr.read_s) &amp;&amp; speed_s.num_read == 1 &amp;&amp; ecu_absasr.v[0] == s.send.speed);&#xa;&#xa;    &#xa;&#xa;  assert notified_timed(ecu_absasr.not_a_main.wait_event()) -> waiting(ecu_absasr.not_a_main);&#xa;&#xa;&#xa;&#xa;  assert never (&#xa;&#xa;  waiting(s.send) &amp;&amp; &#xa;&#xa;  waiting(ecu_absasr.not_a_main) &amp;&amp; &#xa;&#xa;  waiting(ecu_absasr.read_s) &amp;&amp; &#xa;&#xa;&#xa;&#xa;  not_notified(speed_s.data_read_event()) &amp;&amp; &#xa;&#xa;  not_notified(speed_s.data_written_event()) &amp;&amp; &#xa;&#xa;  not_notified(s.send.wait_event()) &amp;&amp; &#xa;&#xa;  not_notified(ecu_absasr.not_a_main.wait_event()));&#xa;&#xa;  } psl */"/>
   <comment column="1" file="settings.h" idref="2608" line="9" name="//------------------------------------------------------------------------------"/>
   <comment column="1" file="settings.h" idref="2609" line="8" name="// geändert: 2008-07-03"/>
   <comment column="1" file="settings.h" idref="2610" line="7" name="// erstellt: 2008-06-22"/>
@@ -3436,202 +3436,202 @@
   <comment column="1" file="settings.h" idref="2615" line="2" name="// All settings for the environment model"/>
   <comment column="1" file="settings.h" idref="2616" line="1" name="//------------------------------------------------------------------------------"/>
   <comment column="1" file="ABSASR.h" idref="2617" line="1" name="/* This is a simple Anti-lock Braking System. The inputs are the&#xa;&#xa;   number of ticks counted within 100 ms at each wheel. Outputs are&#xa;&#xa;   control signals for pressure control (0 - constant pressure, 2 -&#xa;&#xa;   increase pressure, 1 - increase pressure slightly, -1 - decrease&#xa;&#xa;   pressure).&#xa;&#xa;&#xa;&#xa;   would be better: move conversion from ticks to velocity to other&#xa;&#xa;   modules, would be easier then to argue with a real refinement&#xa;&#xa;   process (communication, data and time refinement)&#xa;&#xa;*/"/>
-  <external_declaration column="2" file="ABS_tb.cpp" idref="2619" line="23">
-    <sc_main_declaration column="2" file="ABS_tb.cpp" idref="2621" line="23">
-      <declaration_specifiers column="1" file="ABS_tb.cpp" idref="2623" line="23">
+  <external_declaration column="2" file="ABS_tb.cpp" idref="2619" line="25">
+    <sc_main_declaration column="2" file="ABS_tb.cpp" idref="2621" line="25">
+      <declaration_specifiers column="1" file="ABS_tb.cpp" idref="2623" line="25">
         <builtin_type_specifier column="1" file="ABS_tb.cpp"
-          idref="2625" length="0" line="23" name="int" sc_dt="false"/>
+          idref="2625" length="0" line="25" name="int" sc_dt="false"/>
       </declaration_specifiers>
-      <function_declarator column="5" file="ABS_tb.cpp" idref="2627" line="23">
+      <function_declarator column="5" file="ABS_tb.cpp" idref="2627" line="25">
         <qualified_id column="5" file="ABS_tb.cpp" idref="2629"
-          line="23" name="sc_main"/>
-        <parameter_list column="13" file="ABS_tb.cpp" idref="2631" line="23">
+          line="25" name="sc_main"/>
+        <parameter_list column="13" file="ABS_tb.cpp" idref="2631" line="25">
           <parameter_declaration column="13" file="ABS_tb.cpp"
-            idref="2633" line="23">
+            idref="2633" line="25">
             <declaration_specifiers column="13" file="ABS_tb.cpp"
-              idref="2635" line="23">
+              idref="2635" line="25">
               <builtin_type_specifier column="13" file="ABS_tb.cpp"
-                idref="2637" length="0" line="23" name="int" sc_dt="false"/>
+                idref="2637" length="0" line="25" name="int" sc_dt="false"/>
             </declaration_specifiers>
-            <declarator column="14" file="ABS_tb.cpp" idref="2639" line="23">
+            <declarator column="14" file="ABS_tb.cpp" idref="2639" line="25">
               <qualified_id column="14" file="ABS_tb.cpp" idref="2641"
-                line="23" name="argc"/>
+                line="25" name="argc"/>
             </declarator>
           </parameter_declaration>
           <parameter_declaration column="22" file="ABS_tb.cpp"
-            idref="2643" line="23">
+            idref="2643" line="25">
             <declaration_specifiers column="22" file="ABS_tb.cpp"
-              idref="2645" line="23">
+              idref="2645" line="25">
               <builtin_type_specifier column="22" file="ABS_tb.cpp"
-                idref="2647" length="0" line="23" name="char" sc_dt="false"/>
+                idref="2647" length="0" line="25" name="char" sc_dt="false"/>
             </declaration_specifiers>
-            <declarator column="24" file="ABS_tb.cpp" idref="2649" line="23">
+            <declarator column="24" file="ABS_tb.cpp" idref="2649" line="25">
               <ptr_operator column="24" file="ABS_tb.cpp" idref="2651"
-                line="23" name="*"/>
-              <declarator column="28" file="ABS_tb.cpp" idref="2653" line="23">
+                line="25" name="*"/>
+              <declarator column="28" file="ABS_tb.cpp" idref="2653" line="25">
                 <qualified_id column="28" file="ABS_tb.cpp" idref="2655"
-                  line="23" name="argv"/>
+                  line="25" name="argv"/>
                 <declarator_suffixes arrayCounter="1" column="30"
-                  file="ABS_tb.cpp" idref="2657" line="23"/>
+                  file="ABS_tb.cpp" idref="2657" line="25"/>
               </declarator>
             </declarator>
           </parameter_declaration>
         </parameter_list>
       </function_declarator>
-      <block column="36" file="ABS_tb.cpp" idref="2659" line="24">
-        <block_statement column="1" file="ABS_tb.cpp" idref="2661" line="25">
-          <declaration column="1" file="ABS_tb.cpp" idref="2663" line="25">
+      <block column="36" file="ABS_tb.cpp" idref="2659" line="26">
+        <block_statement column="1" file="ABS_tb.cpp" idref="2661" line="27">
+          <declaration column="1" file="ABS_tb.cpp" idref="2663" line="27">
             <init_declarator_list column="1" file="ABS_tb.cpp"
-              idref="2665" line="25">
+              idref="2665" line="27">
               <declaration_specifiers column="1" file="ABS_tb.cpp"
-                idref="2667" line="25">
+                idref="2667" line="27">
                 <builtin_type_specifier column="1" file="ABS_tb.cpp"
-                  idref="2669" length="0" line="25" name="sc_fifo" sc_dt="true">
+                  idref="2669" length="0" line="27" name="sc_fifo" sc_dt="true">
                   <declaration_specifiers column="10" file="ABS_tb.cpp"
-                    idref="2671" line="25">
+                    idref="2671" line="27">
                     <builtin_type_specifier column="10"
                       file="ABS_tb.cpp" idref="2673" length="0"
-                      line="25" name="int" sc_dt="false"/>
+                      line="27" name="int" sc_dt="false"/>
                   </declaration_specifiers>
                 </builtin_type_specifier>
               </declaration_specifiers>
               <init_declarator column="16" file="ABS_tb.cpp"
-                idref="2675" line="25">
-                <declarator column="16" file="ABS_tb.cpp" idref="2677" line="25">
+                idref="2675" line="27">
+                <declarator column="16" file="ABS_tb.cpp" idref="2677" line="27">
                   <qualified_id column="16" file="ABS_tb.cpp"
-                    idref="2679" line="25" name="speed_s"/>
+                    idref="2679" line="27" name="speed_s"/>
                 </declarator>
               </init_declarator>
             </init_declarator_list>
           </declaration>
         </block_statement>
-        <block_statement column="25" file="ABS_tb.cpp" idref="2681" line="27">
-          <declaration column="25" file="ABS_tb.cpp" idref="2683" line="27">
+        <block_statement column="25" file="ABS_tb.cpp" idref="2681" line="29">
+          <declaration column="25" file="ABS_tb.cpp" idref="2683" line="29">
             <init_declarator_list column="25" file="ABS_tb.cpp"
-              idref="2685" line="27">
+              idref="2685" line="29">
               <declaration_specifiers column="25" file="ABS_tb.cpp"
-                idref="2687" line="27">
+                idref="2687" line="29">
                 <qualified_type column="25" file="ABS_tb.cpp"
-                  idref="2689" line="27">
+                  idref="2689" line="29">
                   <qualified_id column="25" file="ABS_tb.cpp"
-                    idref="2691" line="27" name="TickCounter"/>
+                    idref="2691" line="29" name="TickCounter"/>
                 </qualified_type>
               </declaration_specifiers>
-              <init_declarator column="3" file="ABS_tb.cpp" idref="2693" line="27">
-                <declarator column="3" file="ABS_tb.cpp" idref="2695" line="27">
+              <init_declarator column="3" file="ABS_tb.cpp" idref="2693" line="29">
+                <declarator column="3" file="ABS_tb.cpp" idref="2695" line="29">
                   <qualified_id column="3" file="ABS_tb.cpp"
-                    idref="2697" line="27" name="s"/>
+                    idref="2697" line="29" name="s"/>
                 </declarator>
                 <arguments_list column="16" file="ABS_tb.cpp"
-                  idref="2699" line="27">
+                  idref="2699" line="29">
                   <primary_expression column="16" file="ABS_tb.cpp"
-                    idref="2703" line="27">
+                    idref="2703" line="29">
                     <constant column="16" file="ABS_tb.cpp" idref="2705"
-                      line="27" value="&quot;s&quot;"/>
+                      line="29" value="&quot;s&quot;"/>
                   </primary_expression>
                 </arguments_list>
               </init_declarator>
             </init_declarator_list>
           </declaration>
         </block_statement>
-        <block_statement column="21" file="ABS_tb.cpp" idref="2707" line="28">
-          <postfix_expression column="21" file="ABS_tb.cpp" idref="2709" line="28">
+        <block_statement column="21" file="ABS_tb.cpp" idref="2707" line="30">
+          <postfix_expression column="21" file="ABS_tb.cpp" idref="2709" line="30">
             <primary_expression column="21" file="ABS_tb.cpp"
-              idref="2711" line="28">
+              idref="2711" line="30">
               <id_expression column="5" file="ABS_tb.cpp" idref="2713"
-                line="28" name="s"/>
+                line="30" name="s"/>
             </primary_expression>
             <dereferencing_operator column="5" file="ABS_tb.cpp"
-              idref="2715" line="28" name="&amp;"/>
+              idref="2715" line="30" name="&amp;"/>
             <id_expression column="7" file="ABS_tb.cpp" idref="2717"
-              line="28" name="out"/>
-            <arguments column="7" file="ABS_tb.cpp" idref="2719" line="28">
-              <arguments_list column="10" file="ABS_tb.cpp" idref="2721" line="28">
+              line="30" name="out"/>
+            <arguments column="7" file="ABS_tb.cpp" idref="2719" line="30">
+              <arguments_list column="10" file="ABS_tb.cpp" idref="2721" line="30">
                 <primary_expression column="10" file="ABS_tb.cpp"
-                  idref="2725" line="28">
+                  idref="2725" line="30">
                   <id_expression column="12" file="ABS_tb.cpp"
-                    idref="2727" line="28" name="speed_s"/>
+                    idref="2727" line="30" name="speed_s"/>
                 </primary_expression>
               </arguments_list>
             </arguments>
           </postfix_expression>
         </block_statement>
-        <block_statement column="21" file="ABS_tb.cpp" idref="2729" line="30">
-          <declaration column="21" file="ABS_tb.cpp" idref="2731" line="30">
+        <block_statement column="21" file="ABS_tb.cpp" idref="2729" line="32">
+          <declaration column="21" file="ABS_tb.cpp" idref="2731" line="32">
             <init_declarator_list column="21" file="ABS_tb.cpp"
-              idref="2733" line="30">
+              idref="2733" line="32">
               <declaration_specifiers column="21" file="ABS_tb.cpp"
-                idref="2735" line="30">
+                idref="2735" line="32">
                 <qualified_type column="21" file="ABS_tb.cpp"
-                  idref="2737" line="30">
+                  idref="2737" line="32">
                   <qualified_id column="21" file="ABS_tb.cpp"
-                    idref="2739" line="30" name="ABSASR"/>
+                    idref="2739" line="32" name="ABSASR"/>
                 </qualified_type>
               </declaration_specifiers>
-              <init_declarator column="3" file="ABS_tb.cpp" idref="2741" line="30">
-                <declarator column="3" file="ABS_tb.cpp" idref="2743" line="30">
+              <init_declarator column="3" file="ABS_tb.cpp" idref="2741" line="32">
+                <declarator column="3" file="ABS_tb.cpp" idref="2743" line="32">
                   <qualified_id column="3" file="ABS_tb.cpp"
-                    idref="2745" line="30" name="ecu_absasr"/>
+                    idref="2745" line="32" name="ecu_absasr"/>
                 </declarator>
                 <arguments_list column="20" file="ABS_tb.cpp"
-                  idref="2747" line="30">
+                  idref="2747" line="32">
                   <primary_expression column="20" file="ABS_tb.cpp"
-                    idref="2751" line="30">
+                    idref="2751" line="32">
                     <constant column="20" file="ABS_tb.cpp" idref="2753"
-                      line="30" value="&quot;absasr&quot;"/>
+                      line="32" value="&quot;absasr&quot;"/>
                   </primary_expression>
                 </arguments_list>
               </init_declarator>
             </init_declarator_list>
           </declaration>
         </block_statement>
-        <block_statement column="30" file="ABS_tb.cpp" idref="2755" line="31">
-          <postfix_expression column="30" file="ABS_tb.cpp" idref="2757" line="31">
+        <block_statement column="30" file="ABS_tb.cpp" idref="2755" line="33">
+          <postfix_expression column="30" file="ABS_tb.cpp" idref="2757" line="33">
             <primary_expression column="30" file="ABS_tb.cpp"
-              idref="2759" line="31">
+              idref="2759" line="33">
               <id_expression column="5" file="ABS_tb.cpp" idref="2761"
-                line="31" name="ecu_absasr"/>
+                line="33" name="ecu_absasr"/>
             </primary_expression>
             <dereferencing_operator column="5" file="ABS_tb.cpp"
-              idref="2763" line="31" name="&amp;"/>
+              idref="2763" line="33" name="&amp;"/>
             <id_expression column="16" file="ABS_tb.cpp" idref="2765"
-              line="31" name="bus_s"/>
-            <arguments column="16" file="ABS_tb.cpp" idref="2767" line="31">
-              <arguments_list column="21" file="ABS_tb.cpp" idref="2769" line="31">
+              line="33" name="bus_s"/>
+            <arguments column="16" file="ABS_tb.cpp" idref="2767" line="33">
+              <arguments_list column="21" file="ABS_tb.cpp" idref="2769" line="33">
                 <primary_expression column="21" file="ABS_tb.cpp"
-                  idref="2773" line="31">
+                  idref="2773" line="33">
                   <id_expression column="23" file="ABS_tb.cpp"
-                    idref="2775" line="31" name="speed_s"/>
+                    idref="2775" line="33" name="speed_s"/>
                 </primary_expression>
               </arguments_list>
             </arguments>
           </postfix_expression>
         </block_statement>
-        <block_statement column="32" file="ABS_tb.cpp" idref="2777" line="32">
+        <block_statement column="32" file="ABS_tb.cpp" idref="2777" line="34">
           <systemCRoutine column="32" file="ABS_tb.cpp" idref="2779"
-            line="32" name="sc_start">
-            <arguments column="3" file="ABS_tb.cpp" idref="2781" line="32">
-              <arguments_list column="11" file="ABS_tb.cpp" idref="2783" line="32">
+            line="34" name="sc_start">
+            <arguments column="3" file="ABS_tb.cpp" idref="2781" line="34">
+              <arguments_list column="11" file="ABS_tb.cpp" idref="2783" line="34">
                 <primary_expression column="11" file="ABS_tb.cpp"
-                  idref="2787" line="32">
+                  idref="2787" line="34">
                   <constant column="11" file="ABS_tb.cpp" idref="2789"
-                    line="32" value="20"/>
+                    line="34" value="20"/>
                 </primary_expression>
                 <primary_expression column="14" file="ABS_tb.cpp"
-                  idref="2793" line="32">
+                  idref="2793" line="34">
                   <constant column="14" file="ABS_tb.cpp" idref="2795"
-                    line="32" value="SC_MS"/>
+                    line="34" value="SC_MS"/>
                 </primary_expression>
               </arguments_list>
             </arguments>
           </systemCRoutine>
         </block_statement>
-        <block_statement column="21" file="ABS_tb.cpp" idref="2797" line="33">
-          <return_statement column="21" file="ABS_tb.cpp" idref="2799" line="33">
+        <block_statement column="21" file="ABS_tb.cpp" idref="2797" line="35">
+          <return_statement column="21" file="ABS_tb.cpp" idref="2799" line="35">
             <primary_expression column="3" file="ABS_tb.cpp"
-              idref="2803" line="33">
+              idref="2803" line="35">
               <constant column="3" file="ABS_tb.cpp" idref="2805"
-                line="33" value="0"/>
+                line="35" value="0"/>
             </primary_expression>
           </return_statement>
         </block_statement>

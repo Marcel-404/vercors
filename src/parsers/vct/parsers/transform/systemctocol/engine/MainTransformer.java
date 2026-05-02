@@ -4,8 +4,8 @@ import de.tub.pes.syscir.sc_model.SCFunction;
 import de.tub.pes.syscir.sc_model.SCSystem;
 import de.tub.pes.syscir.sc_model.SCVariable;
 import de.tub.pes.syscir.sc_model.expressions.Expression;
-import de.tub.pes.syscir.sc_model.expressions.PSLExpression;
 import de.tub.pes.syscir.sc_model.expressions.MarkerExpression;
+import de.tub.pes.syscir.sc_model.expressions.ConstantExpression;
 import de.tub.pes.syscir.sc_model.expressions.SCVariableDeclarationExpression;
 import de.tub.pes.syscir.sc_model.variables.SCArray;
 import de.tub.pes.syscir.sc_model.variables.SCClassInstance;
@@ -115,6 +115,11 @@ public class MainTransformer<T> {
      * PSL permission invariant.
      */
     private InstancePredicate<T> psl_invariant;
+
+    /**
+     * A list of PSL timer variables.
+     */
+    private java.util.List<InstanceField<T>> timer_vars;
 
     /**
      * Constructor of the Main class.
@@ -467,28 +472,100 @@ public class MainTransformer<T> {
      * Generates the psl permission invariant.
      */
     private void create_psl_invariant() {
+        this.timer_vars = new java.util.ArrayList<>();
+            // Count occurences of within_t PSL operator, to specify, how many local timing
+            // variables need to be created:
+            
+            String annotations = this.sc_system.getAnnotations().toString();
+            int count = (annotations.length() - annotations.replace("within_t", "").length()) / 8;
             java.util.List<Expr<T>> conditions = new java.util.ArrayList<>();
+            if (count != 0) {
+                // Add PSL Helper Variables for each timer object
+                InstanceField<T> psl_timer_value = new InstanceField<>(col_system.T_SEQ_INT, col_system.NO_FLAGS, OriGen.create("timer_value"));
+                InstanceField<T> psl_timer_set= new InstanceField<>(col_system.T_SEQ_BOOL, col_system.NO_FLAGS, OriGen.create("timer_set"));
+                InstanceField<T> psl_timer_reset = new InstanceField<>(col_system.T_SEQ_BOOL, col_system.NO_FLAGS, OriGen.create("timer_reset"));            
+                timer_vars.addAll(java.util.Arrays.asList(psl_timer_value,psl_timer_set,psl_timer_reset));
+                this.col_system.set_timer_vars_state(timer_vars);
+                conditions.addAll(create_psl_timer_var_permission_conditions(count));
+        }
             java.util.ArrayList<MarkerExpression> psl_expressions = sc_system.getAnnotations();
             if (!psl_expressions.isEmpty()) {
                     // Parse and transform PSL expression
-                    try{
-                    String input = psl_expressions.get(0).toString();
-                    LangPSLLexer lexer = new LangPSLLexer(CharStreams.fromString(input));
-                    lexer.removeErrorListeners();
-                    LangPSLParser parser = new LangPSLParser(new CommonTokenStream(lexer));
-                    parser.removeErrorListeners();
-                    parser.setErrorHandler(new BailErrorStrategy());
-                    ParseTree tree = parser.verification_item();
-                    PSLToColVisitor<T> visitor = new PSLToColVisitor(sc_system, col_system);
-                    Expr<T> result = visitor.visit(tree);
-                    conditions.add(result);
-                    }
-                    catch(Exception ignored){
-                        throw new ExpressionParseException("PSL expression could not be parsed!");
+                    try {
+                            String input = psl_expressions.get(0).toString();
+                            LangPSLLexer lexer = new LangPSLLexer(CharStreams.fromString(input));
+                            lexer.removeErrorListeners();
+                            LangPSLParser parser = new LangPSLParser(new CommonTokenStream(lexer));
+                            parser.removeErrorListeners();
+                            parser.setErrorHandler(new BailErrorStrategy());
+                            ParseTree tree = parser.verification_item();
+                            PSLToColVisitor<T> visitor = new PSLToColVisitor(sc_system, col_system);
+                            Expr<T> result = visitor.visit(tree);
+                            conditions.add(result);
+                    } catch (Exception ignored) {
+                            throw new ExpressionParseException("PSL expression could not be parsed!");
                     }
             }
             psl_invariant = new InstancePredicate<>(col_system.NO_VARS, Option.apply(col_system.fold_star(conditions)),
                             false, true, OriGen.create("psl_invariant"));
+    }
+
+    private java.util.List<Expr<T>> create_psl_timer_var_permission_conditions(int count){
+        java.util.List<Expr<T>> timer_conditions = new java.util.ArrayList<>(); 
+        for(int i = 0; i < this.timer_vars.size();i++){
+                InstanceField<T> timer_var = this.timer_vars.get(i);
+                Ref<T, InstanceField<T>> timer_state_ref = new DirectRef<>(timer_var,
+                ClassTag$.MODULE$.apply(InstanceField.class));
+        Deref<T> timer_state_deref = new Deref<>(col_system.THIS, timer_state_ref, new GeneratedBlame<>(),
+                OriGen.create());
+
+        FieldLocation<T> timer_state_loc = new FieldLocation<>(col_system.THIS, timer_state_ref, OriGen.create());
+
+        Size<T> timer_size = new Size<>(timer_state_deref, OriGen.create());
+        IntegerValue<T> nr_timers = new IntegerValue<>(BigInt.apply(count), OriGen.create());
+
+        // Create conditions
+        Perm<T> perm_to_timer = new Perm<>(timer_state_loc, new WritePerm<>(OriGen.create()), OriGen.create());
+        Eq<T> timer_length = new Eq<>(timer_size, nr_timers, OriGen.create());
+
+        // Put it all together and register the invariant in the COL system context
+        timer_conditions.addAll(java.util.List.of(perm_to_timer, timer_length));
+    }
+    return timer_conditions;
+}
+
+    /**
+     * Generates the initialization for the within_t timer variables specified by the given index.
+     * timer_value entries are set to -3, timer_set and timer_reset entries are set to false.
+     *
+     * @param index the index for which to return an assignment for the timer variable initialization
+     * @return An assignment for the timer variable initialization
+     */
+    private Statement<T> create_timer_state_initialization(int index) {
+            String annotations = this.sc_system.getAnnotations().toString();
+            int count = (annotations.length() - annotations.replace("within_t", "").length()) / 8;
+                LiteralSeq<T> literal = null;
+            InstanceField<T> timer_var = this.timer_vars.get(index);
+            Ref<T, InstanceField<T>> state_ref = new DirectRef<>(timer_var,
+                            ClassTag$.MODULE$.apply(InstanceField.class));
+            Deref<T> state_deref = new Deref<>(col_system.THIS, state_ref, new GeneratedBlame<>(),
+                            OriGen.create());
+            if (index == 0) {
+                    java.util.List<Expr<T>> literal_values = new java.util.ArrayList<>();
+                    for (int i = 0; i < count; i++) {
+                            literal_values.add(col_system.MINUS_THREE);
+                    }
+                    literal = new LiteralSeq<>(col_system.T_INT,
+                                    List.from(CollectionConverters.asScala(literal_values)), OriGen.create());
+            } else {
+                    java.util.List<Expr<T>> literal_values = new java.util.ArrayList<>();
+                    for (int i = 0; i < count; i++) {
+                            literal_values.add(col_system.FALSE);
+                    }
+                    literal = new LiteralSeq<>(col_system.T_BOOL,
+                                    List.from(CollectionConverters.asScala(literal_values)), OriGen.create());
+            }
+            return new Assign<>(state_deref, literal, new GeneratedBlame<>(), OriGen.create());
     }
 
     /**
@@ -551,7 +628,9 @@ public class MainTransformer<T> {
         initializations.add(create_process_state_initialization());
         initializations.add(create_event_state_initialization());
         initializations.add(create_primitive_channel_update_initialization());
-
+        for(int i = 0; i < this.timer_vars.size(); i++){
+        initializations.add(create_timer_state_initialization(i));
+        }
         // Create initializations for all instance fields
         for (InstanceField<T> channel : channels) {
             initializations.add(create_field_initialization(channel));

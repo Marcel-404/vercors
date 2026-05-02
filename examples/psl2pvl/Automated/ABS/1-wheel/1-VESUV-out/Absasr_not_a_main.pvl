@@ -2,29 +2,14 @@
 class Absasr_not_a_main {
     Main m;
     
-    boolean[] ecu_absasr_timer_set;
-    
-    boolean ecu_absasr_init;
+    boolean absasr_not_a_main_init;
     
     int i__abs;
     
-    int[] ecu_absasr_timer_value;
-    
-    boolean[] ecu_absasr_timer_reset;
-    
     ensures Perm(this.m, write);
     ensures this.m == m_param;
-    ensures Perm(this.ecu_absasr_timer_set, read);
-    ensures \array(this.ecu_absasr_timer_set, 1);
-    ensures Perm(this.ecu_absasr_timer_set[*], write);
-    ensures Perm(this.ecu_absasr_init, write);
+    ensures Perm(this.absasr_not_a_main_init, write);
     ensures Perm(this.i__abs, write);
-    ensures Perm(this.ecu_absasr_timer_value, read);
-    ensures \array(this.ecu_absasr_timer_value, 1);
-    ensures Perm(this.ecu_absasr_timer_value[*], write);
-    ensures Perm(this.ecu_absasr_timer_reset, read);
-    ensures \array(this.ecu_absasr_timer_reset, 1);
-    ensures Perm(this.ecu_absasr_timer_reset[*], write);
     ensures idle(this);
     constructor(
         Main m_param

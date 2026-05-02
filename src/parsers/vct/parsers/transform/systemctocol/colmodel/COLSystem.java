@@ -365,6 +365,11 @@ public class COLSystem<T> {
     private InstanceField<T> primitive_channel_update;
 
     /**
+     * Field for the timer_vars sequence.
+     */
+    private java.util.List<InstanceField<T>> timer_vars_state;
+
+    /**
      * A list of all global declarations (e.g. classes) in the system; represents the top-level AST node during
      * conversion and is used to finish the AST afterward.
      */
@@ -784,6 +789,33 @@ public class COLSystem<T> {
      */
     public InstanceField<T> get_event_state() {
         return event_state;
+    }
+
+    /**
+     * Registers the list of fields for the timer_vars state sequence list.
+     *
+     * @param new_proc_state list of timer_vars_state sequences
+     */
+    public void set_timer_vars_state(java.util.List<InstanceField<T>> new_timer_vars_state) {
+        this.timer_vars_state = new_timer_vars_state;
+    }
+
+    /**
+     * Returns the timer_var_state sequence field encoded by the given index. 
+     *
+     * @return An instance field of the Main class containing the timer_var_state encoded by the given index.
+     */
+    public InstanceField<T> get_timer_var_state(int index) {
+        return timer_vars_state.get(index);
+    }
+
+        /**
+     * Returns the timer_var_state sequence field list  
+     *
+     * @return A list of instance field of the Main class containing the timer_var_state sequences.
+     */
+    public java.util.List<InstanceField<T>> get_timer_vars_state_list() {
+        return timer_vars_state;
     }
 
     /**

@@ -211,7 +211,7 @@ NOTIFIED_DELTA:'notified_delta';
 
 NOTIFIED_PREV_DELTA:'notified_prev_delta';
 
-NOTIFIED_UNTIMED:'notified_untimed';
+NOTIFIED_IMMEDIATE:'notified_immediate';
 
 
 ACTIVE: 'active';
