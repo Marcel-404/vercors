@@ -1,0 +1,5 @@
+vesuv_entry {
+    Main Design_1028472807;
+    Design_1028472807 = new Main();
+    Design_1028472807.main();
+}

@@ -1577,6 +1577,9 @@ public class MainTransformer<T> {
         declarations.add(col_system.get_process_state());
         declarations.add(col_system.get_event_state());
         declarations.add(col_system.get_primitive_channel_update());
+        for(int i = 0; i < this.timer_vars.size();i++){
+                declarations.add(this.col_system.get_timer_var_state(i));
+        }
         declarations.addAll(processes);
         declarations.addAll(state_classes);
         declarations.addAll(channels);

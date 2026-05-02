@@ -1,0 +1,165 @@
+
+class Absasr {
+    Main m;
+    
+    int temp_fv;
+    
+    int[] a;
+    
+    int j__asr;
+    
+    int i__abs;
+    
+    int fa;
+    
+    int[] lambda;
+    
+    int[] s;
+    
+    int fv;
+    
+    int[] p;
+    
+    int[] v;
+    
+    ensures Perm(this.m, write);
+    ensures this.m == m_param;
+    ensures Perm(this.temp_fv, write);
+    ensures Perm(this.a, read);
+    ensures \array(this.a, 4);
+    ensures Perm(this.a[*], write);
+    ensures Perm(this.j__asr, write);
+    ensures Perm(this.i__abs, write);
+    ensures Perm(this.fa, write);
+    ensures Perm(this.lambda, read);
+    ensures \array(this.lambda, 4);
+    ensures Perm(this.lambda[*], write);
+    ensures Perm(this.s, read);
+    ensures \array(this.s, 4);
+    ensures Perm(this.s[*], write);
+    ensures Perm(this.fv, write);
+    ensures Perm(this.p, read);
+    ensures \array(this.p, 4);
+    ensures Perm(this.p[*], write);
+    ensures Perm(this.v, read);
+    ensures \array(this.v, 4);
+    ensures Perm(this.v[*], write);
+    constructor(
+        Main m_param
+    ) {
+        this.m = m_param;
+    }
+    
+    requires Perm(this.m, read);
+    requires this.m != null;
+    requires committed(this.m);
+    requires held(this.m);
+    requires Perm(this.m.global_invariant(), 1);
+    requires this.m.ecu_absasr_absasr == this;
+    ensures Perm(this.m, read);
+    ensures this.m != null;
+    ensures committed(this.m);
+    ensures held(this.m);
+    ensures Perm(this.m.global_invariant(), 1);
+    ensures this.m.ecu_absasr_absasr == this;
+    void _abs() {
+        if (this.fv > 22) {
+            loop_invariant Perm(this.m, read);
+            loop_invariant this.m != null;
+            loop_invariant committed(this.m);
+            loop_invariant held(this.m);
+            loop_invariant Perm(this.m.global_invariant(), 1);
+            loop_invariant this.m.ecu_absasr_absasr == this;
+            loop_invariant this.fv > 22;
+            for (this.i__abs = 0; this.i__abs < 4; this.i__abs = this.i__abs + 1) {
+                this.lambda[this.i__abs] = (this.fv - this.v[this.i__abs]) * 100 / this.fv;
+                if (this.s[this.i__abs] == 4) {
+                    if (this.a[this.i__abs] > 98) {
+                        this.p[this.i__abs] = 2;
+                        this.s[this.i__abs] = 5;
+                    }
+                } else if (this.s[this.i__abs] == 8) {
+                    if (this.a[this.i__abs] > -14) {
+                        this.p[this.i__abs] = 0;
+                        this.s[this.i__abs] = 4;
+                    }
+                } else if (this.s[this.i__abs] == 3) {
+                    if (this.a[this.i__abs] > -14) {
+                        this.p[this.i__abs] = 0;
+                        this.s[this.i__abs] = 4;
+                    }
+                } else if (this.s[this.i__abs] == 5) {
+                    if (this.a[this.i__abs] < 98) {
+                        this.p[this.i__abs] = 0;
+                        this.s[this.i__abs] = 6;
+                    }
+                } else if (this.s[this.i__abs] == 2) {
+                    if (this.lambda[this.i__abs] > 13) {
+                        this.p[this.i__abs] = -1;
+                        this.s[this.i__abs] = 3;
+                    }
+                } else if (this.s[this.i__abs] == 6) {
+                    if (this.a[this.i__abs] < 2) {
+                        this.p[this.i__abs] = 1;
+                        this.s[this.i__abs] = 7;
+                    }
+                } else if (this.s[this.i__abs] == 1) {
+                    if (this.a[this.i__abs] < -14) {
+                        this.p[this.i__abs] = 0;
+                        this.s[this.i__abs] = 2;
+                    }
+                } else if (this.s[this.i__abs] == 7) {
+                    if (this.a[this.i__abs] < -14) {
+                        this.p[this.i__abs] = -1;
+                        this.s[this.i__abs] = 8;
+                    }
+                }
+            }
+        }
+    }
+    
+    requires Perm(this.m, read);
+    requires this.m != null;
+    requires committed(this.m);
+    requires held(this.m);
+    requires Perm(this.m.global_invariant(), 1);
+    requires this.m.ecu_absasr_absasr == this;
+    ensures Perm(this.m, read);
+    ensures this.m != null;
+    ensures committed(this.m);
+    ensures held(this.m);
+    ensures Perm(this.m.global_invariant(), 1);
+    ensures this.m.ecu_absasr_absasr == this;
+    void _asr() {
+        this.j__asr = 3;
+        loop_invariant Perm(this.m, read);
+        loop_invariant this.m != null;
+        loop_invariant committed(this.m);
+        loop_invariant held(this.m);
+        loop_invariant Perm(this.m.global_invariant(), 1);
+        loop_invariant this.m.ecu_absasr_absasr == this;
+        for (this.i__abs = 0; this.i__abs < 2; this.i__abs = this.i__abs + 1) {
+            if (this.v[this.i__abs] > 0) {
+                this.lambda[this.i__abs] = (this.v[this.i__abs] - this.v[this.j__asr]) * 100 / this.v[this.i__abs];
+                if (this.lambda[this.i__abs] > 13) {
+                    if (this.a[this.i__abs] > 0) {
+                        this.p[this.i__abs] = 2;
+                    } else {
+                        this.p[this.i__abs] = 0;
+                    }
+                } else {
+                    this.p[this.i__abs] = -1;
+                }
+            }
+            this.j__asr = 2;
+        }
+    }
+    
+    pure int abs(int val) {
+        if (val >= 0) {
+            return val;
+        } else {
+            return -val;
+        }
+    }
+}

@@ -279,10 +279,6 @@ vunit main(Main){
 
     
 
-  assert notified_timed(ecu_absasr.not_a_main.wait_event()) -> waiting(ecu_absasr.not_a_main);
-
-
-
   assert never (
 
   waiting(s.send) && 

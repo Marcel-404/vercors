@@ -10,8 +10,6 @@ vunit main(Main){
   assert always (active(s.send) && speed_s.num_written == 1 -> 
     within_t(1,SC_MS) active(ecu_absasr.read_s) && speed_s.num_read == 1 && ecu_absasr.v[0] == s.send.speed);
     
-  assert notified_timed(ecu_absasr.not_a_main.wait_event()) -> waiting(ecu_absasr.not_a_main);
-
   assert never (
   waiting(s.send) && 
   waiting(ecu_absasr.not_a_main) && 

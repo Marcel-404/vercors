@@ -149,12 +149,12 @@ public class PSLToColVisitor<T> extends LangPSLParserBaseVisitor<Expr<T>> {
         public Expr<T> visitVerificationUnitVerificationItem(
                         LangPSLParser.VerificationUnitVerificationItemContext ctx) {
                 Expr<T> result = null;
-                /*try {*/
+                try {
                         result = visit(ctx.verification_unit());
 
-                /* } catch (Exception ignored) {
+                } catch (Exception ignored) {
                         throw new PSLParseException("One or more PSL constructs could not be transformed!");
-                }*/
+                }
                 return result;
         }
 
