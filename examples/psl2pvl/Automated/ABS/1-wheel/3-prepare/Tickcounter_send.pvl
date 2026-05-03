@@ -2,13 +2,7 @@
 class Tickcounter_send {
     Main m;
     
-    boolean tickcounter_send_timer_reset;
-    
     int ticks;
-    
-    boolean tickcounter_send_timer_set;
-    
-    int tickcounter_send_timer_value;
     
     boolean tickcounter_send_init;
     
@@ -16,10 +10,7 @@ class Tickcounter_send {
     
     ensures Perm(this.m, write);
     ensures this.m == m_param;
-    ensures Perm(this.tickcounter_send_timer_reset, write);
     ensures Perm(this.ticks, write);
-    ensures Perm(this.tickcounter_send_timer_set, write);
-    ensures Perm(this.tickcounter_send_timer_value, write);
     ensures Perm(this.tickcounter_send_init, write);
     ensures Perm(this.speed_send, write);
     ensures idle(this);
@@ -48,6 +39,10 @@ class Tickcounter_send {
         loop_invariant this.m.global_invariant();
         loop_invariant this.m.s_tickcounter_send == this;
         while (true) {
+            
+            // Reset Timer Set Status
+            this.m.timer_set = this.m.timer_set.update(0, false);
+            
             this.m.process_state = this.m.process_state.update(0, 2);
             this.m.event_state = this.m.event_state.update(2, 1);
             loop_invariant Perm(this.m, 1 \ 2);
@@ -81,7 +76,11 @@ class Tickcounter_send {
                 }
             }
             this.m.sc_fifo_int.fifo_write(this.speed_send);
-            this.m.event_state=this.m.event_state.update(4,1);
+            
+            // Set Timer 
+            this.m.event_state = this.m.event_state.update(4, 1);
+            this.m.timer_set = this.m.timer_set.update(0, true);
+            this.m.timer_value = this.m.timer_value.update(0, 1);
         }
         unlock this.m;
     }

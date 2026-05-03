@@ -7,6 +7,12 @@ class Main {
     
     seq<boolean> primitive_channel_update;
     
+    seq<int> timer_value;
+    
+    seq<boolean> timer_set;
+    
+    seq<boolean> timer_reset;
+    
     Tickcounter_send s_tickcounter_send;
     
     Absasr_not_a_main ecu_absasr_absasr_not_a_main;
@@ -18,6 +24,8 @@ class Main {
     Sc_fifo_int sc_fifo_int;
     
     int buffer_size;
+    
+    int min_advance;
     
     inline resource update_permission_invariant() =
         Perm(this.primitive_channel_update, write) ** |this.primitive_channel_update| == 1;
@@ -54,54 +62,50 @@ class Main {
         this.sc_fifo_int_permission_invariant() **
         Perm(this.s_tickcounter_send, read) **
         this.s_tickcounter_send != null **
-        Perm(this.s_tickcounter_send.tickcounter_send_timer_reset, write) **
         Perm(this.s_tickcounter_send.ticks, write) **
-        Perm(this.s_tickcounter_send.tickcounter_send_timer_set, write) **
-        Perm(this.s_tickcounter_send.tickcounter_send_timer_value, write) **
         Perm(this.s_tickcounter_send.tickcounter_send_init, write) ** Perm(this.s_tickcounter_send.speed_send, write) **
         Perm(this.ecu_absasr_absasr_not_a_main, read) **
         this.ecu_absasr_absasr_not_a_main != null **
-        Perm(this.ecu_absasr_absasr_not_a_main.absasr_not_a_main_timer_value, write) **
-        Perm(this.ecu_absasr_absasr_not_a_main.absasr_not_a_main_timer_reset, write) **
         Perm(this.ecu_absasr_absasr_not_a_main.absasr_not_a_main_init, write) **
-        Perm(this.ecu_absasr_absasr_not_a_main.absasr_not_a_main_timer_set, write) **
         Perm(this.ecu_absasr_absasr_read_s, read) **
         this.ecu_absasr_absasr_read_s != null **
-        Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_timer_value, write) **
-        Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_timer_set, write) **
         Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_init, write) **
-        Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_timer_reset, write) **
         Perm(this.ecu_absasr_absasr_read_s.tmp_0_read_s, write) **
         Perm(this.ecu_absasr_absasr, read) **
         this.ecu_absasr_absasr != null **
-        Perm(this.ecu_absasr_absasr.temp_fv, write) **
         Perm(this.ecu_absasr_absasr.s, write) **
         |this.ecu_absasr_absasr.s| == 1 **
-        Perm(this.ecu_absasr_absasr.v, write) **
-        |this.ecu_absasr_absasr.v| == 1 **
-        Perm(this.ecu_absasr_absasr.lambda, write) **
-        |this.ecu_absasr_absasr.lambda| == 1 **
-        Perm(this.ecu_absasr_absasr.absasr_timer_reset, write) **
-        Perm(this.ecu_absasr_absasr.fv, write) **
-        Perm(this.ecu_absasr_absasr.absasr_init, write) **
-        Perm(this.ecu_absasr_absasr.p, write) **
-        |this.ecu_absasr_absasr.p| == 1 **
-        Perm(this.ecu_absasr_absasr.absasr_timer_set, write) **
+        Perm(this.ecu_absasr_absasr.temp_fv, write) **
         Perm(this.ecu_absasr_absasr.a, write) **
         |this.ecu_absasr_absasr.a| == 1 **
-        Perm(this.ecu_absasr_absasr.fa, write) ** Perm(this.ecu_absasr_absasr.absasr_timer_value, write) **
+        Perm(this.ecu_absasr_absasr.lambda, write) **
+        |this.ecu_absasr_absasr.lambda| == 1 **
+        Perm(this.ecu_absasr_absasr.v, write) **
+        |this.ecu_absasr_absasr.v| == 1 **
+        Perm(this.ecu_absasr_absasr.p, write) **
+        |this.ecu_absasr_absasr.p| == 1 **
+        Perm(this.ecu_absasr_absasr.fa, write) ** Perm(this.ecu_absasr_absasr.fv, write) **
         Perm(this.ecu_absasr_absasr.m, read) ** this.ecu_absasr_absasr.m == this ** this.psl_invariant();
     
     inline resource psl_invariant() =
-        (this.process_state[0] == -1 && this.event_state[0] == -2 ==> this.event_state[4] == 1) **
-        (this.process_state[2] == -1 && this.event_state[0] == -2 && this.ecu_absasr_absasr.v[0] == this.s_tickcounter_send.speed_send ==>
-            this.event_state[4] > 0) **
-        !(this.process_state[0] >= 0 && this.process_state[2] >= 0 && this.process_state[1] >= 0 &&
+        Perm(this.timer_value, write) **
+        |this.timer_value| == 1 **
+        Perm(this.timer_set, write) **
+        |this.timer_set| == 1 **
+        Perm(this.timer_reset, write) **
+        |this.timer_reset| == 1 **
+        (this.process_state[0] == -1 && |this.sc_fifo_int.written| == 1 ==>
+            this.event_state[4] == 1 && this.timer_set[0]) **
+        (this.timer_reset[0] ==>
+            this.process_state[2] == -1 && this.sc_fifo_int.num_read == 1 &&
+            this.ecu_absasr_absasr.v[0] == this.s_tickcounter_send.speed_send &&
+            this.event_state[4] == -3 &&
+            this.timer_value[0] > 0) **
+        !(this.process_state[0] >= 0 && this.process_state[1] >= 0 && this.process_state[2] >= 0 &&
         this.event_state[0] == -3 &&
         this.event_state[1] == -3 &&
         this.event_state[2] == -3 &&
-        this.event_state[3] == -3 &&
-        this.event_state[4] == -3);
+        this.event_state[3] == -3);
     
     ensures Perm(this.s_tickcounter_send, read);
     ensures this.s_tickcounter_send != null;
@@ -124,11 +128,15 @@ class Main {
         this.event_state = seq<int>{-3, -3, -3, -3, -3};
         this.primitive_channel_update = seq<boolean>{false};
         this.buffer_size = non_negative();
+        this.timer_value = seq<int>{-3};
+        this.timer_set = seq<boolean>{false};
+        this.timer_reset = seq<boolean>{false};
         this.sc_fifo_int = new Sc_fifo_int(this);
         this.ecu_absasr_absasr = new Absasr(this);
         this.s_tickcounter_send = new Tickcounter_send(this);
         this.ecu_absasr_absasr_not_a_main = new Absasr_not_a_main(this);
         this.ecu_absasr_absasr_read_s = new Absasr_read_s(this);
+        this.min_advance = 0;
         commit this;
     }
     
@@ -178,7 +186,6 @@ class Main {
             if (this.process_state[0] != -1 && this.process_state[1] != -1 && this.process_state[2] != -1) {
                 this.sc_fifo_int.fifo_update();
                 this.primitive_channel_update = seq<boolean>{false};
-                int min_advance;
                 min_advance =
                     this.find_minimum_advance(
                         this.event_state[0],
@@ -324,6 +331,6 @@ class Main {
         this.event_state[4] == \old(this.event_state[4]);
     void reset_all_events();
 
-ensures \result >0;
-int non_negative();
+    ensures \result > 0;
+    int non_negative();
 }

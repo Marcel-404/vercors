@@ -367,93 +367,85 @@ SC_MODULE ( TickCounter ) {
 
 vunit main(Main){
 
-assert always (active(vr.send) && speed_vr.num_written == 1 -> 
+  assert always (active(vr.send) && speed_vr.num_written == 1 -> 
 
-  within_t(1,SC_MS) active(ecu_absasr.read_vr) && speed_vr.num_read == 1 && ecu_absasr.v[0] == vr.send.speed);
-
-
-
-assert always (active(vl.send) && speed_vl.num_written == 1 -> 
-
-  within_t(1,SC_MS) active(ecu_absasr.read_vl) && speed_vl.num_read == 1 && ecu_absasr.v[1] == vl.send.speed);
+    within_t(1,SC_MS) active(ecu_absasr.read_vr) && speed_vr.num_read == 1 && ecu_absasr.v[0] == vr.send.speed);
 
 
 
-assert always (active(hr.send) && speed_hr.num_written == 1 -> 
+  assert always (active(vl.send) && speed_vl.num_written == 1 -> 
 
-  within_t(1,SC_MS) active(ecu_absasr.read_hr) && speed_hr.num_read == 1 && ecu_absasr.v[2] == hr.send.speed);
+    within_t(1,SC_MS) active(ecu_absasr.read_vl) && speed_vl.num_read == 1 && ecu_absasr.v[1] == vl.send.speed);
+
+
+
+  assert always (active(hr.send) && speed_hr.num_written == 1 -> 
+
+    within_t(1,SC_MS) active(ecu_absasr.read_hr) && speed_hr.num_read == 1 && ecu_absasr.v[2] == hr.send.speed);
 
     
 
-assert always (active(hl.send) && speed_hl.num_written == 1 -> 
+  assert always (active(hl.send) && speed_hl.num_written == 1 -> 
 
-  within_t(1,SC_MS) active(ecu_absasr.read_hl) && speed_hl.num_read == 1 && ecu_absasr.v[3] == hl.send.speed);
+    within_t(1,SC_MS) active(ecu_absasr.read_hl) && speed_hl.num_read == 1 && ecu_absasr.v[3] == hl.send.speed);
 
   
 
-
-
-
-
   assert never (
-
-  waiting(vl.send) && 
-
-  waiting(vr.send) && 
-
-  waiting(hr.send) && 
-
-  waiting(hl.send) && 
-
-
-
-  waiting(ecu_absasr.read_vr) && 
-
-  waiting(ecu_absasr.read_vl) && 
-
-  waiting(ecu_absasr.read_hl) && 
-
-  waiting(ecu_absasr.read_hr) && 
-
-
 
   waiting(ecu_absasr.not_a_main) && 
 
+  not_notified(ecu_absasr.not_a_main.wait_event()) &&
 
+  
 
-  not_notified(speed_vr.data_read_event()) &&
+  waiting(vl.send) && 
+
+  waiting(ecu_absasr.read_vl) && 
 
   not_notified(speed_vl.data_read_event()) && 
 
-  not_notified(speed_hl.data_read_event()) &&
-
-  not_notified(speed_hr.data_read_event()) &&
-
-
-
-  not_notified(speed_vr.data_written_event()) && 
-
   not_notified(speed_vl.data_written_event()) && 
-
-  not_notified(speed_hr.data_written_event()) && 
-
-  not_notified(speed_hl.data_written_event()) && 
-
-
-
-  not_notified(vr.send.wait_event()) &&
 
   not_notified(vl.send.wait_event()) && 
 
+  
+
+  waiting(vr.send) && 
+
+  waiting(ecu_absasr.read_vr) && 
+
+  not_notified(speed_vr.data_read_event()) &&
+
+  not_notified(speed_vr.data_written_event()) && 
+
+  not_notified(vr.send.wait_event()) &&
+
+  
+
+  waiting(hr.send) && 
+
+  waiting(ecu_absasr.read_hr) && 
+
+  not_notified(speed_hr.data_read_event()) &&
+
+  not_notified(speed_hr.data_written_event()) && 
+
   not_notified(hr.send.wait_event()) &&
 
-  not_notified(hl.send.wait_event()) &&
+  
 
-  not_notified(ecu_absasr.not_a_main.wait_event()));
+  waiting(hl.send) && 
 
-}
+  waiting(ecu_absasr.read_hl) && 
 
-psl */
+  not_notified(speed_hl.data_read_event()) &&
+
+  not_notified(speed_hl.data_written_event()) && 
+
+  not_notified(hl.send.wait_event()));
+
+} psl */
 int sc_main (int argc, char* argv[])
 {
   //  sc_signal<bool>         resetWheels;   

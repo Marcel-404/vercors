@@ -19,7 +19,7 @@ printf "1) Automated/ABS/1-wheel\n2) Automated/ABS/4-wheels\n3) Manual-Encoding/
 read -r option
 case "$option" in
   1) verify "Automated/ABS/1-wheel" ;;
-  2) verify "Automated/ABS/1-wheel" ;;
+  2) verify "Automated/ABS/4-wheels" ;;
   3) verify "Manual-Encoding/ABS/1-wheel";;
   4) verify "Manual-Encoding/ABS/4-wheels";;
   #3) verify "producer-consumer" ;;

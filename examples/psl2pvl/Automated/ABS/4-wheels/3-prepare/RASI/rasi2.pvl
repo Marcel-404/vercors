@@ -1,0 +1,79 @@
+inline resource reachable_abstract_states_invariant2() =
+    !this.primitive_channel_update[1] && this.event_state[2] == -3 && this.event_state[3] == -3 &&
+    this.event_state[9] == -3 &&
+    this.process_state[1] == -1 &&
+    this.process_state[5] == -1 &&
+    |this.sc_fifo_int_speed_vr.buffer| == 0 &&
+    |this.sc_fifo_int_speed_vr.written| == 0 &&
+    this.sc_fifo_int_speed_vr.num_read == 0 ||
+    !this.primitive_channel_update[1] && this.event_state[2] == -3 && this.event_state[3] == -3 &&
+    this.event_state[9] == 1 &&
+    this.process_state[1] == 9 &&
+    this.process_state[5] == -1 &&
+    |this.sc_fifo_int_speed_vr.buffer| == 0 &&
+    |this.sc_fifo_int_speed_vr.written| == 0 &&
+    this.sc_fifo_int_speed_vr.num_read == 0 ||
+    !this.primitive_channel_update[1] && this.event_state[2] == -3 && this.event_state[3] == -3 &&
+    this.event_state[9] == -3 &&
+    this.process_state[1] == -1 &&
+    this.process_state[5] == 3 &&
+    |this.sc_fifo_int_speed_vr.buffer| == 0 &&
+    |this.sc_fifo_int_speed_vr.written| == 0 &&
+    this.sc_fifo_int_speed_vr.num_read == 0 ||
+    !this.primitive_channel_update[1] && this.event_state[2] == -3 && this.event_state[3] == -3 &&
+    this.event_state[9] == 1 &&
+    this.process_state[1] == 9 &&
+    this.process_state[5] == 3 &&
+    |this.sc_fifo_int_speed_vr.buffer| == 0 &&
+    |this.sc_fifo_int_speed_vr.written| == 0 &&
+    this.sc_fifo_int_speed_vr.num_read == 0 ||
+    !this.primitive_channel_update[1] && this.event_state[2] == -3 && this.event_state[3] == -3 &&
+    this.event_state[9] == -2 &&
+    this.process_state[1] == -1 &&
+    this.process_state[5] == 3 &&
+    |this.sc_fifo_int_speed_vr.buffer| == 0 &&
+    |this.sc_fifo_int_speed_vr.written| == 0 &&
+    this.sc_fifo_int_speed_vr.num_read == 0 ||
+    this.primitive_channel_update[1] && this.event_state[2] == -3 && this.event_state[3] == -3 &&
+    this.event_state[9] == -2 &&
+    this.process_state[1] == -1 &&
+    this.process_state[5] == 3 &&
+    |this.sc_fifo_int_speed_vr.buffer| == 0 &&
+    |this.sc_fifo_int_speed_vr.written| == 1 &&
+    this.sc_fifo_int_speed_vr.num_read == 0 ||
+    this.primitive_channel_update[1] && this.event_state[2] == -3 && this.event_state[3] == -3 &&
+    this.event_state[9] == 1 &&
+    this.process_state[1] == 9 &&
+    this.process_state[5] == 3 &&
+    |this.sc_fifo_int_speed_vr.buffer| == 0 &&
+    |this.sc_fifo_int_speed_vr.written| == 1 &&
+    this.sc_fifo_int_speed_vr.num_read == 0 ||
+    !this.primitive_channel_update[1] && this.event_state[2] == -3 && this.event_state[3] == -2 &&
+    this.event_state[9] == 1 &&
+    this.process_state[1] == 9 &&
+    this.process_state[5] == -1 &&
+    |this.sc_fifo_int_speed_vr.buffer| == 1 &&
+    |this.sc_fifo_int_speed_vr.written| == 0 &&
+    this.sc_fifo_int_speed_vr.num_read == 0 ||
+    this.primitive_channel_update[1] && this.event_state[2] == -3 && this.event_state[3] == -2 &&
+    this.event_state[9] == 1 &&
+    this.process_state[1] == 9 &&
+    this.process_state[5] == -1 &&
+    |this.sc_fifo_int_speed_vr.buffer| == 1 &&
+    |this.sc_fifo_int_speed_vr.written| == 0 &&
+    this.sc_fifo_int_speed_vr.num_read == 1 ||
+    this.primitive_channel_update[1] && this.event_state[2] == -3 && this.event_state[3] == -2 &&
+    this.event_state[9] == 1 &&
+    this.process_state[1] == 9 &&
+    this.process_state[5] == 3 &&
+    |this.sc_fifo_int_speed_vr.buffer| == 1 &&
+    |this.sc_fifo_int_speed_vr.written| == 0 &&
+    this.sc_fifo_int_speed_vr.num_read == 1 ||
+    !this.primitive_channel_update[1] && this.event_state[2] == -2 && this.event_state[3] == -3 &&
+    this.event_state[9] == 1 &&
+    this.process_state[1] == 9 &&
+    this.process_state[5] == 3 &&
+    |this.sc_fifo_int_speed_vr.buffer| == 0 &&
+    |this.sc_fifo_int_speed_vr.written| == 0 &&
+    this.sc_fifo_int_speed_vr.num_read == 0
+;

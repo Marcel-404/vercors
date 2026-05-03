@@ -1,0 +1,100 @@
+
+class Sc_fifo_int_speed_vr {
+    Main m;
+    
+    seq<int> buffer;
+    
+    int num_read;
+    
+    seq<int> written;
+    
+    ensures Perm(this.m, read);
+    ensures this.m == m_param;
+    ensures Perm(this.buffer, write);
+    ensures this.buffer == seq<int>{};
+    ensures Perm(this.num_read, write);
+    ensures this.num_read == 0;
+    ensures Perm(this.written, write);
+    ensures this.written == seq<int>{};
+    constructor(
+        Main m_param
+    ) {
+        this.m = m_param;
+        this.buffer = seq<int>{};
+        this.num_read = 0;
+        this.written = seq<int>{};
+    }
+    
+    requires Perm(this.m, read);
+    requires this.m != null;
+    requires held(this.m);
+    requires this.m.update_permission_invariant();
+    requires this.m.parameter_invariant();
+    requires this.m.sc_fifo_int_speed_vr_permission_invariant();
+    requires this.m.sc_fifo_int_speed_vr == this;
+    requires this.num_read < |this.buffer|;
+    ensures Perm(this.m, read);
+    ensures this.m != null;
+    ensures held(this.m);
+    ensures this.m.update_permission_invariant();
+    ensures this.m.parameter_invariant();
+    ensures this.m.sc_fifo_int_speed_vr_permission_invariant();
+    ensures this.m.sc_fifo_int_speed_vr == this;
+    ensures this.written == \old(this.written);
+    ensures this.buffer == \old(this.buffer);
+    ensures \result == \old(this.buffer[this.num_read]);
+    ensures this.num_read == \old(this.num_read) + 1;
+    ensures this.m.primitive_channel_update == \old(this.m.primitive_channel_update).update(1, true);
+    int fifo_read();
+    
+    requires Perm(this.m, read);
+    requires this.m != null;
+    requires held(this.m);
+    requires this.m.update_permission_invariant();
+    requires this.m.parameter_invariant();
+    requires this.m.sc_fifo_int_speed_vr_permission_invariant();
+    requires this.m.sc_fifo_int_speed_vr == this;
+    requires |this.buffer| + |this.written| < this.m.buffer_size;
+    ensures Perm(this.m, read);
+    ensures this.m != null;
+    ensures held(this.m);
+    ensures this.m.update_permission_invariant();
+    ensures this.m.parameter_invariant();
+    ensures this.m.sc_fifo_int_speed_vr_permission_invariant();
+    ensures this.m.sc_fifo_int_speed_vr == this;
+    ensures this.num_read == \old(this.num_read);
+    ensures this.buffer == \old(this.buffer);
+    ensures this.written == \old(this.written + seq<int>{new_val});
+    ensures this.m.primitive_channel_update == \old(this.m.primitive_channel_update).update(1, true);
+    void fifo_write(int new_val);
+    
+    requires Perm(this.m, read);
+    requires this.m != null;
+    requires held(this.m);
+    requires this.m.scheduler_invariant();
+    requires this.m.parameter_invariant();
+    requires this.m.sc_fifo_int_speed_vr_permission_invariant();
+    requires this.m.sc_fifo_int_speed_vr == this;
+    ensures Perm(this.m, read);
+    ensures this.m != null;
+    ensures held(this.m);
+    ensures this.m.scheduler_invariant();
+    ensures this.m.parameter_invariant();
+    ensures this.m.sc_fifo_int_speed_vr_permission_invariant();
+    ensures this.m.sc_fifo_int_speed_vr == this;
+    ensures this.m.process_state == \old(this.m.process_state);
+    ensures this.m.primitive_channel_update == \old(this.m.primitive_channel_update);
+    ensures !this.m.primitive_channel_update[1] ==>
+        this.num_read == \old(this.num_read) &&
+        this.written == \old(this.written) &&
+        this.buffer == \old(this.buffer) && this.m.event_state == \old(this.m.event_state);
+    ensures this.m.primitive_channel_update[1] ==>
+        this.num_read == 0 &&
+        |this.written| == 0 &&
+        this.buffer == \old(this.buffer[this.num_read..|this.buffer|] + this.written) &&
+        this.m.event_state[..2] == \old(this.m.event_state[..2]) &&
+        this.m.event_state[2] == (\old(this.num_read) > 0 ? -1 : \old(this.m.event_state[2])) &&
+        this.m.event_state[3] == (\old(|this.written|) > 0 ? -1 : \old(this.m.event_state[3])) &&
+        this.m.event_state[4..] == \old(this.m.event_state[4..]);
+    void fifo_update();
+}

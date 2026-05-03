@@ -1,4 +1,5 @@
-This README.md is copied from the artifact in the paper "Automated Invariant Generation for Efficient Deductive Reasoning About Embedded Systems" by Tasche, Herber and Huisman
+The first two entries of this README.md are entries from the artifact in the paper "Automated Invariant Generation for Efficient Deductive Reasoning About Embedded Systems" by Tasche, Herber and Huisman
+The last entry represents the manual effort, that is required for our approach to verify the generated properties.
 
 Some manual effort is required to make the program verifiable, optimize it and to encode the desired properties.
 
@@ -10,6 +11,13 @@ For the ABS/ASR example, this means
 - Replacing the arrays in `Absasr.pvl` with PVL's `seq` type
 - Making the loop variables in `Absasr.pvl` and `Absasr_not_a_main.pvl` local
 
+- [Additional Info] Since each array in `Absasr.pvl` has been replaced by PVL's `seq` type, each time the variables have to be accessed differently:
+- - Instead of ARRAY[i] = x -> ARRAY = ARRAY.update(i, x)
+- - Therefore, also each Perm(ARRAY, read) -> Perm(ARRAY, write)
+- This has to be done for `Absasr.pvl`, `Absasr_not_a_main.pvl` and  `Absasr_read_s.pvl`
+- [Additional Info] Moreover, for each Perm(this.arrray, read) -> (this.arrray, write) 
+- [Additional Info] Moreover, for each Perm(this.m.invariant,1) -> this.m.invariant()
+
 
 ### Verification
 
@@ -19,3 +27,22 @@ For the ABS/ASR example, this means
 - Adding loop bounds to the loops in `Absasr.pvl` and `Absasr_not_a_main.pvl`
 - Assigning a nondeterministic nonnegative value to the `buffer_size` in `Main.pvl`
 
+
+### Property Verification
+
+To enable the verification of the generated PVL properties from the PSL assertions, some manual effort is required. 
+For each property using the within_t operator, an entry in the global arrays timer_set, timer_reset and timer_value are created.
+The entries in the global variables are encoded in such a way, that the order of the within_t specification corresponds to the order in these arrays.
+However, the timer operations, such as setting and resetting the timer need to be manually defined.
+
+For instance, for the given timely reaction property, this means:
+- A timer has to be set in `Tickcounter_send.pvl` and its new value saved after line 74 `this.m.sc_fifo_int.fifo_write(this.speed_send);` 
+- This is encoded as: 
+- - this.m.event_state = this.m.event_state.update(4,1); 
+- - this.m.timer_set = this.m.timer_set.update(0,true); 
+- - this.m.timer_value = this.m.timer_value.update(0,1);
+- Moreover, the timer has to be reset in `Absasr_read_s.pvl` and its current value saved after line 61 `this.tmp_0_read_s = this.m.ecu_absasr_absasr.v[0];`
+- This is encoded as:
+- - this.m.timer_value = this.m.timer_value.update(0,this.m.event_state[4]);
+- - this.m.timer_value = this.m.timer_reset.update(0,true);
+- - this.m.event_state = this.m.event_state.update(4,-3);

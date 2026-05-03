@@ -19,7 +19,7 @@ vunit main(Main){
   not_notified(speed_s.data_written_event()) && 
   not_notified(s.send.wait_event()) && 
   not_notified(ecu_absasr.not_a_main.wait_event()));
-  } psl */
+} psl */
 int sc_main (int argc, char* argv[]) 
 {
   sc_fifo< int >  speed_s;

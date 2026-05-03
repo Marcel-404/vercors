@@ -2,22 +2,13 @@
 class Absasr_read_s {
     Main m;
     
-    int absasr_read_s_timer_value;
-    
-    boolean absasr_read_s_timer_set;
-    
     boolean absasr_read_s_init;
-    
-    boolean absasr_read_s_timer_reset;
     
     int tmp_0_read_s;
     
     ensures Perm(this.m, write);
     ensures this.m == m_param;
-    ensures Perm(this.absasr_read_s_timer_value, write);
-    ensures Perm(this.absasr_read_s_timer_set, write);
     ensures Perm(this.absasr_read_s_init, write);
-    ensures Perm(this.absasr_read_s_timer_reset, write);
     ensures Perm(this.tmp_0_read_s, write);
     ensures idle(this);
     constructor(
@@ -46,6 +37,10 @@ class Absasr_read_s {
         loop_invariant this.m.global_invariant();
         loop_invariant this.m.ecu_absasr_absasr_read_s == this;
         while (true) {
+            
+            // Reset timer_reset
+            this.m.timer_reset = this.m.timer_reset.update(0, false);
+
             loop_invariant Perm(this.m, 1 \ 2);
             loop_invariant this.m != null;
             loop_invariant committed(this.m);
@@ -65,10 +60,14 @@ class Absasr_read_s {
                     lock this.m;
                 }
             }
-            this.m.ecu_absasr_absasr.v =this.m.ecu_absasr_absasr.v.update(0, this.m.sc_fifo_int.fifo_read());
-            this.m.ecu_absasr_absasr.a = this.m.ecu_absasr_absasr.a.update(0,this.m.ecu_absasr_absasr.v[0] - this.tmp_0_read_s);
+            this.m.ecu_absasr_absasr.v = this.m.ecu_absasr_absasr.v.update(0, this.m.sc_fifo_int.fifo_read());
+            this.m.ecu_absasr_absasr.a = this.m.ecu_absasr_absasr.a.update(0, this.m.ecu_absasr_absasr.v[0] - this.tmp_0_read_s);
             this.tmp_0_read_s = this.m.ecu_absasr_absasr.v[0];
-            this.m.event_state=this.m.event_state.update(4,-3);
+            
+            // Reset Timer
+            this.m.timer_value = this.m.timer_value.update(0, this.m.event_state[4]);
+            this.m.timer_reset = this.m.timer_reset.update(0, true);
+            this.m.event_state = this.m.event_state.update(4, -3);
         }
         unlock this.m;
     }
