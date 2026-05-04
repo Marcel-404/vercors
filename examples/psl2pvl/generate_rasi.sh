@@ -37,7 +37,7 @@ printf "[INFO] Generate RASI for which SystemC Design?:\n"
 printf "1) Automated/ABS/1-wheel\n2) Automated/ABS/4-wheels\n3) All SystemC designs\n4) Back to previous menu\n"
 read -r option
 case "$option" in
-    1)  generate_rasi "Automated/ABS/1-wheel" "event_state[0],event_state[1],event_state[3],process_state[0],process_state[2],min_advance";;
+    1)  generate_rasi "Automated/ABS/1-wheel" "timer_set[0],timer_reset[0],timer_value[0],event_state[0],event_state[4],event_state[3],process_state[0],process_state[2],min_advance";;
     2)  generate_rasi "Automated/ABS/4-wheels" "event_state[0],event_state[1],event_state[8],process_state[0],process_state[6],min_advance" 1
         generate_rasi "Automated/ABS/4-wheels" "event_state[2],event_state[3],event_state[9],process_state[1],process_state[5],min_advance" 2
         generate_rasi "Automated/ABS/4-wheels" "event_state[4],event_state[5],event_state[10],process_state[2],process_state[8],min_advance" 3
@@ -46,7 +46,7 @@ case "$option" in
     #3) generate_rasi "Manual-Encoding/ABS/1-wheel" "event_state[0],event_state[3],process_state[0],process_state[2]";;
     #3) generate_rasi "producer-consumer" "";; 
     #4) generate_rasi "crossroad" "";; 
-    3)  generate_rasi "Automated/ABS/1-wheel" "event_state[0],event_state[1],event_state[3],process_state[0],process_state[2],min_advance"
+    3)  generate_rasi "Automated/ABS/1-wheel" "timer_set[0],timer_reset[0],timer_value[0],event_state[0],event_state[1],event_state[3],process_state[0],process_state[2],min_advance"
         generate_rasi "Automated/ABS/4-wheels" "event_state[0],event_state[1],event_state[8],process_state[0],process_state[6],min_advance" 1
         generate_rasi "Automated/ABS/4-wheels" "event_state[2],event_state[3],event_state[9],process_state[1],process_state[5],min_advance" 2
         generate_rasi "Automated/ABS/4-wheels" "event_state[4],event_state[5],event_state[10],process_state[2],process_state[8],min_advance" 3
@@ -55,6 +55,6 @@ case "$option" in
         #generate_rasi "producer-consumer" "" 
         #generate_rasi "crossroad" ""
         ;; 
-    5) $PWD/run_experiments.sh ;;
+    4) $PWD/run_experiments.sh ;;
   *) echo "[ERROR] Invalid option" "";;
 esac

@@ -55,260 +55,94 @@ class Main {
         |this.sc_fifo_int.buffer| + |this.sc_fifo_int.written| <= this.buffer_size;
 
     inline resource reachable_abstract_states_invariant() =
-    !this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == -3 &&
-    this.event_state[3] == -3 &&
-    this.event_state[4] == -3 &&
-    this.process_state[0] == -1 &&
-    this.process_state[1] == -1 &&
-    this.process_state[2] == -1 &&
-    this.timer_value[0] == -3 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 0 ||
-    !this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == 1 &&
-    this.event_state[3] == -3 &&
-    this.event_state[4] == -3 &&
-    this.process_state[0] == 2 &&
-    this.process_state[1] == -1 &&
-    this.process_state[2] == -1 &&
-    this.timer_value[0] == -3 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 0 ||
-    !this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == -3 &&
-    this.event_state[3] == 1 &&
-    this.event_state[4] == -3 &&
-    this.process_state[0] == -1 &&
-    this.process_state[1] == 3 &&
-    this.process_state[2] == -1 &&
-    this.timer_value[0] == -3 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 0 ||
-    !this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == -3 &&
-    this.event_state[3] == -3 &&
-    this.event_state[4] == -3 &&
-    this.process_state[0] == -1 &&
-    this.process_state[1] == -1 &&
-    this.process_state[2] == 1 &&
-    this.timer_value[0] == -3 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 0 ||
-    !this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == 1 &&
-    this.event_state[3] == 1 &&
-    this.event_state[4] == -3 &&
-    this.process_state[0] == 2 &&
-    this.process_state[1] == 3 &&
-    this.process_state[2] == -1 &&
-    this.timer_value[0] == -3 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 0 ||
-    !this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == 1 &&
-    this.event_state[3] == -3 &&
-    this.event_state[4] == -3 &&
-    this.process_state[0] == 2 &&
-    this.process_state[1] == -1 &&
-    this.process_state[2] == 1 &&
-    this.timer_value[0] == -3 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 0 ||
-    !this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == -3 &&
-    this.event_state[3] == 1 &&
-    this.event_state[4] == -3 &&
-    this.process_state[0] == -1 &&
-    this.process_state[1] == 3 &&
-    this.process_state[2] == 1 &&
-    this.timer_value[0] == -3 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 0 ||
-    !this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == 1 &&
-    this.event_state[3] == 1 &&
-    this.event_state[4] == -3 &&
-    this.process_state[0] == 2 &&
-    this.process_state[1] == 3 &&
-    this.process_state[2] == 1 &&
-    this.timer_value[0] == -3 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 0 ||
-    !this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == -2 &&
-    this.event_state[3] == -2 &&
-    this.event_state[4] == -3 &&
-    this.process_state[0] == -1 &&
-    this.process_state[1] == -1 &&
-    this.process_state[2] == 1 &&
-    this.timer_value[0] == -3 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 0 ||
-    this.primitive_channel_update[0] && !this.timer_reset[0] && this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == -2 &&
-    this.event_state[3] == -2 &&
-    this.event_state[4] == 1 &&
-    this.process_state[0] == -1 &&
-    this.process_state[1] == -1 &&
-    this.process_state[2] == 1 &&
-    this.timer_value[0] == 1 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 1 &&
-    this.sc_fifo_int.num_read == 0 ||
-    !this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == -2 &&
-    this.event_state[3] == 1 &&
-    this.event_state[4] == -3 &&
-    this.process_state[0] == -1 &&
-    this.process_state[1] == 3 &&
-    this.process_state[2] == 1 &&
-    this.timer_value[0] == -3 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 0 ||
-    this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == 1 &&
-    this.event_state[3] == -2 &&
-    this.event_state[4] == 1 &&
-    this.process_state[0] == 2 &&
-    this.process_state[1] == -1 &&
-    this.process_state[2] == 1 &&
-    this.timer_value[0] == 1 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 1 &&
-    this.sc_fifo_int.num_read == 0 ||
-    this.primitive_channel_update[0] && !this.timer_reset[0] && this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == -2 &&
-    this.event_state[3] == 1 &&
-    this.event_state[4] == 1 &&
-    this.process_state[0] == -1 &&
-    this.process_state[1] == 3 &&
-    this.process_state[2] == 1 &&
-    this.timer_value[0] == 1 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 1 &&
-    this.sc_fifo_int.num_read == 0 ||
-    this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == 1 &&
-    this.event_state[3] == 1 &&
-    this.event_state[4] == 1 &&
-    this.process_state[0] == 2 &&
-    this.process_state[1] == 3 &&
-    this.process_state[2] == 1 &&
-    this.timer_value[0] == 1 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 1 &&
-    this.sc_fifo_int.num_read == 0 ||
-    !this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -2 &&
-    this.event_state[2] == 1 &&
-    this.event_state[3] == 1 &&
-    this.event_state[4] == 1 &&
-    this.process_state[0] == 2 &&
-    this.process_state[1] == 3 &&
-    this.process_state[2] == -1 &&
-    this.timer_value[0] == 1 &&
-    |this.sc_fifo_int.buffer| == 1 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 0 ||
-    this.primitive_channel_update[0] && this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -2 &&
-    this.event_state[2] == 1 &&
-    this.event_state[3] == 1 &&
-    this.event_state[4] == -3 &&
-    this.process_state[0] == 2 &&
-    this.process_state[1] == 3 &&
-    this.process_state[2] == -1 &&
-    this.timer_value[0] == 1 &&
-    |this.sc_fifo_int.buffer| == 1 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 1 ||
-    this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -2 &&
-    this.event_state[2] == 1 &&
-    this.event_state[3] == 1 &&
-    this.event_state[4] == -3 &&
-    this.process_state[0] == 2 &&
-    this.process_state[1] == 3 &&
-    this.process_state[2] == -1 &&
-    this.timer_value[0] == 1 &&
-    |this.sc_fifo_int.buffer| == 1 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 1 ||
-    this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -2 &&
-    this.event_state[2] == 1 &&
-    this.event_state[3] == 1 &&
-    this.event_state[4] == -3 &&
-    this.process_state[0] == 2 &&
-    this.process_state[1] == 3 &&
-    this.process_state[2] == 1 &&
-    this.timer_value[0] == 1 &&
-    |this.sc_fifo_int.buffer| == 1 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 1 ||
-    !this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -2 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == 1 &&
-    this.event_state[3] == 1 &&
-    this.event_state[4] == -3 &&
-    this.process_state[0] == 2 &&
-    this.process_state[1] == 3 &&
-    this.process_state[2] == 1 &&
-    this.timer_value[0] == 1 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 0 ||
-    !this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == -2 &&
-    this.event_state[3] == -2 &&
-    this.event_state[4] == -3 &&
-    this.process_state[0] == -1 &&
-    this.process_state[1] == -1 &&
-    this.process_state[2] == 1 &&
-    this.timer_value[0] == 1 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 0 ||
-    !this.primitive_channel_update[0] && !this.timer_reset[0] && !this.timer_set[0] && this.event_state[0] == -3 &&
-    this.event_state[1] == -3 &&
-    this.event_state[2] == -2 &&
-    this.event_state[3] == 1 &&
-    this.event_state[4] == -3 &&
-    this.process_state[0] == -1 &&
-    this.process_state[1] == 3 &&
-    this.process_state[2] == 1 &&
-    this.timer_value[0] == 1 &&
-    |this.sc_fifo_int.buffer| == 0 &&
-    |this.sc_fifo_int.written| == 0 &&
-    this.sc_fifo_int.num_read == 0
-;
-
+        !this.primitive_channel_update[0] && this.event_state[0] == -3 && this.event_state[1] == -3 &&
+        this.event_state[2] == -3 &&
+        this.event_state[4] == -3 &&
+        this.process_state[0] == -1 &&
+        this.process_state[2] == -1 &&
+        |this.sc_fifo_int.buffer| == 0 &&
+        |this.sc_fifo_int.written| == 0 &&
+        this.sc_fifo_int.num_read == 0 ||
+        !this.primitive_channel_update[0] && this.event_state[0] == -3 && this.event_state[1] == -3 &&
+        this.event_state[2] == 1 &&
+        this.event_state[4] == -3 &&
+        this.process_state[0] == 2 &&
+        this.process_state[2] == -1 &&
+        |this.sc_fifo_int.buffer| == 0 &&
+        |this.sc_fifo_int.written| == 0 &&
+        this.sc_fifo_int.num_read == 0 ||
+        !this.primitive_channel_update[0] && this.event_state[0] == -3 && this.event_state[1] == -3 &&
+        this.event_state[2] == -3 &&
+        this.event_state[4] == -3 &&
+        this.process_state[0] == -1 &&
+        this.process_state[2] == 1 &&
+        |this.sc_fifo_int.buffer| == 0 &&
+        |this.sc_fifo_int.written| == 0 &&
+        this.sc_fifo_int.num_read == 0 ||
+        !this.primitive_channel_update[0] && this.event_state[0] == -3 && this.event_state[1] == -3 &&
+        this.event_state[2] == 1 &&
+        this.event_state[4] == -3 &&
+        this.process_state[0] == 2 &&
+        this.process_state[2] == 1 &&
+        |this.sc_fifo_int.buffer| == 0 &&
+        |this.sc_fifo_int.written| == 0 &&
+        this.sc_fifo_int.num_read == 0 ||
+        !this.primitive_channel_update[0] && this.event_state[0] == -3 && this.event_state[1] == -3 &&
+        this.event_state[2] == -2 &&
+        this.event_state[4] == -3 &&
+        this.process_state[0] == -1 &&
+        this.process_state[2] == 1 &&
+        |this.sc_fifo_int.buffer| == 0 &&
+        |this.sc_fifo_int.written| == 0 &&
+        this.sc_fifo_int.num_read == 0 ||
+        this.primitive_channel_update[0] && this.event_state[0] == -3 && this.event_state[1] == -3 &&
+        this.event_state[2] == -2 &&
+        this.event_state[4] == 1 &&
+        this.process_state[0] == -1 &&
+        this.process_state[2] == 1 &&
+        |this.sc_fifo_int.buffer| == 0 &&
+        |this.sc_fifo_int.written| == 1 &&
+        this.sc_fifo_int.num_read == 0 ||
+        this.primitive_channel_update[0] && this.event_state[0] == -3 && this.event_state[1] == -3 &&
+        this.event_state[2] == 1 &&
+        this.event_state[4] == 1 &&
+        this.process_state[0] == 2 &&
+        this.process_state[2] == 1 &&
+        |this.sc_fifo_int.buffer| == 0 &&
+        |this.sc_fifo_int.written| == 1 &&
+        this.sc_fifo_int.num_read == 0 ||
+        !this.primitive_channel_update[0] && this.event_state[0] == -3 && this.event_state[1] == -2 &&
+        this.event_state[2] == 1 &&
+        this.event_state[4] == 1 &&
+        this.process_state[0] == 2 &&
+        this.process_state[2] == -1 &&
+        |this.sc_fifo_int.buffer| == 1 &&
+        |this.sc_fifo_int.written| == 0 &&
+        this.sc_fifo_int.num_read == 0 ||
+        this.primitive_channel_update[0] && this.event_state[0] == -3 && this.event_state[1] == -2 &&
+        this.event_state[2] == 1 &&
+        this.event_state[4] == -3 &&
+        this.process_state[0] == 2 &&
+        this.process_state[2] == -1 &&
+        |this.sc_fifo_int.buffer| == 1 &&
+        |this.sc_fifo_int.written| == 0 &&
+        this.sc_fifo_int.num_read == 1 ||
+        this.primitive_channel_update[0] && this.event_state[0] == -3 && this.event_state[1] == -2 &&
+        this.event_state[2] == 1 &&
+        this.event_state[4] == -3 &&
+        this.process_state[0] == 2 &&
+        this.process_state[2] == 1 &&
+        |this.sc_fifo_int.buffer| == 1 &&
+        |this.sc_fifo_int.written| == 0 &&
+        this.sc_fifo_int.num_read == 1 ||
+        !this.primitive_channel_update[0] && this.event_state[0] == -2 && this.event_state[1] == -3 &&
+        this.event_state[2] == 1 &&
+        this.event_state[4] == -3 &&
+        this.process_state[0] == 2 &&
+        this.process_state[2] == 1 &&
+        |this.sc_fifo_int.buffer| == 0 &&
+        |this.sc_fifo_int.written| == 0 &&
+        this.sc_fifo_int.num_read == 0;
 
     inline resource global_invariant() =
         this.scheduler_invariant() **
@@ -317,13 +151,18 @@ class Main {
         Perm(this.s_tickcounter_send, read) **
         this.s_tickcounter_send != null **
         Perm(this.s_tickcounter_send.ticks, write) **
-        Perm(this.s_tickcounter_send.tickcounter_send_init, write) ** Perm(this.s_tickcounter_send.speed_send, write) **
+        Perm(this.s_tickcounter_send.at_send, 1\2) **
+        Perm(this.s_tickcounter_send.tickcounter_send_timer_set, 1\2) **
+        Perm(this.s_tickcounter_send.tickcounter_send_init, 1\2) ** Perm(this.s_tickcounter_send.speed_send, write) **
         Perm(this.ecu_absasr_absasr_not_a_main, read) **
         this.ecu_absasr_absasr_not_a_main != null **
-        Perm(this.ecu_absasr_absasr_not_a_main.absasr_not_a_main_init, write) **
+        Perm(this.ecu_absasr_absasr_not_a_main.absasr_not_a_main_init, 1\2) **
         Perm(this.ecu_absasr_absasr_read_s, read) **
         this.ecu_absasr_absasr_read_s != null **
-        Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_init, write) **
+        Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_fifo_value, write) **
+        Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_init, 1\2) **
+        Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_timer_value, write) **
+        Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_timer_set, 1\2) **
         Perm(this.ecu_absasr_absasr_read_s.tmp_0_read_s, write) **
         Perm(this.ecu_absasr_absasr, read) **
         this.ecu_absasr_absasr != null **
@@ -340,7 +179,11 @@ class Main {
         |this.ecu_absasr_absasr.p| == 1 **
         Perm(this.ecu_absasr_absasr.fa, write) ** Perm(this.ecu_absasr_absasr.fv, write) **
         Perm(this.ecu_absasr_absasr.m, read) ** this.ecu_absasr_absasr.m == this ** 
-        this.reachable_abstract_states_invariant() ** this.psl_invariant();
+        this.reachable_abstract_states_invariant() ** this.psl_invariant()
+
+        ** ((event_state[2] == -2 && s_tickcounter_send.at_send) ==> (|this.sc_fifo_int.buffer| == 0 && |this.sc_fifo_int.written| == 0))
+        ** (|sc_fifo_int.written| != 0 ==> (|sc_fifo_int.written| == 1 && sc_fifo_int.written[0] == s_tickcounter_send.speed_send))
+        ** (|sc_fifo_int.buffer| != 0 ==> (|sc_fifo_int.buffer| == 1 && sc_fifo_int.buffer[0] == s_tickcounter_send.speed_send));
     
     inline resource psl_invariant() =
         Perm(this.timer_value, write) **
@@ -350,12 +193,12 @@ class Main {
         Perm(this.timer_reset, write) **
         |this.timer_reset| == 1 **
         (this.process_state[0] == -1 && |this.sc_fifo_int.written| == 1 ==>
-            this.event_state[4] == 1 && this.timer_set[0]) **
-        (this.timer_reset[0] ==>
+            this.event_state[4] == 1 && this.s_tickcounter_send.tickcounter_send_timer_set) **
+        (this.ecu_absasr_absasr_read_s.absasr_read_s_timer_set ==>
             this.process_state[2] == -1 && this.sc_fifo_int.num_read == 1 &&
-            this.ecu_absasr_absasr.v[0] == this.s_tickcounter_send.speed_send &&
+            this.ecu_absasr_absasr_read_s.absasr_read_s_fifo_value == ecu_absasr_absasr_read_s.tmp_0_read_s &&
             this.event_state[4] == -3 &&
-            this.timer_value[0] > 0) **
+            this.ecu_absasr_absasr_read_s.absasr_read_s_timer_value > 0) **
         !(this.process_state[0] >= 0 && this.process_state[1] >= 0 && this.process_state[2] >= 0 &&
         this.event_state[0] == -3 &&
         this.event_state[1] == -3 &&
@@ -364,6 +207,9 @@ class Main {
     
     ensures Perm(this.s_tickcounter_send, read);
     ensures this.s_tickcounter_send != null;
+    ensures Perm(this.s_tickcounter_send.at_send, 1\2) ** !this.s_tickcounter_send.at_send;
+    ensures Perm(this.s_tickcounter_send.tickcounter_send_timer_set, 1\2) ** !this.s_tickcounter_send.tickcounter_send_timer_set;
+    ensures Perm(this.s_tickcounter_send.tickcounter_send_init, 1\2) ** this.s_tickcounter_send.tickcounter_send_init;
     ensures Perm(this.s_tickcounter_send.m, 1 \ 2);
     ensures this.s_tickcounter_send.m == this;
     ensures idle(this.s_tickcounter_send);
@@ -371,10 +217,13 @@ class Main {
     ensures this.ecu_absasr_absasr_not_a_main != null;
     ensures Perm(this.ecu_absasr_absasr_not_a_main.m, 1 \ 2);
     ensures this.ecu_absasr_absasr_not_a_main.m == this;
+    ensures Perm(this.ecu_absasr_absasr_not_a_main.absasr_not_a_main_init, 1\2) ** this.ecu_absasr_absasr_not_a_main.absasr_not_a_main_init;
     ensures idle(this.ecu_absasr_absasr_not_a_main);
     ensures Perm(this.ecu_absasr_absasr_read_s, read);
     ensures this.ecu_absasr_absasr_read_s != null;
     ensures Perm(this.ecu_absasr_absasr_read_s.m, 1 \ 2);
+    ensures Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_timer_set, 1\2) ** !this.ecu_absasr_absasr_read_s.absasr_read_s_timer_set;
+    ensures Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_init, 1\2) ** this.ecu_absasr_absasr_read_s.absasr_read_s_init;
     ensures this.ecu_absasr_absasr_read_s.m == this;
     ensures idle(this.ecu_absasr_absasr_read_s);
     ensures committed(this);
@@ -398,8 +247,12 @@ class Main {
     requires this.s_tickcounter_send != null;
     requires Perm(this.s_tickcounter_send.m, 1 \ 2);
     requires this.s_tickcounter_send.m == this;
+    requires Perm(this.s_tickcounter_send.at_send, 1\2) ** !this.s_tickcounter_send.at_send;
+    requires Perm(this.s_tickcounter_send.tickcounter_send_timer_set, 1\2) ** !this.s_tickcounter_send.tickcounter_send_timer_set;
+    requires Perm(this.s_tickcounter_send.tickcounter_send_init, 1\2) ** this.s_tickcounter_send.tickcounter_send_init;
     requires idle(this.s_tickcounter_send);
     requires Perm(this.ecu_absasr_absasr_not_a_main, read);
+    requires Perm(ecu_absasr_absasr_not_a_main.absasr_not_a_main_init, 1\2) ** ecu_absasr_absasr_not_a_main.absasr_not_a_main_init;
     requires this.ecu_absasr_absasr_not_a_main != null;
     requires Perm(this.ecu_absasr_absasr_not_a_main.m, 1 \ 2);
     requires this.ecu_absasr_absasr_not_a_main.m == this;
@@ -408,6 +261,8 @@ class Main {
     requires this.ecu_absasr_absasr_read_s != null;
     requires Perm(this.ecu_absasr_absasr_read_s.m, 1 \ 2);
     requires this.ecu_absasr_absasr_read_s.m == this;
+    requires Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_timer_set, 1\2) ** !this.ecu_absasr_absasr_read_s.absasr_read_s_timer_set;
+    requires Perm(this.ecu_absasr_absasr_read_s.absasr_read_s_init, 1\2) ** this.ecu_absasr_absasr_read_s.absasr_read_s_init;
     requires idle(this.ecu_absasr_absasr_read_s);
     requires committed(this);
     ensures Perm(this.s_tickcounter_send, read);

@@ -1,0 +1,94 @@
+
+class Absasr_read_s {
+    Main m;
+    
+    boolean absasr_read_s_init;
+
+    int absasr_read_s_fifo_value;
+    
+    boolean absasr_read_s_timer_set;
+
+    int absasr_read_s_timer_value;
+
+    int tmp_0_read_s;
+    
+    ensures Perm(this.m, write);
+    ensures this.m == m_param;
+    ensures Perm(this.absasr_read_s_init, write) ** this.absasr_read_s_init;
+    ensures Perm(absasr_read_s_timer_set, write) ** !absasr_read_s_timer_set;
+    ensures Perm(this.tmp_0_read_s, write);
+    ensures Perm(absasr_read_s_fifo_value, write);
+    ensures Perm(absasr_read_s_timer_value, write);
+    ensures idle(this);
+    constructor(
+        Main m_param
+    ) {
+        this.m = m_param;
+        this.absasr_read_s_timer_set = false;
+        this.absasr_read_s_init = true;
+    }
+    
+    requires Perm(this.m, 1 \ 2);
+    requires this.m != null;
+    requires committed(this.m);
+    requires Perm(this.m.ecu_absasr_absasr_read_s, read);
+    requires this.m.ecu_absasr_absasr_read_s == this;
+    requires Perm(absasr_read_s_timer_set, 1 \ 2) ** !absasr_read_s_timer_set;
+    requires Perm(absasr_read_s_init, 1\2) ** absasr_read_s_init;
+    ensures Perm(this.m, 1 \ 2);
+    ensures this.m != null;
+    ensures committed(this.m);
+    ensures Perm(this.m.ecu_absasr_absasr_read_s, read);
+    ensures this.m.ecu_absasr_absasr_read_s == this;
+    run {
+        lock this.m;
+        this.tmp_0_read_s = 0;
+        loop_invariant Perm(this.m, 1 \ 2);
+        loop_invariant this.m != null;
+        loop_invariant committed(this.m);
+        loop_invariant held(this.m);
+        loop_invariant this.m.global_invariant();
+        loop_invariant this.m.ecu_absasr_absasr_read_s == this;
+        loop_invariant Perm(this.absasr_read_s_init, 1\2);
+        loop_invariant Perm(absasr_read_s_timer_set, 1 \ 2) ** absasr_read_s_init != absasr_read_s_timer_set;
+        while (true) {
+            this.absasr_read_s_init = false;
+            // Reset absasr_read_s_timer_set
+            this.absasr_read_s_timer_set = false;
+
+            loop_invariant Perm(this.m, 1 \ 2);
+            loop_invariant this.m != null;
+            loop_invariant committed(this.m);
+            loop_invariant held(this.m);
+            loop_invariant this.m.global_invariant();
+            loop_invariant this.m.ecu_absasr_absasr_read_s == this;
+            loop_invariant Perm(absasr_read_s_timer_set, 1 \ 2) ** !absasr_read_s_timer_set;
+            loop_invariant Perm(this.absasr_read_s_init, 1\2) ** !this.absasr_read_s_init;
+            while (|this.m.sc_fifo_int.buffer| <= this.m.sc_fifo_int.num_read) {
+                this.m.process_state = this.m.process_state.update(2, 1);
+                loop_invariant Perm(this.m, 1 \ 2);
+                loop_invariant this.m != null;
+                loop_invariant committed(this.m);
+                loop_invariant held(this.m);
+                loop_invariant this.m.global_invariant();
+                loop_invariant this.m.ecu_absasr_absasr_read_s == this;
+                loop_invariant Perm(absasr_read_s_timer_set, 1 \ 2) ** !absasr_read_s_timer_set;
+                loop_invariant Perm(this.absasr_read_s_init, 1\2) ** !this.absasr_read_s_init;
+                while (this.m.process_state[2] != -1 || this.m.event_state[1] != -2) {
+                    unlock this.m;
+                    lock this.m;
+                }
+            }
+            this.m.ecu_absasr_absasr.v = this.m.ecu_absasr_absasr.v.update(0, this.m.sc_fifo_int.fifo_read());
+            this.m.ecu_absasr_absasr.a = this.m.ecu_absasr_absasr.a.update(0, this.m.ecu_absasr_absasr.v[0] - this.tmp_0_read_s);
+            this.tmp_0_read_s = this.m.ecu_absasr_absasr.v[0];
+            
+            // Reset Timer
+            this.absasr_read_s_fifo_value = this.m.s_tickcounter_send.speed_send;
+            this.absasr_read_s_timer_value = this.m.event_state[4];
+            this.absasr_read_s_timer_set = true;
+            this.m.event_state = this.m.event_state.update(4, -3);
+        }
+        unlock this.m;
+    }
+}

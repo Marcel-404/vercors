@@ -199,11 +199,12 @@ public class Transformer<T> {
 			// Add PSL Helper Variables for each timer object
 			if(count!=0){
 				String class_name =proc.get_generating_instance().getSCClass().getName()+"_"+proc.get_generating_function().getName();
-				/*SCArray psl_timer_value = new SCArray(class_name+"_timer_value","int",count_var);
-        		SCArray psl_timer_set = new SCArray(class_name+"_timer_set","bool",count_var);
-        		SCArray psl_timer_reset = new SCArray(class_name+"_timer_reset","bool",count_var);*/
+				/*SCSimpleType psl_timer_value = new SCSimpleType(class_name+"_timer_value","int");
+				SCSimpleType fifo_value = new SCSimpleType(class_name+"_fifo_value","int");
+        		SCSimpleType psl_timer_set = new SCSimpleType(class_name+"_timer_set","bool");
+        		SCSimpleType psl_timer_reset = new SCSimpleType(class_name+"_timer_reset","bool");*/
 				SCSimpleType psl_init = new SCSimpleType(class_name+"_init","bool");
-				psl_members.addAll(java.util.Arrays.asList(/*psl_timer_value,psl_timer_set,psl_timer_reset,*/psl_init));
+				psl_members.addAll(java.util.Arrays.asList(/*psl_timer_value,psl_timer_set,psl_timer_reset,fifo_value,*/psl_init));
 			}
 		}
 		return psl_members;

@@ -45,5 +45,5 @@ For instance, for the given timely reaction property, this means:
 - Moreover, the timer has to be reset in `Absasr_read_x.pvl` and its current value saved after line 61 `this.tmp_0_read_s = this.m.ecu_absasr_absasr.v[0];` , where x \in \[vl,vr,hl,hr\]
 - This is encoded as:
 - - this.m.timer_value = this.m.timer_value.update(j,this.m.event_state[i]);
-- - this.m.timer_value = this.m.timer_reset.update(j,false);
+- - this.m.timer_reset = this.m.timer_reset.update(j,false);
 - - this.m.event_state = this.m.event_state.update(i,-3);, where j \in \[0,1,2,3\], where i == 13+j

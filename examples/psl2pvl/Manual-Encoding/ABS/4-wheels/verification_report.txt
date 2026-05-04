@@ -1,2 +1,0 @@
-[INFO] Start: VerCors (at 15:28:10)
-[INFO] Done: VerCors (at 15:34:31, duration: 00:06:21)

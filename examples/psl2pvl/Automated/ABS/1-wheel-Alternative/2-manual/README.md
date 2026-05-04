@@ -31,16 +31,14 @@ For the ABS/ASR example, this means
 ### Property Verification
 
 To enable the verification of the generated PVL properties from the PSL assertions, some manual effort is required. 
-For each property using the within_t operator, an entry in the global arrays timer_set, timer_reset and timer_value are created.
-The entries in the global variables are encoded in such a way, that the order of the within_t specification corresponds to the order in these arrays.
-However, the timer operations, such as setting and resetting the timer need to be manually defined.
+In this alternative approach the global arrays timer_set, timer_reset and timer_value have to be localised as local variables.
+Moreover, the timer operations, such as setting and resetting the timer need to be manually defined.
 
 For instance, for the given timely reaction property, this means:
 - A timer has to be set in `Tickcounter_send.pvl` and its new value saved after line 74 `this.m.sc_fifo_int.fifo_write(this.speed_send);` 
 - This is encoded as: 
 - - this.m.event_state = this.m.event_state.update(4,1); 
-- - this.m.timer_set = this.m.timer_set.update(0,true); 
-- - this.m.timer_value = this.m.timer_value.update(0,1);
+- - this.tickcounter_send_timer_set = true; 
 - Moreover, the timer has to be reset in `Absasr_read_s.pvl` and its current value saved after line 61 `this.tmp_0_read_s = this.m.ecu_absasr_absasr.v[0];`
 - This is encoded as:
 - - this.m.timer_value = this.m.timer_value.update(0,this.m.event_state[4]);

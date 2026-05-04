@@ -1,0 +1,115 @@
+
+class Tickcounter_send {
+    Main m;
+    
+    int ticks;
+    
+    boolean tickcounter_send_init;
+    
+    boolean tickcounter_send_timer_set;
+
+    boolean at_send;
+
+    int speed_send;
+    
+    ensures Perm(this.m, write);
+    ensures this.m == m_param;
+    ensures Perm(this.ticks, write);
+    ensures Perm(at_send, write) ** !at_send;
+    ensures Perm(this.tickcounter_send_init, write) ** this.tickcounter_send_init;
+    ensures Perm(tickcounter_send_timer_set, write) ** !tickcounter_send_timer_set;
+    ensures Perm(this.speed_send, write);
+    ensures idle(this);
+    constructor(
+        Main m_param
+    ) {
+        at_send = false;
+        this.m = m_param;
+        tickcounter_send_timer_set = false;
+        this.tickcounter_send_init = true;
+
+    }
+    
+    requires Perm(this.m, 1 \ 2);
+    requires this.m != null;
+    requires committed(this.m);
+    requires Perm(this.m.s_tickcounter_send, read);
+    requires Perm(at_send, 1\2) ** !at_send;
+    requires Perm(this.tickcounter_send_init, 1\2) ** this.tickcounter_send_init;
+    requires Perm(tickcounter_send_timer_set, 1\2) ** !tickcounter_send_timer_set;
+    requires this.m.s_tickcounter_send == this;
+    ensures Perm(this.m, 1 \ 2);
+    ensures this.m != null;
+    ensures committed(this.m);
+    ensures Perm(this.m.s_tickcounter_send, read);
+    ensures this.m.s_tickcounter_send == this;
+    run {
+        lock this.m;
+        loop_invariant Perm(this.m, 1 \ 2);
+        loop_invariant this.m != null;
+        loop_invariant committed(this.m);
+        loop_invariant held(this.m);
+        loop_invariant this.m.global_invariant();
+        loop_invariant this.m.s_tickcounter_send == this;
+        loop_invariant Perm(tickcounter_send_timer_set, 1\2);
+        loop_invariant Perm(at_send, 1\2) ** !at_send;
+        loop_invariant Perm(this.tickcounter_send_init, 1\2);
+        loop_invariant tickcounter_send_init != tickcounter_send_timer_set;
+        while (true) {
+            this.tickcounter_send_init = false; 
+            at_send = true; 
+            // Reset Timer Set Status
+            this.tickcounter_send_timer_set = false;
+            
+            this.m.process_state = this.m.process_state.update(0, 2);
+            this.m.event_state = this.m.event_state.update(2, 1);
+            loop_invariant Perm(this.m, 1 \ 2);
+            loop_invariant this.m != null;
+            loop_invariant committed(this.m);
+            loop_invariant held(this.m);
+            loop_invariant this.m.global_invariant();
+            loop_invariant this.m.s_tickcounter_send == this;
+            loop_invariant Perm(at_send, 1\2) ** at_send;
+            loop_invariant Perm(tickcounter_send_timer_set, 1\2) ** !tickcounter_send_timer_set;
+            while (this.m.process_state[0] != -1 || this.m.event_state[2] != -2) {
+                unlock this.m;
+                lock this.m;
+            }
+            at_send = false;        
+            this.speed_send = this.generate__random__0();
+            loop_invariant Perm(this.m, 1 \ 2);
+            loop_invariant this.m != null;
+            loop_invariant committed(this.m);
+            loop_invariant held(this.m);
+            loop_invariant this.m.global_invariant();
+            loop_invariant this.m.s_tickcounter_send == this;
+            loop_invariant Perm(at_send, 1\2) ** !at_send;
+            loop_invariant |this.m.sc_fifo_int.buffer| + |this.m.sc_fifo_int.written| == 0
+                        ** this.m.event_state[2] == -2;
+            loop_invariant Perm(tickcounter_send_timer_set, 1\2) ** !tickcounter_send_timer_set;
+            while (|this.m.sc_fifo_int.buffer| + |this.m.sc_fifo_int.written| >= this.m.buffer_size) {
+                this.m.process_state = this.m.process_state.update(0, 0);
+                loop_invariant Perm(this.m, 1 \ 2);
+                loop_invariant this.m != null;
+                loop_invariant committed(this.m);
+                loop_invariant held(this.m);
+                loop_invariant this.m.global_invariant();
+                loop_invariant this.m.s_tickcounter_send == this;
+                loop_invariant Perm(at_send, 1\2) ** !at_send;
+                loop_invariant Perm(tickcounter_send_timer_set, 1\2) ** !tickcounter_send_timer_set;
+                while (this.m.process_state[0] != -1 || this.m.event_state[0] != -2) {
+                    unlock this.m;
+                    lock this.m;
+                }
+            }
+            this.m.sc_fifo_int.fifo_write(this.speed_send);
+            
+            // Set Timer 
+            this.m.event_state = this.m.event_state.update(4, 1);
+            this.tickcounter_send_timer_set = true;
+        }
+        unlock this.m;
+    }
+    
+    pure int generate__random__0();
+}

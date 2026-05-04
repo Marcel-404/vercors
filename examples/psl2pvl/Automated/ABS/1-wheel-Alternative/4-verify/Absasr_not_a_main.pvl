@@ -3,7 +3,7 @@ class Absasr_not_a_main {
     Main m;
     
     boolean absasr_not_a_main_init;
-    
+        
     ensures Perm(this.m, write);
     ensures this.m == m_param;
     ensures Perm(this.absasr_not_a_main_init, write) ** absasr_not_a_main_init;
@@ -11,8 +11,8 @@ class Absasr_not_a_main {
     constructor(
         Main m_param
     ) {
-        absasr_not_a_main_init = true;
         this.m = m_param;
+        absasr_not_a_main_init = true;
     }
     
     requires Perm(this.m, 1 \ 2);
@@ -36,8 +36,8 @@ class Absasr_not_a_main {
         loop_invariant this.m.global_invariant();
         loop_invariant this.m.ecu_absasr_absasr_not_a_main == this;
         loop_invariant Perm(absasr_not_a_main_init, 1\2) ** absasr_not_a_main_init;
-        loop_invariant (0 <= i && i <= 4);
-        for (i = 0; i < 4; i = i + 1) {
+        loop_invariant (0 <= i && i <= 1);
+        for (i = 0; i < 1; i = i + 1) {
             this.m.ecu_absasr_absasr.s = this.m.ecu_absasr_absasr.s.update(i, 1);
             this.m.ecu_absasr_absasr.v = this.m.ecu_absasr_absasr.v.update(i, 0);
             this.m.ecu_absasr_absasr.a = this.m.ecu_absasr_absasr.a.update(i, 0);
@@ -51,8 +51,8 @@ class Absasr_not_a_main {
         loop_invariant Perm(absasr_not_a_main_init, 1\2);
         while (true) {
             absasr_not_a_main_init = false;
-            this.m.process_state = this.m.process_state.update(4, 12);
-            this.m.event_state = this.m.event_state.update(12, 1);
+            this.m.process_state = this.m.process_state.update(1, 3);
+            this.m.event_state = this.m.event_state.update(3, 1);
             loop_invariant Perm(this.m, 1 \ 2);
             loop_invariant this.m != null;
             loop_invariant committed(this.m);
@@ -60,29 +60,11 @@ class Absasr_not_a_main {
             loop_invariant this.m.global_invariant();
             loop_invariant this.m.ecu_absasr_absasr_not_a_main == this;
             loop_invariant Perm(absasr_not_a_main_init, 1\2) ** !absasr_not_a_main_init;
-            while (this.m.process_state[4] != -1 || this.m.event_state[12] != -2) {
+            while (this.m.process_state[1] != -1 || this.m.event_state[3] != -2) {
                 unlock this.m;
                 lock this.m;
             }
             i = 0;
-            if (
-                this.m.ecu_absasr_absasr.abs(this.m.ecu_absasr_absasr.a[1]) <
-                this.m.ecu_absasr_absasr.abs(this.m.ecu_absasr_absasr.a[i])
-            ) {
-                i = 1;
-            }
-            if (
-                this.m.ecu_absasr_absasr.abs(this.m.ecu_absasr_absasr.a[2]) <
-                this.m.ecu_absasr_absasr.abs(this.m.ecu_absasr_absasr.a[i])
-            ) {
-                i = 2;
-            }
-            if (
-                this.m.ecu_absasr_absasr.abs(this.m.ecu_absasr_absasr.a[3]) <
-                this.m.ecu_absasr_absasr.abs(this.m.ecu_absasr_absasr.a[i])
-            ) {
-                i = 3;
-            }
             this.m.ecu_absasr_absasr.temp_fv = this.m.ecu_absasr_absasr.v[i];
             this.m.ecu_absasr_absasr.fa = this.m.ecu_absasr_absasr.temp_fv - this.m.ecu_absasr_absasr.fv;
             if (this.m.ecu_absasr_absasr.fa < 0) {

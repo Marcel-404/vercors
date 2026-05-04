@@ -1,3 +1,0 @@
-vunit Main{
-    assert always x;
-}

@@ -1,4 +1,4 @@
-inline resource reachable_abstract_states_invariant2() =
+inline resource reachable_abstract_states_invariant() =
     !this.primitive_channel_update[1] && this.event_state[2] == -3 && this.event_state[3] == -3 &&
     this.event_state[9] == -3 &&
     this.process_state[1] == -1 &&

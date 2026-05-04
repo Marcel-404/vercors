@@ -19,7 +19,7 @@ VerCors requires a **java** runtime environment (version 17 or later), as well a
 Currently we support debian-based systems; let us know if you need something else! Install the dependencies:
 
 ```shell script
-sudo apt install clang openjdk-17-jre
+sudo apt install clang openjdk-21-jre
 ```
 
 Obtain the latest `deb` release of VerCors [here](https://github.com/utwente-fmt/vercors/releases/latest), and install it by running:
@@ -101,6 +101,7 @@ The license to VerCors is a mozilla open source license as described in LICENSE.
 
 
 # PSL2PVL Transformation 
+Note that openjdk-21-jre is required to run our approach.
 
 ## Run all experiments: 
 
@@ -112,6 +113,7 @@ $ ./examples/psl2pvl/run_experiments.sh
 3) Verify SystemC design
 ```
 
+To test the transformation of a SystemC design along with user-defined properties:
 ## Transform SystemC design: 
 
 ```shell script
@@ -119,10 +121,8 @@ $ ./examples/psl2pvl/transform.sh
 [INFO] Transform which SystemC design?:
 1) Automated/ABS/1-wheel
 2) Automated/ABS/4-wheels
-3) Manual-Encoding/ABS/1-wheel
-4) Manual-Encoding/ABS/4-wheels
-5) All SystemC designs
-6) Back to previous menu
+3) All SystemC designs
+4) Back to previous menu
 ```
 
 ## Generate RASI: 
@@ -133,14 +133,12 @@ $ ./examples/psl2pvl/generate_rasi.sh
 [INFO] Generate RASI for which SystemC design?:
 1) Automated/ABS/1-wheel
 2) Automated/ABS/4-wheels
-3) Manual-Encoding/ABS/1-wheel
-4) Manual-Encoding/ABS/4-wheels
-5) All SystemC designs
-6) Back to previous menu
+3) All SystemC designs
+4) Back to previous menu
 ```
 
 ## Verify SystemC design: 
-
+Manual-Encodings include the encodings of the VESUV approach.
 ```shell script
 $ ./examples/psl2pvl/verify.sh 
 [INFO] Verify which SystemC design?:
@@ -150,12 +148,4 @@ $ ./examples/psl2pvl/verify.sh
 4) Manual-Encoding/ABS/4-wheels
 5) All Systemc designs
 6) Back to previous menu
-```
-
-## Run transformation tests: 
-
-```shell script
-$ ./test/psl2pvl/run_tests.sh
-[INFO] Transforming PSL expressions...
-[INFO] Transformation complete.
 ```
