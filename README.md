@@ -19,7 +19,7 @@ VerCors requires a **java** runtime environment (version 17 or later), as well a
 Currently we support debian-based systems; let us know if you need something else! Install the dependencies:
 
 ```shell script
-sudo apt install clang openjdk-21-jre
+sudo apt install clang openjdk-21-jre 
 ```
 
 Obtain the latest `deb` release of VerCors [here](https://github.com/utwente-fmt/vercors/releases/latest), and install it by running:
@@ -128,6 +128,8 @@ $ ./examples/psl2pvl/transform.sh
 ## Generate RASI: 
 - Note: Since the RASI generator does not work on this version, the VerCors version from the [paper](https://research.utwente.nl/files/479531770/978-3-031-77382-2_23.pdf) must be used. Since the file was too large to add to this GitHub fork, the vercors.jar from the artifact must be added to lib/RASI-Generator/ .
 
+
+To generate the RASI for each example:
 ```shell script
 $ ./examples/psl2pvl/generate_rasi.sh 
 [INFO] Generate RASI for which SystemC design?:
@@ -138,6 +140,7 @@ $ ./examples/psl2pvl/generate_rasi.sh
 ```
 
 ## Verify SystemC design: 
+Unfortunately, 
 Manual-Encodings include the encodings of the VESUV approach.
 ```shell script
 $ ./examples/psl2pvl/verify.sh 
