@@ -20,7 +20,6 @@ Currently we support debian-based systems; let us know if you need something els
 
 ```shell script
 sudo apt install clang openjdk-21-jre 
-```
 
 Obtain the latest `deb` release of VerCors [here](https://github.com/utwente-fmt/vercors/releases/latest), and install it by running:
 
