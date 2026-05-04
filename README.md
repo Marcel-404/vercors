@@ -19,7 +19,7 @@ VerCors requires a **java** runtime environment (version 17 or later), as well a
 Currently we support debian-based systems; let us know if you need something else! Install the dependencies:
 
 ```shell script
-sudo apt install clang openjdk-17-jre
+sudo apt install clang openjdk-21-jre
 ```
 
 Obtain the latest `deb` release of VerCors [here](https://github.com/utwente-fmt/vercors/releases/latest), and install it by running:
@@ -101,7 +101,7 @@ The license to VerCors is a mozilla open source license as described in LICENSE.
 
 
 # PSL2PVL Transformation 
-
+Note that openjdk-21-jre is required to run our approach!
 ## Run all experiments: 
 
 ```shell script
@@ -146,16 +146,10 @@ $ ./examples/psl2pvl/verify.sh
 [INFO] Verify which SystemC design?:
 1) Automated/ABS/1-wheel
 2) Automated/ABS/4-wheels
-3) Manual-Encoding/ABS/1-wheel
-4) Manual-Encoding/ABS/4-wheels
-5) All Systemc designs
-6) Back to previous menu
+3) Automated/ABS/1-wheel-Alternative
+4) Manual-Encoding/ABS/1-wheel
+5) Manual-Encoding/ABS/4-wheels
+6) All Systemc designs
+7) Back to previous menu
 ```
 
-## Run transformation tests: 
-
-```shell script
-$ ./test/psl2pvl/run_tests.sh
-[INFO] Transforming PSL expressions...
-[INFO] Transformation complete.
-```
