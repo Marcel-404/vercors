@@ -20,7 +20,7 @@ Currently we support debian-based systems; let us know if you need something els
 
 ```shell script
 sudo apt install clang openjdk-21-jre 
-
+```
 Obtain the latest `deb` release of VerCors [here](https://github.com/utwente-fmt/vercors/releases/latest), and install it by running:
 
 ```shell script
@@ -139,15 +139,15 @@ $ ./examples/psl2pvl/generate_rasi.sh
 ```
 
 ## Verify SystemC design: 
-Unfortunately, 
 Manual-Encodings include the encodings of the VESUV approach.
 ```shell script
 $ ./examples/psl2pvl/verify.sh 
 [INFO] Verify which SystemC design?:
 1) Automated/ABS/1-wheel
 2) Automated/ABS/4-wheels
-3) Manual-Encoding/ABS/1-wheel
-4) Manual-Encoding/ABS/4-wheels
-5) All Systemc designs
-6) Back to previous menu
+3) Automated/ABS/1-wheel-Alternative
+4) Manual-Encoding/ABS/1-wheel
+5) Manual-Encoding/ABS/4-wheels
+6) All Systemc designs
+7) Back to previous menu
 ```
